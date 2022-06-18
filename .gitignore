@@ -1,0 +1,7 @@
+*~
+.*.sw[ponmlkji]
+.sw[ponmlkji]
+
+__pycache__/
+*.egg-info/
+.tox/
