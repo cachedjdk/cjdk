@@ -27,10 +27,6 @@ repository = "https://github.com/marktsuchida/cachedjdk"
 [project.scripts]
 cachedjdk = "cachedjdk.cli:run"
 
-[tool.setuptools]
-packages = ["cachedjdk"]
-package-dir = {cachedjdk = "src/cachedjdk"}
-
 [tool.black]
 line-length = 79
 target-version = ["py37"]
