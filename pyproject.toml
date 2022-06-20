@@ -25,8 +25,13 @@ classifiers = [
 ]
 
 dependencies = [
-    "requests>=2.24",
-    "tqdm>=4.0",
+    "requests >= 2.24",
+    "tqdm >= 4.0",
+]
+
+[project.optional-dependencies]
+testing = [
+    "pytest >= 7.0",
 ]
 
 [project.urls]
@@ -39,20 +44,6 @@ cachedjdk = "cachedjdk.cli:run"
 [tool.black]
 line-length = 79
 target-version = ["py37"]
-
-[tool.tox]
-legacy_tox_ini = """
-[tox]
-isolated_build = True
-envlist = py3
-
-[testenv]
-deps =
-    pytest
-    requests
-    tqdm
-commands = pytest
-"""
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
