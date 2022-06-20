@@ -1,3 +1,7 @@
+# This file is part of cachedjdk.
+# Copyright 2022, Board of Regents of the University of Wisconsin System
+# SPDX-License-Identifier: MIT
+
 from pathlib import Path
 from tqdm.auto import tqdm
 import contextlib
