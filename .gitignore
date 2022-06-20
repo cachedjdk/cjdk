@@ -3,5 +3,6 @@
 .sw[ponmlkji]
 
 __pycache__/
+dist/
 *.egg-info/
 .tox/
