@@ -2,58 +2,93 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-from cachedjdk import _index
+from cachedjdk import _index, _cache
+from pathlib import Path
 import json
+import mock_server
 import pytest
 import urllib
 
 
 def test_index(tmp_path):
-    index = _index.index(cachedir=tmp_path)
-    assert "linux" in index
+    data = {
+        "linux": {
+            "amd64": {
+                "jdk@adoptium": {"17.0.1": "tgz+https://example.com/a/b/c.tgz"}
+            }
+        }
+    }
+    with mock_server.start("/jdk-index.json", data) as server:
+        index = _index.index(url=server.endpoint_url(), cachedir=tmp_path)
+        assert index == data
+        assert server.request_count() == 1
+        index = _index.index(url=server.endpoint_url(), cachedir=tmp_path)
+        assert index == data
+        assert server.request_count() == 1  # No new request
 
 
 def test_available_jdks(tmp_path):
-    index = _index.index(cachedir=tmp_path)
+    index = {
+        "linux": {
+            "amd64": {
+                "jdk@adoptium": {"17.0.1": "tgz+https://example.com/a/b/c.tgz"}
+            }
+        }
+    }
     jdks = _index.available_jdks(index, os="linux", arch="x86_64")
-    assert len(jdks)
-    assert len(jdks[0]) == 2
-    assert isinstance(jdks[0][0], str)
-    assert isinstance(jdks[0][1], str)
+    assert len(jdks) == 1
+    assert jdks[0] == ("adoptium", "17.0.1")
 
 
 def test_jdk_url(tmp_path):
-    index = _index.index(cachedir=tmp_path)
+    index = {
+        "linux": {
+            "amd64": {
+                "jdk@adoptium": {"17.0.1": "tgz+https://example.com/a/b/c.tgz"}
+            }
+        }
+    }
     assert _index.jdk_url(
         index, "adoptium", "17.0.1", os="linux", arch="amd64"
-    ) == urllib.parse.urlparse(
-        "tgz+https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_x64_linux_hotspot_17.0.1_12.tar.gz"
-    )
+    ) == urllib.parse.urlparse("tgz+https://example.com/a/b/c.tgz")
 
 
 def test_cached_index(tmp_path):
-    url = "https://raw.githubusercontent.com/coursier/jvm-index/master/index.json"
-    path = _index._cached_index(url, 86400, tmp_path)
-    assert path.is_file()
-    assert path.samefile(
-        tmp_path
-        / _index._INDEX_KEY_PREFIX
-        / "raw.githubusercontent.com"
-        / "coursier"
-        / "jvm-index"
-        / "master"
-        / "index.json"
-        / _index._INDEX_FILENAME
-    )
-    _index._read_index(path)  # Should not raise
+    with mock_server.start("/index.json", {"hello": "world"}) as server:
+        url = server.endpoint_url()
+        expected_path = (
+            tmp_path
+            / _index._INDEX_KEY_PREFIX
+            / Path(*_cache.url_to_key(url))
+            / _index._INDEX_FILENAME
+        )
+        path = _index._cached_index(url, 86400, tmp_path)
+        assert path.is_file()
+        assert path.samefile(expected_path)
+        data = _index._read_index(path)
+        assert data == {"hello": "world"}
+        mtime = path.stat().st_mtime
+
+        # Second time should return same data without fetching.
+        assert server.request_count() == 1
+        path2 = _index._cached_index(url, 86400, tmp_path)
+        assert server.request_count() == 1  # No new request
+        assert path2.is_file()
+        assert path2.samefile(path)
+        data = _index._read_index(path2)
+        assert data == {"hello": "world"}
+        assert path2.stat().st_mtime == mtime
 
 
 def test_fetch_index(tmp_path):
-    url = "https://raw.githubusercontent.com/coursier/jvm-index/master/index.json"
-    path = tmp_path / "test.json"
-    _index._fetch_index(url, path, progress=None)
-    assert path.is_file()
-    _index._read_index(path)  # Should not raise
+    with mock_server.start("/index.json", {"hello": "world"}) as server:
+        url = server.endpoint_url()
+        path = tmp_path / "test.json"
+        _index._fetch_index(url, path, progress=None)
+        assert path.is_file()
+        data = _index._read_index(path)
+        assert "hello" in data
+        assert data["hello"] == "world"
 
 
 def test_read_index(tmp_path):

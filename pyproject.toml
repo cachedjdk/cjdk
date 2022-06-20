@@ -31,7 +31,9 @@ dependencies = [
 
 [project.optional-dependencies]
 testing = [
+    "flask >= 2.0",
     "pytest >= 7.0",
+    "werkzeug >= 2.0",
 ]
 
 [project.urls]
