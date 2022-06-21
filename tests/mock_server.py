@@ -4,11 +4,13 @@
 
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
+from werkzeug.debug import DebuggedApplication
 from werkzeug.serving import make_server
 import flask
 import os
 import requests
 import threading
+import werkzeug
 
 
 __all__ = [
@@ -20,13 +22,30 @@ _PORT = int(os.environ.get("CACHEDJDK_TEST_PORT", "5000"))
 
 
 @contextmanager
-def start(endpoint, data):
-    server = _start(endpoint, data)
+def start(
+    *,
+    endpoint="/test",
+    data={},
+    download_endpoint="/download",
+    download_size=0,
+    file_endpoint="/file.txt",
+    file_data="hello",
+):
+    server = _start(
+        endpoint,
+        data,
+        download_endpoint,
+        download_size,
+        file_endpoint,
+        file_data,
+    )
     yield server
     server._shutdown()
 
 
-def _start(endpoint, data):
+def _start(
+    endpoint, data, download_endpoint, download_size, file_endpoint, file_data
+):
     def run_server(endpoint, data):
         exec = ThreadPoolExecutor()
         server = None
@@ -52,6 +71,36 @@ def _start(endpoint, data):
             nonlocal request_count
             return flask.jsonify({"count": request_count})
 
+        @app.route(download_endpoint)
+        def download():
+            def generate():
+                remaining = download_size
+                chunk_size = 4096
+                while remaining > chunk_size:
+                    yield b"*" * chunk_size
+                    remaining -= chunk_size
+                yield b"*" * remaining
+
+            return flask.Response(
+                generate(),
+                content_type="application/octet-stream",
+                headers={
+                    "content-disposition": "attachment; filename=test.zip",
+                    "content-length": download_size,
+                },
+            )
+
+        @app.route(file_endpoint)
+        def file():
+            return flask.Response(
+                file_data,
+                content_type="application/octet-stream",
+                headers={
+                    "content-disposition": "attachment; filename=test.zip",
+                },
+            )
+
+        app = DebuggedApplication(app)
         server = make_server("127.0.0.1", _PORT, app)
         server.serve_forever(poll_interval=0.1)
         exec.shutdown()
@@ -70,9 +119,6 @@ class _MockServer:
     def url(self, path):
         assert path.startswith("/")
         return f"http://127.0.0.1:{self.port}{path}"
-
-    def endpoint_url(self):
-        return self.url(self.endpoint)
 
     def request_count(self):
         response = requests.get(self.url("/request_count"))

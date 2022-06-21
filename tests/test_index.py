@@ -18,11 +18,15 @@ def test_index(tmp_path):
             }
         }
     }
-    with mock_server.start("/jdk-index.json", data) as server:
-        index = _index.index(url=server.endpoint_url(), cachedir=tmp_path)
+    with mock_server.start(endpoint="/jdk-index.json", data=data) as server:
+        index = _index.index(
+            url=server.url("/jdk-index.json"), cachedir=tmp_path
+        )
         assert index == data
         assert server.request_count() == 1
-        index = _index.index(url=server.endpoint_url(), cachedir=tmp_path)
+        index = _index.index(
+            url=server.url("/jdk-index.json"), cachedir=tmp_path
+        )
         assert index == data
         assert server.request_count() == 1  # No new request
 
@@ -54,8 +58,10 @@ def test_jdk_url(tmp_path):
 
 
 def test_cached_index(tmp_path):
-    with mock_server.start("/index.json", {"hello": "world"}) as server:
-        url = server.endpoint_url()
+    with mock_server.start(
+        endpoint="/index.json", data={"hello": "world"}
+    ) as server:
+        url = server.url("/index.json")
         expected_path = (
             tmp_path
             / _index._INDEX_KEY_PREFIX
@@ -81,8 +87,10 @@ def test_cached_index(tmp_path):
 
 
 def test_fetch_index(tmp_path):
-    with mock_server.start("/index.json", {"hello": "world"}) as server:
-        url = server.endpoint_url()
+    with mock_server.start(
+        endpoint="/index.json", data={"hello": "world"}
+    ) as server:
+        url = server.url("/index.json")
         path = tmp_path / "test.json"
         _index._fetch_index(url, path, progress=None)
         assert path.is_file()
