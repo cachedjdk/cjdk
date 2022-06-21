@@ -222,15 +222,34 @@ def _normalize_version(ver, *, remove_prefix_1=False):
     # - Trailing zero elements are NOT removed, so, e.g., 11 < 11.0 (for the
     #   most part, the index uses versions with the same number of elements
     #   within a given vendor; versions like "11" are outliers)
-    norm = re.split(_VER_SEPS, ver)
-    try:
-        norm = tuple(int(e) for e in norm)
-    except ValueError:
-        raise ValueError(f"Invalid version string: {ver}")
+    # - If suffixed with "+", append "+" to the returned tuple
+    is_plus = ver.endswith("+")
+    if is_plus:
+        ver = ver[:-1]
+    if ver:
+        norm = re.split(_VER_SEPS, ver)
+        try:
+            norm = tuple(int(e) for e in norm)
+        except ValueError:
+            raise ValueError(f"Invalid version string: {ver}")
+    else:
+        norm = ()
+    plus = ("+",) if is_plus else ()
     if remove_prefix_1 and len(norm) and norm[0] == 1:
-        return norm[1:]
-    return norm
+        return norm[1:] + plus
+    return norm + plus
 
 
 def _is_version_compatible_with_spec(version, spec):
-    return len(version) >= len(spec) and spec == version[: len(spec)]
+    assert "+" not in version
+    is_plus = spec and spec[-1] == "+"
+    if is_plus:
+        spec = spec[:-1]
+        if not len(spec):  # spec was just ("+",)
+            return True
+        return (
+            len(version) >= len(spec)
+            and version[: len(spec) - 1] == spec[:-1]
+            and version[len(spec) - 1] >= spec[-1]
+        )
+    return len(version) >= len(spec) and version[: len(spec)] == spec

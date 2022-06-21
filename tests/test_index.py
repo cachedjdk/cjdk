@@ -140,6 +140,10 @@ def test_match_version():
     assert f("adoptium", ["10", "11.0", "11.1", "1.12.0"], "12") == "1.12.0"
     assert f("graalvm", ["10", "11.0", "11.1", "1.12.0"], "11") == "11.1"
     assert f("graalvm", ["10", "11.0", "11.1", "1.12.0"], "1") == "1.12.0"
+    assert f("temurin", ["11.0", "17.0", "18.0"], "") == "18.0"
+    assert f("temurin", ["11.0", "17.0", "18.0"], "17+") == "18.0"
+    with pytest.raises(LookupError):
+        f("temurin", ["11.0", "17.0", "18.0"], "19+")
 
 
 def test_normalize_version():
@@ -161,6 +165,7 @@ def test_is_version_compatible_with_spec():
         return _index._is_version_compatible_with_spec(nx, ny)
 
     assert f("1", "1")
+    assert not f("1", "0")
     assert not f("1", "2")
     assert f("1.0", "1")
     assert not f("1", "1.0")
@@ -169,3 +174,18 @@ def test_is_version_compatible_with_spec():
     assert f("11.1.2.3", "11")
     assert f("11.1.2.3", "11.1")
     assert not f("11.1.2.3", "11.1.2.3.0")
+
+    assert f("1", "")
+    assert f("1", "+")
+    assert f("1", "0+")
+    assert f("1.0", "1+")
+    assert f("1.0", "1.0+")
+    assert f("1.0.5", "1.0+")
+    assert not f("1", "1.0+")
+    assert f("1.1", "1.0+")
+    assert not f("1.0", "1.1+")
+    assert f("11.1.2.3", "11+")
+    assert f("11.1.2.3", "10+")
+    assert f("11.1.2.3", "11.1+")
+    assert not f("11.1.2.3", "11.2+")
+    assert not f("11.1.2.3", "12+")
