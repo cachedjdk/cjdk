@@ -155,7 +155,11 @@ def test_normalize_version():
 
 
 def test_is_version_compatible_with_spec():
-    f = _index._is_version_compatible_with_spec
+    def f(x, y):
+        nx = _index._normalize_version(x)
+        ny = _index._normalize_version(y)
+        return _index._is_version_compatible_with_spec(nx, ny)
+
     assert f("1", "1")
     assert not f("1", "2")
     assert f("1.0", "1")
