@@ -238,7 +238,7 @@ def _default_cachedir():
 
 
 def _windows_cachedir():
-    return _local_app_data() / "cjdk" / "Cache"
+    return _local_app_data() / "cjdk" / "cache"
 
 
 def _local_app_data():
