@@ -1,4 +1,4 @@
-# This file is part of cachedjdk.
+# This file is part of cjdk.
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
@@ -18,7 +18,7 @@ __all__ = [
 ]
 
 
-_PORT = int(os.environ.get("CACHEDJDK_TEST_PORT", "5000"))
+_PORT = int(os.environ.get("CJDK_TEST_PORT", "5000"))
 
 
 @contextmanager

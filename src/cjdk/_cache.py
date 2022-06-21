@@ -1,4 +1,4 @@
-# This file is part of cachedjdk.
+# This file is part of cjdk.
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
@@ -27,14 +27,14 @@ def default_cachedir():
     """
     Return the cache directory path to be used by default.
 
-    This is either from the environment variable CACHEDJDK_CACHE_DIR, or in the
+    This is either from the environment variable CJDK_CACHE_DIR, or in the
     default user cache directory.
     """
-    if "CACHEDJDK_CACHE_DIR" in os.environ:
-        ret = Path(os.environ["CACHEDJDK_CACHE_DIR"])
+    if "CJDK_CACHE_DIR" in os.environ:
+        ret = Path(os.environ["CJDK_CACHE_DIR"])
         if not ret.is_absolute():
             raise ValueError(
-                f"CACHEDJDK_CACHE_DIR must be an absolute path (found '{ret}')"
+                f"CJDK_CACHE_DIR must be an absolute path (found '{ret}')"
             )
         return ret
     return _default_cachedir()
@@ -238,7 +238,7 @@ def _default_cachedir():
 
 
 def _windows_cachedir():
-    return _local_app_data() / "CachedJDK" / "Cache"
+    return _local_app_data() / "cjdk" / "Cache"
 
 
 def _local_app_data():
@@ -248,13 +248,13 @@ def _local_app_data():
 
 
 def _macos_cachedir():
-    return Path.home() / "Library" / "Caches" / "CachedJDK"
+    return Path.home() / "Library" / "Caches" / "cjdk"
 
 
 def _xdg_cachedir():
     if "XDG_CACHE_HOME" in os.environ:
-        return Path(os.environ["XDG_CACHE_HOME"]) / "cachedjdk"
-    return Path.home() / ".cache" / "cachedjdk"
+        return Path(os.environ["XDG_CACHE_HOME"]) / "cjdk"
+    return Path.home() / ".cache" / "cjdk"
 
 
 def _file_exists_and_is_fresh(file, ttl):

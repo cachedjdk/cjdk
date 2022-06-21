@@ -1,4 +1,4 @@
-# This file is part of cachedjdk.
+# This file is part of cjdk.
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
@@ -7,7 +7,7 @@ requires = ["setuptools>=42"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cachedjdk"
+name = "cjdk"
 version = "0.1.0.dev0"
 description = "Download JDK or JRE distributions on the fly"
 readme = "README.md"
@@ -37,11 +37,11 @@ testing = [
 ]
 
 [project.urls]
-homepage = "https://github.com/marktsuchida/cachedjdk"
-repository = "https://github.com/marktsuchida/cachedjdk"
+homepage = "https://github.com/marktsuchida/cjdk"
+repository = "https://github.com/marktsuchida/cjdk"
 
 [project.scripts]
-cachedjdk = "cachedjdk.cli:run"
+cjdk = "cjdk.cli:run"
 
 [tool.black]
 line-length = 79

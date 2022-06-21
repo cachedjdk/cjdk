@@ -1,8 +1,8 @@
-# This file is part of cachedjdk.
+# This file is part of cjdk.
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-import cachedjdk
+import cjdk
 import re
 
 
@@ -10,7 +10,7 @@ def test_version():
     # cchedjdk uses SemVer major.minor.patch[-dev]; the possible '-dev' suffix
     # is translated to '.dev0' for PEP 440 format.
 
-    parts = cachedjdk.__version__.split(".")
+    parts = cjdk.__version__.split(".")
     assert len(parts) in (3, 4)
 
     n = r"(([1-9][0-9]*)|0)"

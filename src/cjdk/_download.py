@@ -1,4 +1,4 @@
-# This file is part of cachedjdk.
+# This file is part of cjdk.
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
@@ -34,7 +34,7 @@ def download_jdk(destdir, url, *, progress=None, _allow_nonsecure=False):
     if ext not in ("zip", "tgz"):
         raise NotImplementedError(f"Cannot handle {scheme}")
     url = f"{http}:{rest}"
-    with tempfile.TemporaryDirectory(prefix="cachedjdk-") as tempd:
+    with tempfile.TemporaryDirectory(prefix="cjdk-") as tempd:
         file = Path(tempd) / f"archive.{ext}"
         _download_large_file(file, url, progress)
         extract = {"zip": _extract_zip, "tgz": _extract_tgz}[ext]

@@ -1,8 +1,8 @@
-# This file is part of cachedjdk.
+# This file is part of cjdk.
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-from cachedjdk import _cache
+from cjdk import _cache
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import pytest
@@ -13,9 +13,9 @@ import tqdm
 
 def test_default_cachedir(monkeypatch):
     f = _cache.default_cachedir
-    monkeypatch.setenv("CACHEDJDK_CACHE_DIR", "/a/b/c")
+    monkeypatch.setenv("CJDK_CACHE_DIR", "/a/b/c")
     assert f() == Path("/a/b/c")
-    monkeypatch.delenv("CACHEDJDK_CACHE_DIR")
+    monkeypatch.delenv("CJDK_CACHE_DIR")
     assert Path.home() in f().parents
     assert "cache" in str(f().relative_to(Path.home())).lower()
 
@@ -60,17 +60,16 @@ def test_local_app_data(monkeypatch):
 
 def test_macos_cachedir():
     assert (
-        _cache._macos_cachedir()
-        == Path.home() / "Library" / "Caches" / "CachedJDK"
+        _cache._macos_cachedir() == Path.home() / "Library" / "Caches" / "cjdk"
     )
 
 
 def test_xdg_cachedir(monkeypatch):
     f = _cache._xdg_cachedir
     monkeypatch.setenv("XDG_CACHE_HOME", "/a/b/c")
-    assert f() == Path("/a/b/c/cachedjdk")
+    assert f() == Path("/a/b/c/cjdk")
     monkeypatch.delenv("XDG_CACHE_HOME")
-    assert f() == Path.home() / ".cache" / "cachedjdk"
+    assert f() == Path.home() / ".cache" / "cjdk"
 
 
 def test_file_exists_and_is_fresh(tmp_path):

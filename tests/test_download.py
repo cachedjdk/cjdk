@@ -1,8 +1,8 @@
-# This file is part of cachedjdk.
+# This file is part of cjdk.
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-from cachedjdk import _download
+from cjdk import _download
 import mock_server
 import stat
 import tarfile
