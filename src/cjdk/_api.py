@@ -43,7 +43,7 @@ def java_home(*, vendor=None, version=None, **kwargs):
     path = _cache.permanent_directory(
         key,
         fetch,
-        cachedir=conf.cache_dir,
+        cache_dir=conf.cache_dir,
         timeout_for_fetch_elsewhere=300,
     )
 

@@ -87,7 +87,7 @@ def _cached_index(conf):
         _INDEX_FILENAME,
         fetch,
         ttl=conf.index_ttl,
-        cachedir=conf.cache_dir,
+        cache_dir=conf.cache_dir,
     )
 
 

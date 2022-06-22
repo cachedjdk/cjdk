@@ -16,7 +16,7 @@ def test_atomic_file_uncached(tmp_path):
         path.touch()
         assert path.samefile(tmp_path / "fetching" / "abc" / "testfile")
 
-    cached = atomic_file(("abc",), "testfile", fetch, cachedir=tmp_path)
+    cached = atomic_file(("abc",), "testfile", fetch, cache_dir=tmp_path)
     assert cached.is_file()
     assert cached.samefile(tmp_path / "abc" / "testfile")
 
@@ -28,7 +28,7 @@ def test_atomic_file_cached(tmp_path):
     (tmp_path / "abc").mkdir()
     (tmp_path / "abc" / "testfile").touch()
     mtime = (tmp_path / "abc" / "testfile").stat().st_mtime
-    cached = atomic_file(("abc",), "testfile", fetch, cachedir=tmp_path)
+    cached = atomic_file(("abc",), "testfile", fetch, cache_dir=tmp_path)
     assert cached.is_file()
     assert cached.samefile(tmp_path / "abc" / "testfile")
     assert (tmp_path / "abc" / "testfile").stat().st_mtime == mtime
@@ -48,7 +48,7 @@ def test_atomic_file_expired(tmp_path):
     old_mtime = (tmp_path / "abc" / "testfile").stat().st_mtime
     time.sleep(0.1)
     cached = atomic_file(
-        ("abc",), "testfile", fetch, ttl=0.05, cachedir=tmp_path
+        ("abc",), "testfile", fetch, ttl=0.05, cache_dir=tmp_path
     )
     assert new_mtime > old_mtime
     assert cached.is_file()
@@ -71,11 +71,13 @@ def test_atomic_file_fetching_elsewhere(tmp_path):
             with open(path, "w") as f:
                 f.write("other")
 
-        atomic_file(("abc",), "testfile", fetch, ttl=0, cachedir=tmp_path)
+        atomic_file(("abc",), "testfile", fetch, ttl=0, cache_dir=tmp_path)
 
     exec.submit(other_fetch)
     time.sleep(0.05)
-    cached = atomic_file(("abc",), "testfile", fetch, ttl=0, cachedir=tmp_path)
+    cached = atomic_file(
+        ("abc",), "testfile", fetch, ttl=0, cache_dir=tmp_path
+    )
     assert cached.is_file()
     with open(cached) as f:
         assert f.read() == "other"
@@ -95,7 +97,7 @@ def test_atomic_file_fetching_elsewhere_timeout(tmp_path):
             "testfile",
             fetch,
             timeout_for_fetch_elsewhere=0.1,
-            cachedir=tmp_path,
+            cache_dir=tmp_path,
         )
 
 
@@ -116,7 +118,7 @@ def test_atomic_file_open_elsewhere(tmp_path):
     with open(tmp_path / "abc" / "testfile") as fp:
         exec.submit(close_after_delay, fp)
         cached = atomic_file(
-            ("abc",), "testfile", fetch, ttl=0, cachedir=tmp_path
+            ("abc",), "testfile", fetch, ttl=0, cache_dir=tmp_path
         )
         assert cached.is_file()
         with open(tmp_path / "abc" / "testfile") as fp2:
@@ -148,7 +150,7 @@ def test_atomic_file_open_elsewhere_timeout(tmp_path):
                 fetch,
                 ttl=0,
                 timeout_for_read_elsewhere=0.1,
-                cachedir=tmp_path,
+                cache_dir=tmp_path,
             )
 
         assert wrote_new

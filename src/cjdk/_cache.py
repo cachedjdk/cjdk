@@ -54,7 +54,7 @@ def atomic_file(
     key,
     filename,
     fetchfunc,
-    cachedir,
+    cache_dir,
     ttl=None,
     timeout_for_fetch_elsewhere=10,
     timeout_for_read_elsewhere=2.5,
@@ -68,7 +68,7 @@ def atomic_file(
     fetchfunc -- A function taking a single positional argument (the
                  destination file path). The function must populate the given
                  path with the desired file content.
-    cachedir -- The root cache directory.
+    cache_dir -- The root cache directory.
 
     Keyword arguments:
     ttl -- Time to live for the cached file, in seconds. If the cached file
@@ -77,16 +77,16 @@ def atomic_file(
     """
     if ttl is None:
         ttl = _FOREVER
-    elif not isinstance(cachedir, Path):
-        cachedir = Path(cachedir)
+    elif not isinstance(cache_dir, Path):
+        cache_dir = Path(cache_dir)
 
     _check_key(key)
-    cachedir.mkdir(parents=True, exist_ok=True)
+    cache_dir.mkdir(parents=True, exist_ok=True)
 
-    keydir = _key_directory(cachedir, key)
+    keydir = _key_directory(cache_dir, key)
     target = keydir / filename
     if not _file_exists_and_is_fresh(target, ttl):
-        with _create_key_tmpdir(cachedir, key) as tmpdir:
+        with _create_key_tmpdir(cache_dir, key) as tmpdir:
             if tmpdir:
                 fetchfunc(tmpdir / filename)
                 _swap_in_fetched_file(
@@ -96,7 +96,7 @@ def atomic_file(
                 )
             else:  # Somebody else is currently fetching
                 _wait_for_dir_to_vanish(
-                    _key_tmpdir(cachedir, key),
+                    _key_tmpdir(cache_dir, key),
                     timeout=timeout_for_fetch_elsewhere,
                 )
                 if not _file_exists_and_is_fresh(target, ttl=_FOREVER):
@@ -109,7 +109,7 @@ def atomic_file(
 def permanent_directory(
     key,
     fetchfunc,
-    cachedir,
+    cache_dir,
     timeout_for_fetch_elsewhere=60,
 ):
     """
@@ -121,23 +121,23 @@ def permanent_directory(
     fetchfunc -- A function taking a single positional argument (the
                  destination directory as a pathlib.Path). The function must
                  populate the given directory with the desired cached content.
-    cachedir -- The root cache directory.
+    cache_dir -- The root cache directory.
     """
-    if not isinstance(cachedir, Path):
-        cachedir = Path(cachedir)
+    if not isinstance(cache_dir, Path):
+        cache_dir = Path(cache_dir)
 
     _check_key(key)
-    cachedir.mkdir(parents=True, exist_ok=True)
+    cache_dir.mkdir(parents=True, exist_ok=True)
 
-    keydir = _key_directory(cachedir, key)
+    keydir = _key_directory(cache_dir, key)
     if not keydir.is_dir():
-        with _create_key_tmpdir(cachedir, key) as tmpdir:
+        with _create_key_tmpdir(cache_dir, key) as tmpdir:
             if tmpdir:
                 fetchfunc(tmpdir)
                 _move_in_fetched_directory(keydir, tmpdir)
             else:  # Somebody else is currently fetching
                 _wait_for_dir_to_vanish(
-                    _key_tmpdir(cachedir, key),
+                    _key_tmpdir(cache_dir, key),
                     timeout=timeout_for_fetch_elsewhere,
                 )
                 if not keydir.is_dir():
@@ -157,8 +157,8 @@ def _file_exists_and_is_fresh(file, ttl):
 
 
 @contextlib.contextmanager
-def _create_key_tmpdir(cachedir, key):
-    tmpdir = _key_tmpdir(cachedir, key)
+def _create_key_tmpdir(cache_dir, key):
+    tmpdir = _key_tmpdir(cache_dir, key)
     tmpdir.parent.mkdir(parents=True, exist_ok=True)
 
     already_exists = False
@@ -180,12 +180,12 @@ def _create_key_tmpdir(cachedir, key):
                 shutil.rmtree(tmpdir)
 
 
-def _key_directory(cachedir, key):
-    return cachedir / Path(*key)
+def _key_directory(cache_dir, key):
+    return cache_dir / Path(*key)
 
 
-def _key_tmpdir(cachedir, key):
-    return cachedir / Path("fetching", *key)
+def _key_tmpdir(cache_dir, key):
+    return cache_dir / Path("fetching", *key)
 
 
 def _check_key(key):
