@@ -16,7 +16,9 @@ def test_atomic_file_uncached(tmp_path):
         path.touch()
         assert path.samefile(tmp_path / "fetching" / "abc" / "testfile")
 
-    cached = atomic_file(("abc",), "testfile", fetch, cache_dir=tmp_path)
+    cached = atomic_file(
+        ("abc",), "testfile", fetch, cache_dir=tmp_path, ttl=2**63
+    )
     assert cached.is_file()
     assert cached.samefile(tmp_path / "abc" / "testfile")
 
@@ -28,7 +30,9 @@ def test_atomic_file_cached(tmp_path):
     (tmp_path / "abc").mkdir()
     (tmp_path / "abc" / "testfile").touch()
     mtime = (tmp_path / "abc" / "testfile").stat().st_mtime
-    cached = atomic_file(("abc",), "testfile", fetch, cache_dir=tmp_path)
+    cached = atomic_file(
+        ("abc",), "testfile", fetch, cache_dir=tmp_path, ttl=2**63
+    )
     assert cached.is_file()
     assert cached.samefile(tmp_path / "abc" / "testfile")
     assert (tmp_path / "abc" / "testfile").stat().st_mtime == mtime
@@ -98,6 +102,7 @@ def test_atomic_file_fetching_elsewhere_timeout(tmp_path):
             fetch,
             timeout_for_fetch_elsewhere=0.1,
             cache_dir=tmp_path,
+            ttl=2**63,
         )
 
 

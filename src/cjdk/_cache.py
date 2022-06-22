@@ -17,9 +17,6 @@ __all__ = [
 ]
 
 
-_FOREVER = 2**63  # seconds
-
-
 def key_for_url(url):
     """
     Return a cache key suitable to cache content retrieved from the given URL.
@@ -54,8 +51,9 @@ def atomic_file(
     key,
     filename,
     fetchfunc,
+    *,
     cache_dir,
-    ttl=None,
+    ttl,
     timeout_for_fetch_elsewhere=10,
     timeout_for_read_elsewhere=2.5,
 ):
@@ -69,15 +67,11 @@ def atomic_file(
                  destination file path). The function must populate the given
                  path with the desired file content.
     cache_dir -- The root cache directory.
-
-    Keyword arguments:
     ttl -- Time to live for the cached file, in seconds. If the cached file
            exists but is older than the TTL, it will be re-fetched and
            replaced (default: for ever).
     """
-    if ttl is None:
-        ttl = _FOREVER
-    elif not isinstance(cache_dir, Path):
+    if not isinstance(cache_dir, Path):
         cache_dir = Path(cache_dir)
 
     _check_key(key)
@@ -99,7 +93,7 @@ def atomic_file(
                     _key_tmpdir(cache_dir, key),
                     timeout=timeout_for_fetch_elsewhere,
                 )
-                if not _file_exists_and_is_fresh(target, ttl=_FOREVER):
+                if not _file_exists_and_is_fresh(target, ttl=2**63):
                     raise Exception(
                         f"Fetching of file {target} appears to have been completed elsewhere, but file does not exist"
                     )
