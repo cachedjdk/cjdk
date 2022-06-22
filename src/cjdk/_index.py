@@ -21,18 +21,16 @@ __all__ = [
 ]
 
 
-# The Coursier JDK index is auto-generated, well curated, and clean.
 def default_index_url():
+    # The Coursier JDK index is auto-generated, well curated, and clean.
     return "https://raw.githubusercontent.com/coursier/jvm-index/master/index.json"
 
+    # There is also an older index from the jabba project, but it is manually
+    # maintained and would benefit from some data cleaning. Noting down the URL
+    # here in case we ever need an alternative. Note that it won't work without
+    # some normalization of arch names.
+    # "https://raw.githubusercontent.com/shyiko/jabba/master/index.json"
 
-# There is also an older index from the jabba project, but it is manually
-# maintained and would benefit from some data cleaning. Noting down the URL
-# here in case we ever need an alternative. Note that it won't work without
-# some normalization of arch names.
-# _JABBA_INDEX_URL = (
-#     "https://raw.githubusercontent.com/shyiko/jabba/master/index.json"
-# )
 
 _INDEX_KEY_PREFIX = "jdk-index"
 _INDEX_FILENAME = "jdk-index.json"
