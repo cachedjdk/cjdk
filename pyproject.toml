@@ -25,6 +25,7 @@ classifiers = [
 ]
 
 dependencies = [
+    "click >= 8.0",
     "requests >= 2.24",
     "tqdm >= 4.0",
 ]
@@ -41,7 +42,7 @@ homepage = "https://github.com/marktsuchida/cjdk"
 repository = "https://github.com/marktsuchida/cjdk"
 
 [project.scripts]
-cjdk = "cjdk.cli:run"
+cjdk = "cjdk._cli:main"
 
 [tool.black]
 line-length = 79

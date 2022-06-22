@@ -38,14 +38,13 @@ class Configuration:
 def configure(**kwargs):
     # kwargs must have API-specific items removed before passing here.
 
-    if "jdk" in kwargs:
+    jdk = kwargs.pop("jdk", None)
+    if jdk:
         if kwargs.get("vendor", None):
             raise ValueError("Cannot specify jdk= together with vendor=")
         if kwargs.get("version", None):
             raise ValueError("Cannot specify jdk= together with version=")
-        kwargs["vendor"], kwargs["version"] = _parse_vendor_version(
-            kwargs.pop("jdk")
-        )
+        kwargs["vendor"], kwargs["version"] = _parse_vendor_version(jdk)
 
     conf = Configuration(
         os=canonicalize_os(kwargs.pop("os", None)),
