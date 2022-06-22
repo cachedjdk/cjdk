@@ -23,7 +23,7 @@ class Configuration:
     os: str = None
     arch: str = None
     progress: bool = True
-    _allow_insecure_for_testing = False
+    _allow_insecure_for_testing: bool = False
 
 
 def configure(vendor=None, version=None, **kwargs):
