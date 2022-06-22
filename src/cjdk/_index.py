@@ -5,11 +5,13 @@
 import json
 import re
 import warnings
+from pathlib import Path
 from urllib.parse import urlparse
 
 import requests
 
 from . import _cache
+from ._conf import Configuration
 
 __all__ = [
     "jdk_index",
@@ -22,32 +24,14 @@ _INDEX_KEY_PREFIX = "jdk-index"
 _INDEX_FILENAME = "jdk-index.json"
 
 
-def jdk_index(url, ttl=None, cachedir=None, _allow_insecure_for_testing=False):
+def jdk_index(conf: Configuration):
     """
     Get the JDK index, from cache if possible.
-
-    Arguments:
-    url -- The URL of the index (default: Coursier's JDK index on GitHub)
-
-    Keyword arguments:
-    ttl -- Time to live for the cached index, in seconds. If the cached index
-           is older than the TTL, it will be freshly retrieved (default: one
-           day).
-    cachedir -- The root cache directory (default: default_cachedir()).
     """
-    if ttl is None:
-        ttl = 24 * 3600
-    return _read_index(
-        _cached_index(
-            url,
-            ttl,
-            cachedir,
-            _allow_insecure_for_testing=_allow_insecure_for_testing,
-        )
-    )
+    return _read_index(_cached_index(conf))
 
 
-def available_jdks(index, os, arch):
+def available_jdks(index, conf: Configuration):
     """
     Find in index the available JDK vendor-version combinations.
 
@@ -55,12 +39,10 @@ def available_jdks(index, os, arch):
 
     Arguments:
     index -- The JDK index (nested dict)
-    os -- Operating system
-    arch -- Architecture
     """
     try:
         # jdks is dict: vendor -> (version -> url)
-        jdks = index[os][arch]
+        jdks = index[conf.os][conf.arch]
     except KeyError:
         return []
 
@@ -71,7 +53,7 @@ def available_jdks(index, os, arch):
     )
 
 
-def jdk_url(index, os, arch, vendor, version):
+def jdk_url(index, conf: Configuration):
     """
     Find in index the URL for the JDK binary for the given vendor and version.
 
@@ -79,53 +61,50 @@ def jdk_url(index, os, arch, vendor, version):
 
     Arguments:
     index -- The JDK index (nested dict)
-    os -- Operating system
-    arch -- Architecture
-    vendor -- E.g., "adoptium", "adoptium-jre", "liberica", "liberica-jre",
-              "zulu", "zulu-jre", "graalvm-java11", "graalvm-java17" (available
-              options depend on index)
-    version -- E.g., "8", "11", "17", or vendor-specific, e.g., "1.11.0.15";
-               for GraalVM, e.g.,"22.1.0"
     """
-    jdks = available_jdks(index, os=os, arch=arch)
-    versions = [i[1] for i in jdks if i[0] == vendor]
+    jdks = available_jdks(index, conf)
+    versions = [i[1] for i in jdks if i[0] == conf.vendor]
     if not versions:
-        raise KeyError(f"No {vendor} JDK is available for {os}-{arch}")
-    matched = _match_version(vendor, versions, version)
+        raise KeyError(
+            f"No {conf.vendor} JDK is available for {conf.os}-{conf.arch}"
+        )
+    matched = _match_version(conf.vendor, versions, conf.version)
     if not matched:
         raise KeyError(
-            f"No JDK matching version {version} for {os}-{arch}-{vendor}"
+            f"No JDK matching version {conf.version} for {conf.os}-{conf.arch}-{conf.vendor}"
         )
-    return index[os][arch][f"jdk@{vendor}"][matched]
+    return index[conf.os][conf.arch][f"jdk@{conf.vendor}"][matched]
 
 
-def _cached_index(url, ttl, cachedir, _allow_insecure_for_testing=False):
-    cache_key = (_INDEX_KEY_PREFIX,) + _cache.key_for_url(url)
+def _cached_index(conf):
+    cache_key = (_INDEX_KEY_PREFIX,) + _cache.key_for_url(conf.index_url)
 
     def fetch(dest, **kwargs):
-        _fetch_index(
-            url, dest, _allow_insecure_for_testing=_allow_insecure_for_testing
-        )
+        _fetch_index(dest, conf)
 
     return _cache.atomic_file(
-        cache_key, _INDEX_FILENAME, fetch, ttl=ttl, cachedir=cachedir
+        cache_key,
+        _INDEX_FILENAME,
+        fetch,
+        ttl=conf.index_ttl,
+        cachedir=conf.cache_dir,
     )
 
 
-def _fetch_index(url, dest, _allow_insecure_for_testing=False):
-    if not _allow_insecure_for_testing:
-        scheme = urlparse(url).scheme
+def _fetch_index(dest: Path, conf: Configuration):
+    if not conf._allow_insecure_for_testing:
+        scheme = urlparse(conf.index_url).scheme
         if scheme != "https":
             raise ValueError("Index URL must be an HTTPS URL")
 
-    response = requests.get(url)
+    response = requests.get(conf.index_url)
     response.raise_for_status()
     # Something is probably wrong if the index is not 7-bit clean. Also by
     # making this assumption there is less to worry about when interpreting
     # the index (and the URLs in it).
     if not response.text.isascii():
         raise ValueError(
-            "Index unexpectedly contains non-ASCII characters ({url})"
+            "Index unexpectedly contains non-ASCII characters ({conf.index_url})"
         )
     index = response.json()
     with open(dest, "w", encoding="ascii", newline="\n") as outfile:

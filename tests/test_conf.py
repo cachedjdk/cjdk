@@ -12,7 +12,7 @@ from cjdk import _conf
 def test_configure():
     f = _conf.configure
 
-    conf = f("temurin", "17")
+    conf = f(vendor="temurin", version="17")
     assert conf.vendor == "temurin"
     assert conf.version == "17"
     assert conf.cache_dir == _conf.default_cachedir()

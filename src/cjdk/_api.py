@@ -27,13 +27,9 @@ def java_home(*, vendor=None, version=None, **kwargs):
     arch -- architecture for the JDK
     progress -- show progress if true
     """
-    conf = _conf.configure(vendor, version, **kwargs)
-    index = _index.jdk_index(
-        cachedir=conf.cache_dir,
-        url=conf.index_url,
-        _allow_insecure_for_testing=conf._allow_insecure_for_testing,
-    )
-    url = _index.jdk_url(index, conf.os, conf.arch, conf.vendor, conf.version)
+    conf = _conf.configure(vendor=vendor, version=version, **kwargs)
+    index = _index.jdk_index(conf)
+    url = _index.jdk_url(index, conf)
     key = ("jdks",) + _cache.key_for_url(url)
 
     def fetch(destdir):

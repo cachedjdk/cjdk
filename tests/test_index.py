@@ -9,6 +9,7 @@ import mock_server
 import pytest
 
 from cjdk import _cache, _index
+from cjdk._conf import configure
 
 
 def test_jdk_index(tmp_path):
@@ -21,16 +22,19 @@ def test_jdk_index(tmp_path):
     }
     with mock_server.start(endpoint="/jdk-index.json", data=data) as server:
         index = _index.jdk_index(
-            url=server.url("/jdk-index.json"),
-            cachedir=tmp_path,
-            _allow_insecure_for_testing=True,
+            configure(
+                index_url=server.url("/jdk-index.json"),
+                cache_dir=tmp_path,
+                _allow_insecure_for_testing=True,
+            )
         )
         assert index == data
         assert server.request_count() == 1
         index = _index.jdk_index(
-            url=server.url("/jdk-index.json"),
-            cachedir=tmp_path,
-            _allow_insecure_for_testing=True,
+            configure(
+                index_url=server.url("/jdk-index.json"),
+                cache_dir=tmp_path,
+            )
         )
         assert index == data
         assert server.request_count() == 1  # No new request
@@ -44,7 +48,7 @@ def test_available_jdks(tmp_path):
             }
         }
     }
-    jdks = _index.available_jdks(index, os="linux", arch="amd64")
+    jdks = _index.available_jdks(index, configure(os="linux", arch="amd64"))
     assert len(jdks) == 1
     assert jdks[0] == ("adoptium", "17.0.1")
 
@@ -58,7 +62,12 @@ def test_jdk_url():
         }
     }
     assert (
-        _index.jdk_url(index, "linux", "amd64", "adoptium", "17.0.1")
+        _index.jdk_url(
+            index,
+            configure(
+                os="linux", arch="amd64", vendor="adoptium", version="17.0.1"
+            ),
+        )
         == "tgz+https://example.com/a/b/c.tgz"
     )
 
@@ -75,10 +84,11 @@ def test_cached_index(tmp_path):
             / _index._INDEX_FILENAME
         )
         path = _index._cached_index(
-            url,
-            86400,
-            tmp_path,
-            _allow_insecure_for_testing=True,
+            configure(
+                index_url=url,
+                cache_dir=tmp_path,
+                _allow_insecure_for_testing=True,
+            )
         )
         assert path.is_file()
         assert path.samefile(expected_path)
@@ -88,7 +98,12 @@ def test_cached_index(tmp_path):
 
         # Second time should return same data without fetching.
         assert server.request_count() == 1
-        path2 = _index._cached_index(url, 86400, tmp_path)
+        path2 = _index._cached_index(
+            configure(
+                index_url=url,
+                cache_dir=tmp_path,
+            )
+        )
         assert server.request_count() == 1  # No new request
         assert path2.is_file()
         assert path2.samefile(path)
@@ -104,9 +119,8 @@ def test_fetch_index(tmp_path):
         url = server.url("/index.json")
         path = tmp_path / "test.json"
         _index._fetch_index(
-            url,
             path,
-            _allow_insecure_for_testing=True,
+            configure(index_url=url, _allow_insecure_for_testing=True),
         )
         assert path.is_file()
         data = _index._read_index(path)

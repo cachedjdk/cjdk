@@ -12,42 +12,56 @@ from pathlib import Path
 from . import _index
 
 __all__ = [
+    "Configuration",
     "configure",
     "default_cachedir",
     "default_index_url",
     "canonicalize_os",
     "canonicalize_arch",
-    "Configuration",
 ]
 
 
-def configure(vendor=None, version=None, **kwargs):
+@dataclass
+class Configuration:
+    os: str
+    arch: str
+    vendor: str
+    version: str
+    cache_dir: Path
+    index_url: str
+    index_ttl: int
+    progress: bool
+    _allow_insecure_for_testing: bool
+
+
+def configure(**kwargs):
     # kwargs must have API-specific items removed before passing here.
 
     if "jdk" in kwargs:
-        if vendor is not None or version is not None:
-            raise ValueError(
-                "Cannot specify jdk= together with vendor= or version="
-            )
-        vendor, version = _parse_vendor_version(kwargs.pop("jdk"))
+        if kwargs.get("vendor", None):
+            raise ValueError("Cannot specify jdk= together with vendor=")
+        if kwargs.get("version", None):
+            raise ValueError("Cannot specify jdk= together with version=")
+        kwargs["vendor"], kwargs["version"] = _parse_vendor_version(
+            kwargs.pop("jdk")
+        )
 
-    conf = Configuration(vendor=vendor, version=version)
-
-    cache_dir = kwargs.pop("cache_dir", None)
-    if cache_dir:
-        conf.cache_dir = Path(cache_dir)
-
-    index_url = kwargs.pop("index_url", None)
-    if index_url:
-        conf.index_url = index_url
-
-    conf.os = kwargs.pop("os", None)
-    conf.arch = kwargs.pop("arch", None)
-    conf.progress = kwargs.pop("progress", True)
-
-    conf._allow_insecure_for_testing = kwargs.pop(
-        "_allow_insecure_for_testing", False
+    conf = Configuration(
+        os=canonicalize_os(kwargs.pop("os", None)),
+        arch=canonicalize_arch(kwargs.pop("arch", None)),
+        vendor=kwargs.pop("vendor", "adoptium"),
+        version=kwargs.pop("version", ""),
+        cache_dir=kwargs.pop("cache_dir", None) or default_cachedir(),
+        index_url=kwargs.pop("index_url", None) or default_index_url(),
+        index_ttl=kwargs.pop("index_ttl", 86400),
+        progress=kwargs.pop("progress", True),
+        _allow_insecure_for_testing=kwargs.pop(
+            "_allow_insecure_for_testing", False
+        ),
     )
+
+    if not isinstance(conf.cache_dir, Path):
+        conf.cache_dir = Path(conf.cache_dir)
 
     if kwargs:
         raise ValueError(f"Unrecognized kwargs: {tuple(kwargs.keys())}")
@@ -158,15 +172,3 @@ def canonicalize_arch(arch):
         arch = "x86"
 
     return arch
-
-
-@dataclass
-class Configuration:
-    vendor: str
-    version: str
-    cache_dir: Path = default_cachedir()
-    index_url: str = default_index_url()
-    os: str = canonicalize_os(None)
-    arch: str = canonicalize_arch(None)
-    progress: bool = True
-    _allow_insecure_for_testing: bool = False
