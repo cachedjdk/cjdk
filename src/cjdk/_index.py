@@ -3,9 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import json
-import platform
 import re
-import sys
 import warnings
 from urllib.parse import urlparse
 
@@ -49,7 +47,7 @@ def jdk_index(url, ttl=None, cachedir=None, _allow_insecure_for_testing=False):
     )
 
 
-def available_jdks(index, os=None, arch=None):
+def available_jdks(index, os, arch):
     """
     Find in index the available JDK vendor-version combinations.
 
@@ -57,15 +55,9 @@ def available_jdks(index, os=None, arch=None):
 
     Arguments:
     index -- The JDK index (nested dict)
-
-    Keyword arguments:
-    os -- Operating system (default: from sys.platform)
-    arch -- Architecture (default: from platform.machine, which should reflect
-            the operating system architecture regardless of whether the Python
-            interpreter is 32-bit or 64-bit)
+    os -- Operating system
+    arch -- Architecture
     """
-    os = _normalize_os(os)
-    arch = _normalize_arch(arch)
     try:
         # jdks is dict: vendor -> (version -> url)
         jdks = index[os][arch]
@@ -79,7 +71,7 @@ def available_jdks(index, os=None, arch=None):
     )
 
 
-def jdk_url(index, vendor, version, *, os=None, arch=None):
+def jdk_url(index, os, arch, vendor, version):
     """
     Find in index the URL for the JDK binary for the given vendor and version.
 
@@ -87,20 +79,14 @@ def jdk_url(index, vendor, version, *, os=None, arch=None):
 
     Arguments:
     index -- The JDK index (nested dict)
+    os -- Operating system
+    arch -- Architecture
     vendor -- E.g., "adoptium", "adoptium-jre", "liberica", "liberica-jre",
               "zulu", "zulu-jre", "graalvm-java11", "graalvm-java17" (available
               options depend on index)
     version -- E.g., "8", "11", "17", or vendor-specific, e.g., "1.11.0.15";
                for GraalVM, e.g.,"22.1.0"
-
-    Keyword arguments:
-    os -- Operating system (default: from sys.platform)
-    arch -- Architecture (default: from platform.machine, which should reflect
-            the operating system architecture regardless of whether the Python
-            interpreter is 32-bit or 64-bit)
     """
-    os = _normalize_os(os)
-    arch = _normalize_arch(arch)
     jdks = available_jdks(index, os=os, arch=arch)
     versions = [i[1] for i in jdks if i[0] == vendor]
     if not versions:
@@ -149,38 +135,6 @@ def _fetch_index(url, dest, _allow_insecure_for_testing=False):
 def _read_index(path):
     with open(path, encoding="ascii", newline="\n") as infile:
         return json.load(infile)
-
-
-def _normalize_os(os):
-    if not os:
-        os = sys.platform
-    os = os.lower()
-
-    if os == "win32":
-        os = "windows"
-    elif os == "macos":
-        os = "darwin"
-    elif os.startswith("aix"):
-        os = "aix"
-    elif os.startswith("solaris"):
-        os = "solaris"
-
-    return os
-
-
-def _normalize_arch(arch):
-    if not arch:
-        arch = platform.machine()
-    arch = arch.lower()
-
-    if arch in ("x86_64", "x86-64", "x64"):
-        arch = "amd64"
-    elif arch == "aarch64":
-        arch = "arm64"
-    elif re.fullmatch(r"i?[356]86", arch):
-        arch = "x86"
-
-    return arch
 
 
 def _match_version(vendor, candidates, requested):

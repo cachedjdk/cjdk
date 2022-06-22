@@ -11,7 +11,7 @@ import pytest
 from cjdk import _cache, _index
 
 
-def test_index(tmp_path):
+def test_jdk_index(tmp_path):
     data = {
         "linux": {
             "amd64": {
@@ -44,12 +44,12 @@ def test_available_jdks(tmp_path):
             }
         }
     }
-    jdks = _index.available_jdks(index, os="linux", arch="x86_64")
+    jdks = _index.available_jdks(index, os="linux", arch="amd64")
     assert len(jdks) == 1
     assert jdks[0] == ("adoptium", "17.0.1")
 
 
-def test_jdk_url(tmp_path):
+def test_jdk_url():
     index = {
         "linux": {
             "amd64": {
@@ -58,7 +58,7 @@ def test_jdk_url(tmp_path):
         }
     }
     assert (
-        _index.jdk_url(index, "adoptium", "17.0.1", os="linux", arch="amd64")
+        _index.jdk_url(index, "linux", "amd64", "adoptium", "17.0.1")
         == "tgz+https://example.com/a/b/c.tgz"
     )
 
@@ -122,33 +122,6 @@ def test_read_index(tmp_path):
     with open(path, "w") as outfile:
         json.dump(data, outfile)
     assert _index._read_index(path) == data
-
-
-def test_normalize_os():
-    f = _index._normalize_os
-    f(None)  # Current OS
-    assert f("Win32") == "windows"
-    assert f("macOS") == "darwin"
-    assert f("aix100") == "aix"
-    assert f("solaris100") == "solaris"
-
-
-def test_normalize_arch():
-    f = _index._normalize_arch
-    f(None)  # Current architecture
-    aliases = {
-        "x86": ["386", "i386", "586", "i586", "686", "i686", "X86"],
-        "amd64": ["x64", "x86_64", "x86-64", "AMD64"],
-        "arm64": ["aarch64", "ARM64"],
-    }
-    for k, v in aliases.items():
-        for a in v:
-            assert f(a) == k
-
-    assert f("ia64") == "ia64"  # Not amd64
-    assert f("ppc64le") != f("ppc64")
-    assert f("ppcle") != f("ppc")
-    assert f("s390x") != f("s390")
 
 
 def test_match_version():

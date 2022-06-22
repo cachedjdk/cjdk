@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import os
+import platform
 import re
 import sys
 from dataclasses import dataclass
@@ -14,6 +15,8 @@ __all__ = [
     "configure",
     "default_cachedir",
     "default_index_url",
+    "canonicalize_os",
+    "canonicalize_arch",
     "Configuration",
 ]
 
@@ -125,13 +128,45 @@ def default_index_url():
     # "https://raw.githubusercontent.com/shyiko/jabba/master/index.json"
 
 
+def canonicalize_os(os):
+    if not os:
+        os = sys.platform
+    os = os.lower()
+
+    if os == "win32":
+        os = "windows"
+    elif os == "macos":
+        os = "darwin"
+    elif os.startswith("aix"):
+        os = "aix"
+    elif os.startswith("solaris"):
+        os = "solaris"
+
+    return os
+
+
+def canonicalize_arch(arch):
+    if not arch:
+        arch = platform.machine()
+    arch = arch.lower()
+
+    if arch in ("x86_64", "x86-64", "x64"):
+        arch = "amd64"
+    elif arch == "aarch64":
+        arch = "arm64"
+    elif re.fullmatch(r"i?[356]86", arch):
+        arch = "x86"
+
+    return arch
+
+
 @dataclass
 class Configuration:
     vendor: str
     version: str
     cache_dir: Path = default_cachedir()
     index_url: str = default_index_url()
-    os: str = None
-    arch: str = None
+    os: str = canonicalize_os(None)
+    arch: str = canonicalize_arch(None)
     progress: bool = True
     _allow_insecure_for_testing: bool = False

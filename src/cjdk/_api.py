@@ -33,9 +33,7 @@ def java_home(*, vendor=None, version=None, **kwargs):
         url=conf.index_url,
         _allow_insecure_for_testing=conf._allow_insecure_for_testing,
     )
-    url = _index.jdk_url(
-        index, conf.vendor, conf.version, os=conf.os, arch=conf.arch
-    )
+    url = _index.jdk_url(index, conf.os, conf.arch, conf.vendor, conf.version)
     key = ("jdks",) + _cache.url_to_key(url)
 
     def fetch(destdir):

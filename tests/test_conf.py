@@ -84,3 +84,30 @@ def test_xdg_cachedir(monkeypatch):
     assert f() == Path("/a/b/c/cjdk")
     monkeypatch.delenv("XDG_CACHE_HOME")
     assert f() == Path.home() / ".cache" / "cjdk"
+
+
+def test_canonicalize_os():
+    f = _conf.canonicalize_os
+    f(None)  # Current OS
+    assert f("Win32") == "windows"
+    assert f("macOS") == "darwin"
+    assert f("aix100") == "aix"
+    assert f("solaris100") == "solaris"
+
+
+def test_canonicalize_arch():
+    f = _conf.canonicalize_arch
+    f(None)  # Current architecture
+    aliases = {
+        "x86": ["386", "i386", "586", "i586", "686", "i686", "X86"],
+        "amd64": ["x64", "x86_64", "x86-64", "AMD64"],
+        "arm64": ["aarch64", "ARM64"],
+    }
+    for k, v in aliases.items():
+        for a in v:
+            assert f(a) == k
+
+    assert f("ia64") == "ia64"  # Not amd64
+    assert f("ppc64le") != f("ppc64")
+    assert f("ppcle") != f("ppc")
+    assert f("s390x") != f("s390")
