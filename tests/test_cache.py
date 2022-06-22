@@ -13,12 +13,11 @@ from cjdk import _cache
 
 
 def test_key_for_url():
-    f = _cache.key_for_url
+    f = _cache._key_for_url
     key = f("https://x.com/a/b.json")
-    assert len(key) == 1
-    assert len(key[0]) == 40
-    assert isinstance(key[0], str)
-    assert key[0] == key[0].lower()
+    assert len(key) == 40
+    assert isinstance(key, str)
+    assert key == key.lower()
     assert f("https://x.com/a%2Bb/c.json") == f("http://x.com/a+b/c.json")
     assert f("https://x.com/a%2Bb/c.json") == f("https://x.com/a%2bb/c.json")
 
@@ -37,26 +36,12 @@ def test_file_exists_and_is_fresh(tmp_path):
 
 def test_key_directory():
     f = _cache._key_directory
-    assert f("a", ("b",)) == Path("a/b")
+    assert f(Path("a"), ("b",)) == Path("a/v0/b")
 
 
 def test_key_tmpdir():
     f = _cache._key_tmpdir
-    assert f("a", ("b",)) == Path("a/fetching/b")
-
-
-def test_check_key():
-    f = _cache._check_key
-    f(("a", "b"))
-    with pytest.raises(ValueError):
-        f(("a/",))
-    with pytest.raises(ValueError):
-        f(
-            (
-                "b",
-                "a\\",
-            )
-        )
+    assert f(Path("a"), ("b",)) == Path("a/v0/fetching/b")
 
 
 def test_swap_in_fetched_file(tmp_path):

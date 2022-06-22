@@ -13,7 +13,7 @@ __all__ = [
 ]
 
 
-_JDK_KEY_PREFIX = ("v0", "jdks")
+_JDK_KEY_PREFIX = "jdks"
 
 
 def install_jdk(conf: Configuration):
@@ -23,7 +23,6 @@ def install_jdk(conf: Configuration):
     index = _index.jdk_index(conf)
     conf.version = _index.resolve_jdk_version(index, conf)
     url = _index.jdk_url(index, conf)
-    key = _JDK_KEY_PREFIX + _cache.key_for_url(url)
 
     def fetch(destdir):
         if conf.progress:
@@ -37,7 +36,8 @@ def install_jdk(conf: Configuration):
         )
 
     path = _cache.permanent_directory(
-        key,
+        _JDK_KEY_PREFIX,
+        url,
         fetch,
         cache_dir=conf.cache_dir,
         timeout_for_fetch_elsewhere=300,

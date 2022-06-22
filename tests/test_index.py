@@ -98,8 +98,9 @@ def test_cached_index(tmp_path):
         url = server.url("/index.json")
         expected_path = (
             tmp_path
-            / Path(*_index._INDEX_KEY_PREFIX)
-            / Path(*_cache.key_for_url(url))
+            / "v0"
+            / _index._INDEX_KEY_PREFIX
+            / _cache._key_for_url(url)
             / _index._INDEX_FILENAME
         )
         path = _index._cached_index(
@@ -126,9 +127,9 @@ def test_cached_index(tmp_path):
         assert server.request_count() == 1  # No new request
         assert path2.is_file()
         assert path2.samefile(path)
+        assert path2.stat().st_mtime == mtime
         data = _index._read_index(path2)
         assert data == {"hello": "world"}
-        assert path2.stat().st_mtime == mtime
 
 
 def test_fetch_index(tmp_path):

@@ -59,8 +59,9 @@ def test_java_env(tmp_path):
     index_url = f"http://127.0.0.1:{port}/index.json"
     index_dir = (
         tmp_path
-        / Path(*_index._INDEX_KEY_PREFIX)
-        / Path(*_cache.key_for_url(index_url))
+        / "v0"
+        / _index._INDEX_KEY_PREFIX
+        / _cache._key_for_url(index_url)
     )
     index_dir.mkdir(parents=True)
     with open(index_dir / _index._INDEX_FILENAME, "w") as f:
@@ -78,8 +79,9 @@ def test_java_env(tmp_path):
         )
     jdk_dir = (
         tmp_path
-        / Path(*_jdk._JDK_KEY_PREFIX)
-        / Path(*_cache.key_for_url(f"http://127.0.0.1:{port}/jdk.zip"))
+        / "v0"
+        / _jdk._JDK_KEY_PREFIX
+        / _cache._key_for_url(f"http://127.0.0.1:{port}/jdk.zip")
     )
     (jdk_dir / "bin").mkdir(parents=True)
     (jdk_dir / "bin" / "java").touch()

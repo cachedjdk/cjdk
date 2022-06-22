@@ -7,30 +7,42 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
+from cjdk import _cache
 from cjdk._cache import permanent_directory
+
+
+_TEST_URL = "http://x.com/y"
 
 
 def test_permanent_directory_uncached(tmp_path):
     def fetch(path, **kwargs):
         (path / "testfile").touch()
-        assert path.samefile(tmp_path / "fetching" / "abc")
+        assert path.samefile(
+            tmp_path / "v0" / "fetching" / "p" / _cache._key_for_url(_TEST_URL)
+        )
 
-    cached = permanent_directory(("abc",), fetch, cache_dir=tmp_path)
+    cached = permanent_directory("p", _TEST_URL, fetch, cache_dir=tmp_path)
     assert cached.is_dir()
-    assert cached.samefile(tmp_path / "abc")
+    assert cached.samefile(
+        tmp_path / "v0" / "p" / _cache._key_for_url(_TEST_URL)
+    )
     assert (cached / "testfile").is_file()
+    assert (cached.parent / (cached.name + ".url")).is_file()
+    with open(cached.parent / (cached.name + ".url")) as f:
+        assert f.read() == _TEST_URL
 
 
 def test_permanent_directory_cached(tmp_path):
     def fetch(path, **kwargs):
         assert False
 
-    (tmp_path / "abc").mkdir()
-    mtime = (tmp_path / "abc").stat().st_mtime
-    cached = permanent_directory(("abc",), fetch, cache_dir=tmp_path)
+    target = tmp_path / "v0" / "p" / _cache._key_for_url(_TEST_URL)
+    target.mkdir(parents=True)
+    mtime = target.stat().st_mtime
+    cached = permanent_directory("p", _TEST_URL, fetch, cache_dir=tmp_path)
     assert cached.is_dir()
-    assert cached.samefile(tmp_path / "abc")
-    assert (tmp_path / "abc").stat().st_mtime == mtime
+    assert cached.samefile(target)
+    assert target.stat().st_mtime == mtime
 
 
 def test_permanent_directory_fetching_elsewhere(tmp_path):
@@ -44,11 +56,11 @@ def test_permanent_directory_fetching_elsewhere(tmp_path):
             time.sleep(0.1)
             (path / "otherfile").touch()
 
-        permanent_directory(("abc",), fetch, cache_dir=tmp_path)
+        permanent_directory("p", _TEST_URL, fetch, cache_dir=tmp_path)
 
     exec.submit(other_fetch)
     time.sleep(0.05)
-    cached = permanent_directory(("abc",), fetch, cache_dir=tmp_path)
+    cached = permanent_directory("p", _TEST_URL, fetch, cache_dir=tmp_path)
     assert cached.is_dir()
     assert (cached / "otherfile").is_file()
 
@@ -59,11 +71,14 @@ def test_permament_directory_fetching_elsewhere_timeout(tmp_path):
     def fetch(path, **kwargs):
         assert False
 
-    (tmp_path / "fetching" / "abc").mkdir(parents=True)
+    (
+        tmp_path / "v0" / "fetching" / "p" / _cache._key_for_url(_TEST_URL)
+    ).mkdir(parents=True)
 
     with pytest.raises(Exception):
         permanent_directory(
-            ("abc",),
+            "p",
+            _TEST_URL,
             fetch,
             timeout_for_fetch_elsewhere=0.1,
             cache_dir=tmp_path,

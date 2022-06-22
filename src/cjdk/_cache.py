@@ -12,13 +12,12 @@ from pathlib import Path
 from tqdm.auto import tqdm
 
 __all__ = [
-    "key_for_url",
     "atomic_file",
     "permanent_directory",
 ]
 
 
-def key_for_url(url):
+def _key_for_url(url):
     """
     Return a cache key suitable to cache content retrieved from the given URL.
     """
@@ -47,11 +46,12 @@ def key_for_url(url):
 
     hasher = hashlib.sha1(usedforsecurity=False)
     hasher.update(normalized.encode())
-    return (hasher.hexdigest().lower(),)
+    return hasher.hexdigest().lower()
 
 
 def atomic_file(
-    key,
+    prefix,
+    key_url,
     filename,
     fetchfunc,
     *,
@@ -64,8 +64,9 @@ def atomic_file(
     Retrieve cached file for key, fetching with fetchfunc if necessary.
 
     Arguments:
-    key -- The cache key; must be a tuple of strings, each safe as a URL path
-           component.
+    prefix -- Cache directory prefix (string)
+    key_url -- The URL used as cache key. The netloc and path parts are
+               normalized and hashed to generate a key.
     fetchfunc -- A function taking a single positional argument (the
                  destination file path). The function must populate the given
                  path with the desired file content.
@@ -77,7 +78,7 @@ def atomic_file(
     if not isinstance(cache_dir, Path):
         cache_dir = Path(cache_dir)
 
-    _check_key(key)
+    key = (prefix, _key_for_url(key_url))
     cache_dir.mkdir(parents=True, exist_ok=True)
 
     keydir = _key_directory(cache_dir, key)
@@ -91,6 +92,7 @@ def atomic_file(
                     tmpdir / filename,
                     timeout=timeout_for_read_elsewhere,
                 )
+                _add_url_file(keydir, key_url)
             else:  # Somebody else is currently fetching
                 _wait_for_dir_to_vanish(
                     _key_tmpdir(cache_dir, key),
@@ -104,8 +106,10 @@ def atomic_file(
 
 
 def permanent_directory(
-    key,
+    prefix,
+    key_url,
     fetchfunc,
+    *,
     cache_dir,
     timeout_for_fetch_elsewhere=60,
 ):
@@ -113,8 +117,9 @@ def permanent_directory(
     Retrieve cached directory for key, fetching with fetchfunc if necessary.
 
     Arguments:
-    key -- The cache key; must be a tuple of strings, each safe as a URL path
-           component.
+    prefix -- Cache directory prefix (string)
+    key_url -- The URL used as cache key. The netloc and path parts are
+               normalized and hashed to generate a key.
     fetchfunc -- A function taking a single positional argument (the
                  destination directory as a pathlib.Path). The function must
                  populate the given directory with the desired cached content.
@@ -123,7 +128,7 @@ def permanent_directory(
     if not isinstance(cache_dir, Path):
         cache_dir = Path(cache_dir)
 
-    _check_key(key)
+    key = (prefix, _key_for_url(key_url))
     cache_dir.mkdir(parents=True, exist_ok=True)
 
     keydir = _key_directory(cache_dir, key)
@@ -132,6 +137,7 @@ def permanent_directory(
             if tmpdir:
                 fetchfunc(tmpdir)
                 _move_in_fetched_directory(keydir, tmpdir)
+                _add_url_file(keydir, key_url)
             else:  # Somebody else is currently fetching
                 _wait_for_dir_to_vanish(
                     _key_tmpdir(cache_dir, key),
@@ -178,19 +184,11 @@ def _create_key_tmpdir(cache_dir, key):
 
 
 def _key_directory(cache_dir, key):
-    return cache_dir / Path(*key)
+    return cache_dir / "v0" / Path(*key)
 
 
 def _key_tmpdir(cache_dir, key):
-    return cache_dir / Path("fetching", *key)
-
-
-def _check_key(key):
-    if not key:
-        raise ValueError(f"Invalid cache key: {key}")
-    for item in key:
-        if "/" in item or "\\" in item:
-            raise ValueError(f"Invalid cache key: {key}")
+    return cache_dir / "v0" / Path("fetching", *key)
 
 
 def _swap_in_fetched_file(target, tmpfile, timeout, progress=False):
@@ -237,6 +235,11 @@ def _swap_in_fetched_file(target, tmpfile, timeout, progress=False):
 def _move_in_fetched_directory(target, tmpdir):
     target.parent.mkdir(parents=True, exist_ok=True)
     tmpdir.replace(target)
+
+
+def _add_url_file(keydir, key_url):
+    with open(keydir.parent / (keydir.name + ".url"), "w") as f:
+        f.write(key_url)
 
 
 def _wait_for_dir_to_vanish(directory, timeout, progress=True):
