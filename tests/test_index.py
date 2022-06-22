@@ -19,13 +19,17 @@ def test_index(tmp_path):
         }
     }
     with mock_server.start(endpoint="/jdk-index.json", data=data) as server:
-        index = _index.index(
-            url=server.url("/jdk-index.json"), cachedir=tmp_path
+        index = _index.jdk_index(
+            url=server.url("/jdk-index.json"),
+            cachedir=tmp_path,
+            _allow_insecure_for_testing=True,
         )
         assert index == data
         assert server.request_count() == 1
-        index = _index.index(
-            url=server.url("/jdk-index.json"), cachedir=tmp_path
+        index = _index.jdk_index(
+            url=server.url("/jdk-index.json"),
+            cachedir=tmp_path,
+            _allow_insecure_for_testing=True,
         )
         assert index == data
         assert server.request_count() == 1  # No new request
@@ -52,9 +56,10 @@ def test_jdk_url(tmp_path):
             }
         }
     }
-    assert _index.jdk_url(
-        index, "adoptium", "17.0.1", os="linux", arch="amd64"
-    ) == urllib.parse.urlparse("tgz+https://example.com/a/b/c.tgz")
+    assert (
+        _index.jdk_url(index, "adoptium", "17.0.1", os="linux", arch="amd64")
+        == "tgz+https://example.com/a/b/c.tgz"
+    )
 
 
 def test_cached_index(tmp_path):
@@ -68,7 +73,12 @@ def test_cached_index(tmp_path):
             / Path(*_cache.url_to_key(url))
             / _index._INDEX_FILENAME
         )
-        path = _index._cached_index(url, 86400, tmp_path)
+        path = _index._cached_index(
+            url,
+            86400,
+            tmp_path,
+            _allow_insecure_for_testing=True,
+        )
         assert path.is_file()
         assert path.samefile(expected_path)
         data = _index._read_index(path)
@@ -92,7 +102,11 @@ def test_fetch_index(tmp_path):
     ) as server:
         url = server.url("/index.json")
         path = tmp_path / "test.json"
-        _index._fetch_index(url, path, progress=None)
+        _index._fetch_index(
+            url,
+            path,
+            _allow_insecure_for_testing=True,
+        )
         assert path.is_file()
         data = _index._read_index(path)
         assert "hello" in data
@@ -111,6 +125,7 @@ def test_read_index(tmp_path):
 
 def test_normalize_os():
     f = _index._normalize_os
+    f(None)  # Current OS
     assert f("Win32") == "windows"
     assert f("macOS") == "darwin"
     assert f("aix100") == "aix"
@@ -119,6 +134,7 @@ def test_normalize_os():
 
 def test_normalize_arch():
     f = _index._normalize_arch
+    f(None)  # Current architecture
     aliases = {
         "x86": ["386", "i386", "586", "i586", "686", "i686", "X86"],
         "amd64": ["x64", "x86_64", "x86-64", "AMD64"],

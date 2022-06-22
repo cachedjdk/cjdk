@@ -2,7 +2,6 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-from os import remove
 from urllib.parse import urlparse
 import json
 import platform
@@ -15,16 +14,17 @@ from . import _cache
 
 
 __all__ = [
-    "index",
+    "default_index_url",
+    "jdk_index",
     "available_jdks",
     "jdk_url",
 ]
 
 
 # The Coursier JDK index is auto-generated, well curated, and clean.
-_COURSIER_INDEX_URL = (
-    "https://raw.githubusercontent.com/coursier/jvm-index/master/index.json"
-)
+def default_index_url():
+    return "https://raw.githubusercontent.com/coursier/jvm-index/master/index.json"
+
 
 # There is also an older index from the jabba project, but it is manually
 # maintained and would benefit from some data cleaning. Noting down the URL
@@ -38,7 +38,9 @@ _INDEX_KEY_PREFIX = "jdk-index"
 _INDEX_FILENAME = "jdk-index.json"
 
 
-def index(url=None, ttl=None, cachedir=None):
+def jdk_index(
+    url=None, ttl=None, cachedir=None, _allow_insecure_for_testing=False
+):
     """
     Get the JDK index, from cache if possible.
 
@@ -50,10 +52,17 @@ def index(url=None, ttl=None, cachedir=None):
     cachedir -- The root cache directory (default: default_cachedir()).
     """
     if not url:
-        url = _COURSIER_INDEX_URL
+        url = default_index_url()
     if ttl is None:
         ttl = 24 * 3600
-    return _read_index(_cached_index(url, ttl, cachedir))
+    return _read_index(
+        _cached_index(
+            url,
+            ttl,
+            cachedir,
+            _allow_insecure_for_testing=_allow_insecure_for_testing,
+        )
+    )
 
 
 def available_jdks(index, os=None, arch=None):
@@ -90,7 +99,7 @@ def jdk_url(index, vendor, version, *, os=None, arch=None):
     """
     Find in index the URL for the JDK binary for the given vendor and version.
 
-    The returned URL usually has a schema like tgz+https or zip+https.
+    The returned URL usually has a scheme like tgz+https or zip+https.
 
     Arguments:
     index -- The JDK index (nested dict)
@@ -117,22 +126,28 @@ def jdk_url(index, vendor, version, *, os=None, arch=None):
         raise KeyError(
             f"No JDK matching version {version} for {os}-{arch}-{vendor}"
         )
-    url = index[os][arch][f"jdk@{vendor}"][matched]
-    return urlparse(url, allow_fragments=False)
+    return index[os][arch][f"jdk@{vendor}"][matched]
 
 
-def _cached_index(url, ttl, cachedir):
+def _cached_index(url, ttl, cachedir, _allow_insecure_for_testing=False):
     cache_key = (_INDEX_KEY_PREFIX,) + _cache.url_to_key(url)
 
     def fetch(dest, **kwargs):
-        _fetch_index(url, dest, **kwargs)
+        _fetch_index(
+            url, dest, _allow_insecure_for_testing=_allow_insecure_for_testing
+        )
 
     return _cache.atomic_file(
         cache_key, _INDEX_FILENAME, fetch, ttl=ttl, cachedir=cachedir
     )
 
 
-def _fetch_index(url, dest, **kwargs):
+def _fetch_index(url, dest, _allow_insecure_for_testing=False):
+    if not _allow_insecure_for_testing:
+        scheme = urlparse(url).scheme
+        if scheme != "https":
+            raise ValueError("Index URL must be an HTTPS URL")
+
     response = requests.get(url)
     response.raise_for_status()
     # Something is probably wrong if the index is not 7-bit clean. Also by
@@ -171,7 +186,7 @@ def _normalize_os(os):
 
 def _normalize_arch(arch):
     if not arch:
-        arch = platform.machine
+        arch = platform.machine()
     arch = arch.lower()
 
     if arch in ("x86_64", "x86-64", "x64"):

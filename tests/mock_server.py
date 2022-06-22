@@ -14,11 +14,16 @@ import werkzeug
 
 
 __all__ = [
+    "port",
     "start",
 ]
 
 
 _PORT = int(os.environ.get("CJDK_TEST_PORT", "5000"))
+
+
+def port():
+    return _PORT
 
 
 @contextmanager

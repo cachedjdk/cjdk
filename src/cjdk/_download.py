@@ -14,7 +14,9 @@ __all__ = [
 ]
 
 
-def download_jdk(destdir, url, *, progress=None, _allow_nonsecure=False):
+def download_jdk(
+    destdir, url, *, progress=None, _allow_insecure_for_testing=False
+):
     """
     Download the JDK at url and extract to destdir.
 
@@ -22,15 +24,14 @@ def download_jdk(destdir, url, *, progress=None, _allow_nonsecure=False):
     destdir -- a pathlib.Path
     url -- a zip+https or tgz+https URL
     progress -- tqdm or None
-    _allow_nonsecure -- for mock testing only
     """
     scheme, rest = url.split(":", 1)
     try:
         ext, http = scheme.split("+")
     except ValueError:
         raise NotImplementedError(f"Cannot handle {scheme}")
-    if http != "https" and not _allow_nonsecure:
-        raise NotImplementedError(f"Cannot handle {scheme} (must be https)")
+    if http != "https" and not _allow_insecure_for_testing:
+        raise NotImplementedError(f"Cannot handle {scheme} (must be HTTPS)")
     if ext not in ("zip", "tgz"):
         raise NotImplementedError(f"Cannot handle {scheme}")
     url = f"{http}:{rest}"
@@ -43,7 +44,7 @@ def download_jdk(destdir, url, *, progress=None, _allow_nonsecure=False):
 
 def _download_large_file(destfile, srcurl, progress=None):
     response = requests.get(srcurl, stream=True)
-    size = response.headers.get("content-length", None)
+    size = int(response.headers.get("content-length", None))
     if size and progress is not None:
         progress.reset(total=size)
         progress.set_description("Downloading")

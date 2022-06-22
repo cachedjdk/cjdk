@@ -23,7 +23,9 @@ def test_download_jdk(tmp_path):
         file_endpoint="/test.zip", file_data=zipdata
     ) as server:
         _download.download_jdk(
-            destdir, "zip+" + server.url("/test.zip"), _allow_nonsecure=True
+            destdir,
+            "zip+" + server.url("/test.zip"),
+            _allow_insecure_for_testing=True,
         )
 
     assert (destdir / "testfile").is_file()
