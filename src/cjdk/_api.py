@@ -23,6 +23,7 @@ def java_home(*, vendor=None, version=None, **kwargs):
     jdk -- string with format vendor:version
     cache_dir -- override the root cache directory
     index_url -- alternative URL for JDK index
+    index_ttl -- time to live (seconds) for cached index
     os -- operating system for the JDK
     arch -- architecture for the JDK
     progress -- show progress if true
