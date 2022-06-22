@@ -3,9 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import contextlib
-import os
 import shutil
-import sys
 import time
 import urllib
 from pathlib import Path
@@ -13,7 +11,6 @@ from pathlib import Path
 from tqdm.auto import tqdm
 
 __all__ = [
-    "default_cachedir",
     "url_to_key",
     "atomic_file",
     "permanent_directory",
@@ -21,23 +18,6 @@ __all__ = [
 
 
 _FOREVER = 2**63  # seconds
-
-
-def default_cachedir():
-    """
-    Return the cache directory path to be used by default.
-
-    This is either from the environment variable CJDK_CACHE_DIR, or in the
-    default user cache directory.
-    """
-    if "CJDK_CACHE_DIR" in os.environ:
-        ret = Path(os.environ["CJDK_CACHE_DIR"])
-        if not ret.is_absolute():
-            raise ValueError(
-                f"CJDK_CACHE_DIR must be an absolute path (found '{ret}')"
-            )
-        return ret
-    return _default_cachedir()
 
 
 def url_to_key(url):
@@ -171,35 +151,6 @@ def permanent_directory(
                         f"Fetching of directory {keydir} appears to have been completed elsewhere, but directory does not exist"
                     )
     return keydir
-
-
-def _default_cachedir():
-    if sys.platform == "win32":
-        return _windows_cachedir()
-    elif sys.platform == "darwin":
-        return _macos_cachedir()
-    else:
-        return _xdg_cachedir()
-
-
-def _windows_cachedir():
-    return _local_app_data() / "cjdk" / "cache"
-
-
-def _local_app_data():
-    if "LOCALAPPDATA" in os.environ:
-        return Path(os.environ["LOCALAPPDATA"])
-    return Path.home() / "AppData" / "Local"
-
-
-def _macos_cachedir():
-    return Path.home() / "Library" / "Caches" / "cjdk"
-
-
-def _xdg_cachedir():
-    if "XDG_CACHE_HOME" in os.environ:
-        return Path(os.environ["XDG_CACHE_HOME"]) / "cjdk"
-    return Path.home() / ".cache" / "cjdk"
 
 
 def _file_exists_and_is_fresh(file, ttl):

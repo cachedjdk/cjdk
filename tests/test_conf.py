@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from cjdk import _cache, _conf
+from cjdk import _conf
 
 
 def test_configure():
@@ -15,7 +15,7 @@ def test_configure():
     conf = f("temurin", "17")
     assert conf.vendor == "temurin"
     assert conf.version == "17"
-    assert conf.cache_dir == _cache.default_cachedir()
+    assert conf.cache_dir == _conf.default_cachedir()
 
     with pytest.raises(ValueError):
         f(vendor="temurin", jdk="temurin:17")
@@ -47,3 +47,40 @@ def test_read_vendor_version():
     assert f("17-0+") == ("", "17-0+")
     assert f("temurin") == ("temurin", "")
     assert f("temurin:") == ("temurin", "")
+
+
+def test_default_cachedir(monkeypatch):
+    f = _conf.default_cachedir
+    monkeypatch.setenv("CJDK_CACHE_DIR", "/a/b/c")
+    assert f() == Path("/a/b/c")
+    monkeypatch.delenv("CJDK_CACHE_DIR")
+    assert Path.home() in f().parents
+    assert "cache" in str(f().relative_to(Path.home())).lower()
+
+
+def test__default_cachedir():
+    f = _conf._default_cachedir
+    assert Path.home() in f().parents
+    assert "cache" in str(f().relative_to(Path.home())).lower()
+
+
+def test_local_app_data(monkeypatch):
+    f = _conf._local_app_data
+    monkeypatch.setenv("LOCALAPPDATA", "/a/b/c")
+    assert f() == Path("/a/b/c")
+    monkeypatch.delenv("LOCALAPPDATA")
+    assert f() == Path.home() / "AppData" / "Local"
+
+
+def test_macos_cachedir():
+    assert (
+        _conf._macos_cachedir() == Path.home() / "Library" / "Caches" / "cjdk"
+    )
+
+
+def test_xdg_cachedir(monkeypatch):
+    f = _conf._xdg_cachedir
+    monkeypatch.setenv("XDG_CACHE_HOME", "/a/b/c")
+    assert f() == Path("/a/b/c/cjdk")
+    monkeypatch.delenv("XDG_CACHE_HOME")
+    assert f() == Path.home() / ".cache" / "cjdk"

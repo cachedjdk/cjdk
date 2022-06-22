@@ -12,47 +12,10 @@ import pytest
 from cjdk import _cache
 
 
-def test_default_cachedir(monkeypatch):
-    f = _cache.default_cachedir
-    monkeypatch.setenv("CJDK_CACHE_DIR", "/a/b/c")
-    assert f() == Path("/a/b/c")
-    monkeypatch.delenv("CJDK_CACHE_DIR")
-    assert Path.home() in f().parents
-    assert "cache" in str(f().relative_to(Path.home())).lower()
-
-
 def test_url_to_key():
     f = _cache.url_to_key
     assert f("https://x.com/a/b.json") == ("x.com", "a", "b.json")
     assert f("https://x.com/a%2Bb/c.json") == ("x.com", "a+b", "c.json")
-
-
-def test__default_cachedir():
-    f = _cache._default_cachedir
-    assert Path.home() in f().parents
-    assert "cache" in str(f().relative_to(Path.home())).lower()
-
-
-def test_local_app_data(monkeypatch):
-    f = _cache._local_app_data
-    monkeypatch.setenv("LOCALAPPDATA", "/a/b/c")
-    assert f() == Path("/a/b/c")
-    monkeypatch.delenv("LOCALAPPDATA")
-    assert f() == Path.home() / "AppData" / "Local"
-
-
-def test_macos_cachedir():
-    assert (
-        _cache._macos_cachedir() == Path.home() / "Library" / "Caches" / "cjdk"
-    )
-
-
-def test_xdg_cachedir(monkeypatch):
-    f = _cache._xdg_cachedir
-    monkeypatch.setenv("XDG_CACHE_HOME", "/a/b/c")
-    assert f() == Path("/a/b/c/cjdk")
-    monkeypatch.delenv("XDG_CACHE_HOME")
-    assert f() == Path.home() / ".cache" / "cjdk"
 
 
 def test_file_exists_and_is_fresh(tmp_path):
