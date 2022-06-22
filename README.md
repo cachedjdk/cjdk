@@ -50,6 +50,100 @@ No pre-installed JDK or JRE is required. Python 3.9 or later is required.
 
 To be written once package is available on PyPI.
 
+## Command line interface
+
+Usage can be viewed with `cjdk --help`. Subcommand usage can be viewed
+similarly; for example, `cjdk exec --help`.
+
+There are currently 2 subcommands: `java-home` and `exec`.
+
+```console
+$ cjdk --jdk temurin:17 java-home
+/Users/mark/Library/Caches/cjdk/jdks/github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3+7/OpenJDK17U-jdk_aarch64_mac_hotspot_17.0.3_7.tar.gz/jdk-17.0.3+7/Contents/Home
+```
+
+downloads (if necessary) the latest Temurin JDK 17 and prints the path that is
+suitable as the value of `JAVA_HOME`.
+
+```console
+$ cjdk --jdk temurin:17 exec java -version
+openjdk version "17.0.3" 2022-04-19
+OpenJDK Runtime Environment Temurin-17.0.3+7 (build 17.0.3+7)
+OpenJDK 64-Bit Server VM Temurin-17.0.3+7 (build 17.0.3+7, mixed mode)
+```
+
+runs the program `java` (with option `-version`) after setting `JAVA_HOME` and
+`PATH` to point to the latest Temurin JDK 17 (which is downloaded if
+necessary). The same works for any command, whether part of the JDK (such as
+`java`, `javac`) or already on the path (for example, `mvn`).
+
+The `--jdk` (or `-j` for short) option takes a specifier consisting of a
+[vendor](#jdk-vendors) and [version](#jdk-versions), both of which are
+optional. See the sections below on those topics.
+
+Other global options (which must be given before the subcommand) include
+`--no-progress`, to hide the progress bar when downloading, and `--cache-dir`,
+to override the location of the [cache directory](#cache-directory) in which
+JDKs are installed.
+
+## Python API
+
+```python
+>>> import cjdk
+>>> print(cjdk.java_home(vendor="temurin", version="17"))
+/Users/mark/Library/Caches/cjdk/jdks/github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3+7/OpenJDK17U-jdk_aarch64_mac_hotspot_17.0.3_7.tar.gz/jdk-17.0.3+7/Contents/Home
+```
+
+downloads (if necessary) the latest Temurin JDK 17 and prints the path that is
+suitable as the value of `JAVA_HOME`.
+
+```python
+>>> import subprocess
+>>> with cjdk.java_env(vendor="temurin", version="17"):
+...     subprocess.run(["java", "-version"])
+...
+openjdk version "17.0.3" 2022-04-19
+OpenJDK Runtime Environment Temurin-17.0.3+7 (build 17.0.3+7)
+OpenJDK 64-Bit Server VM Temurin-17.0.3+7 (build 17.0.3+7, mixed mode)
+CompletedProcess(args=['java', '-version'], returncode=0)
+```
+
+runs the program `java` (with option `-version`) after setting `JAVA_HOME` and
+`PATH` to point to the latest Temurin JDK 17 (which is downloaded if
+necessary).
+
+Both `cjdk.java_home()` and `cjdk.java_env()` take the following additional
+keyword arguments:
+
+- `vendor=` JDK [vendor](#jdk-vendors) name.
+- `version=` JDK [version](#jdk-versions) expression.
+- `jdk=` Alternative way to specify `vendor:version` as a single string.
+- `progress=` If false, do not show progress bars when downloading.
+- `cache_dir=` Override the location of the [cache directory](#cache-directory)
+  in which JDKs are installed.
+- `index_url=` Override the location of the [JDK index](#jdk-index) used to find
+  JDKs.
+- `index_ttl=` Time to live for the cached JDK index; if set to 0, always
+  download freshly.
+- `os=` Override operating system for the JDK (default: current OS)
+- `arch=` Override architecture for the JDK (default: current architecture)
+
+In addition, `cjdk.java_env()` takes an additional keyword argument,
+`add_bin=` (default: `True`), which, if set to false, will skip modification of
+`PATH`.
+
+## Environment variables
+
+The following environment variables modify the default behavior of both the CLI
+and the Python API, and are intended for setting user preferences:
+
+- `CJDK_CACHE_DIR`: Set to an absolute path to override the default [cache
+  directory](#cache-directory). Overrides on the command line or by keyword
+  arguments take precedence over this environment variable.
+- `CJDK_DEFAULT_VENDOR`: Set to a [vendor](#jdk-vendors) to change the default
+  in case the vendor is not given on the command line or by keyword arguments.
+  When this environment variable is unset, the default is `adoptium`.
+
 ## Cache directory
 
 By default, **cjdk** uses the platform-dependent user cache directory to store
