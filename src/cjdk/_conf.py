@@ -9,12 +9,13 @@ from pathlib import Path
 from . import _cache, _index
 
 __all__ = [
+    "Configuration",
     "check_kwargs",
 ]
 
 
 @dataclass
-class _Config:
+class Configuration:
     vendor: str
     version: str
     cache_dir: Path = _cache.default_cachedir()
@@ -35,7 +36,7 @@ def check_kwargs(vendor=None, version=None, **kwargs):
             )
         vendor, version = _parse_vendor_version(kwargs.pop("jdk"))
 
-    conf = _Config(vendor=vendor, version=version)
+    conf = Configuration(vendor=vendor, version=version)
 
     cache_dir = kwargs.pop("cache_dir", None)
     if cache_dir:
