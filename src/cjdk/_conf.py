@@ -111,24 +111,44 @@ def _default_cachedir():
         return _xdg_cachedir()
 
 
-def _windows_cachedir():
-    return _local_app_data() / "cjdk" / "cache"
+def _windows_cachedir(*, create=True):
+    cjdk_cache = _local_app_data(create=create) / "cjdk"
+    if create:
+        cjdk_cache.mkdir(mode=0o700, exist_ok=True)
+    return cjdk_cache / "cache"
 
 
-def _local_app_data():
+def _local_app_data(*, create=True):
+    # https://docs.microsoft.com/en-us/windows/win32/shell/knownfolderid#FOLDERID_LocalAppData
+    # https://docs.microsoft.com/en-us/windows/win32/msi/localappdatafolder
+    # It is not clear, but I'm pretty sure it's safe to assume that the
+    # directory exists.
     if "LOCALAPPDATA" in os.environ:
         return Path(os.environ["LOCALAPPDATA"])
     return Path.home() / "AppData" / "Local"
 
 
-def _macos_cachedir():
-    return Path.home() / "Library" / "Caches" / "cjdk"
+def _macos_cachedir(*, create=True):
+    # ~/Library/Caches almost always already exists, and both dirs are 0o700.
+    # Create them here if they don't exist to ensure correct permissions.
+    caches = Path.home() / "Library" / "Caches"
+    if create:
+        caches.parent.mkdir(mode=0o700, exist_ok=True)
+        caches.mkdir(mode=0o700, exist_ok=True)
+    return caches / "cjdk"
 
 
-def _xdg_cachedir():
+def _xdg_cachedir(*, create=True):
+    # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
     if "XDG_CACHE_HOME" in os.environ:
-        return Path(os.environ["XDG_CACHE_HOME"]) / "cjdk"
-    return Path.home() / ".cache" / "cjdk"
+        caches = Path(os.environ["XDG_CACHE_HOME"])
+    else:
+        caches = Path.home() / ".cache"
+    # The spec says that if the directory does not exist, it should be created
+    # with 0o700; if it exists, permissions should not be changed.
+    if create:
+        caches.mkdir(mode=0o700, exist_ok=True)
+    return caches / "cjdk"
 
 
 def default_index_url():

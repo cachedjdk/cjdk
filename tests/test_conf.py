@@ -68,23 +68,22 @@ def test__default_cachedir():
 def test_local_app_data(monkeypatch):
     f = _conf._local_app_data
     monkeypatch.setenv("LOCALAPPDATA", "/a/b/c")
-    assert f() == Path("/a/b/c")
+    assert f(create=False) == Path("/a/b/c")
     monkeypatch.delenv("LOCALAPPDATA")
-    assert f() == Path.home() / "AppData" / "Local"
+    assert f(create=False) == Path.home() / "AppData" / "Local"
 
 
 def test_macos_cachedir():
-    assert (
-        _conf._macos_cachedir() == Path.home() / "Library" / "Caches" / "cjdk"
-    )
+    f = _conf._macos_cachedir
+    assert f(create=False) == Path.home() / "Library" / "Caches" / "cjdk"
 
 
 def test_xdg_cachedir(monkeypatch):
     f = _conf._xdg_cachedir
     monkeypatch.setenv("XDG_CACHE_HOME", "/a/b/c")
-    assert f() == Path("/a/b/c/cjdk")
+    assert f(create=False) == Path("/a/b/c/cjdk")
     monkeypatch.delenv("XDG_CACHE_HOME")
-    assert f() == Path.home() / ".cache" / "cjdk"
+    assert f(create=False) == Path.home() / ".cache" / "cjdk"
 
 
 def test_canonicalize_os():
