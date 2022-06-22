@@ -29,25 +29,7 @@ def java_home(*, vendor=None, version=None, **kwargs):
     progress -- show progress if true
     """
     conf = _conf.configure(vendor=vendor, version=version, **kwargs)
-    index = _index.jdk_index(conf)
-    url = _index.jdk_url(index, conf)
-    key = ("jdks",) + _cache.key_for_url(url)
-
-    def fetch(destdir):
-        _download.download_jdk(
-            destdir,
-            url,
-            progress=conf.progress,
-            _allow_insecure_for_testing=conf._allow_insecure_for_testing,
-        )
-
-    path = _cache.permanent_directory(
-        key,
-        fetch,
-        cache_dir=conf.cache_dir,
-        timeout_for_fetch_elsewhere=300,
-    )
-
+    path = _jdk.install_jdk(conf)
     return _jdk.find_home(path)
 
 

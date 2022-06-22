@@ -4,9 +4,39 @@
 
 from pathlib import Path
 
+from . import _cache, _download, _index
+from ._conf import Configuration
+
 __all__ = [
+    "install_jdk",
     "find_home",
 ]
+
+
+def install_jdk(conf: Configuration):
+    """
+    Install a JDK if it is not already installed.
+    """
+    index = _index.jdk_index(conf)
+    url = _index.jdk_url(index, conf)
+    key = ("jdks",) + _cache.key_for_url(url)
+
+    def fetch(destdir):
+        _download.download_jdk(
+            destdir,
+            url,
+            progress=conf.progress,
+            _allow_insecure_for_testing=conf._allow_insecure_for_testing,
+        )
+
+    path = _cache.permanent_directory(
+        key,
+        fetch,
+        cache_dir=conf.cache_dir,
+        timeout_for_fetch_elsewhere=300,
+    )
+
+    return path
 
 
 def find_home(path, _recursion_depth=2):
