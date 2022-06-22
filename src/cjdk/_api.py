@@ -2,16 +2,13 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
+import os
+import re
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
-import os
-import re
 
-from . import _cache
-from . import _download
-from . import _index
-from . import _jdk
+from . import _cache, _download, _index, _jdk
 
 __all__ = [
     "java_env",

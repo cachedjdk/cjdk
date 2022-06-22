@@ -2,16 +2,15 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
+import os
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
+
+import flask
+import requests
 from werkzeug.debug import DebuggedApplication
 from werkzeug.serving import make_server
-import flask
-import os
-import requests
-import threading
-import werkzeug
-
 
 __all__ = [
     "port",

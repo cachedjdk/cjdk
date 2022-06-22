@@ -2,10 +2,12 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-from cjdk._cache import permanent_directory
-from concurrent.futures import ThreadPoolExecutor
-import pytest
 import time
+from concurrent.futures import ThreadPoolExecutor
+
+import pytest
+
+from cjdk._cache import permanent_directory
 
 
 def test_permanent_directory_uncached(tmp_path):

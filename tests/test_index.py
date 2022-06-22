@@ -2,12 +2,13 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-from cjdk import _index, _cache
-from pathlib import Path
 import json
+from pathlib import Path
+
 import mock_server
 import pytest
-import urllib
+
+from cjdk import _cache, _index
 
 
 def test_index(tmp_path):

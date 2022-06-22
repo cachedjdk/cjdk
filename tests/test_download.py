@@ -2,11 +2,13 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-from cjdk import _download
-import mock_server
 import stat
 import tarfile
 import zipfile
+
+import mock_server
+
+from cjdk import _download
 
 
 def test_download_jdk(tmp_path):

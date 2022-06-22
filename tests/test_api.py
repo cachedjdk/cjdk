@@ -2,15 +2,15 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-from cjdk import _api
-from cjdk import _cache
-from cjdk import _index
-from pathlib import Path
 import json
-import mock_server
 import os
-import pytest
 import zipfile
+from pathlib import Path
+
+import mock_server
+import pytest
+
+from cjdk import _api, _cache, _index
 
 
 def test_java_home(tmp_path):

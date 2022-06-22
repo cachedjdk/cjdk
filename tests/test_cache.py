@@ -2,13 +2,15 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-from cjdk import _cache
-from concurrent.futures import ThreadPoolExecutor
-from pathlib import Path
-import pytest
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+
+import pytest
 import tqdm
+
+from cjdk import _cache
 
 
 def test_default_cachedir(monkeypatch):

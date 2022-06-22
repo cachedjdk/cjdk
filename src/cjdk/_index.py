@@ -2,16 +2,16 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-from urllib.parse import urlparse
 import json
 import platform
 import re
-import requests
 import sys
 import warnings
+from urllib.parse import urlparse
+
+import requests
 
 from . import _cache
-
 
 __all__ = [
     "default_index_url",

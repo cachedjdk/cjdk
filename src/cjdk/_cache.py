@@ -2,15 +2,15 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-from pathlib import Path
-from tqdm.auto import tqdm
 import contextlib
 import os
 import shutil
 import sys
 import time
 import urllib
+from pathlib import Path
 
+from tqdm.auto import tqdm
 
 __all__ = [
     "default_cachedir",

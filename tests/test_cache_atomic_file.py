@@ -2,11 +2,13 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-from cjdk._cache import atomic_file
-from concurrent.futures import ThreadPoolExecutor
-import pytest
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor
+
+import pytest
+
+from cjdk._cache import atomic_file
 
 
 def test_atomic_file_uncached(tmp_path):

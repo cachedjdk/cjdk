@@ -2,12 +2,12 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-from pathlib import Path
 import tarfile
 import tempfile
-import requests
 import zipfile
+from pathlib import Path
 
+import requests
 
 __all__ = [
     "download_jdk",
