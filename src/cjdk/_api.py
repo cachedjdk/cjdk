@@ -38,11 +38,11 @@ def java_home(*, vendor=None, version=None, **kwargs):
     )
     key = ("jdks",) + _cache.url_to_key(url)
 
-    def fetch(destdir, progress=None, **kwargs):
+    def fetch(destdir):
         _download.download_jdk(
             destdir,
             url,
-            progress=progress,
+            progress=conf.progress,
             _allow_insecure_for_testing=conf._allow_insecure_for_testing,
         )
 
@@ -51,7 +51,6 @@ def java_home(*, vendor=None, version=None, **kwargs):
         fetch,
         cachedir=conf.cache_dir,
         timeout_for_fetch_elsewhere=300,
-        progress=conf.progress,
     )
 
     return _jdk.find_home(path)

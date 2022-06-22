@@ -8,7 +8,6 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pytest
-import tqdm
 
 from cjdk import _cache
 
@@ -26,24 +25,6 @@ def test_url_to_key():
     f = _cache.url_to_key
     assert f("https://x.com/a/b.json") == ("x.com", "a", "b.json")
     assert f("https://x.com/a%2Bb/c.json") == ("x.com", "a+b", "c.json")
-
-
-def test_call_with_optional_tqdm():
-    f = _cache._call_with_optional_tqdm
-
-    def assert_tqdm(x):
-        assert x is not None
-        assert hasattr(x, "update")
-        assert hasattr(x, "reset")
-
-    def assert_none(x):
-        assert x is None
-
-    f(assert_tqdm, True)
-    f(assert_tqdm, tqdm.std.tqdm())
-    f(assert_tqdm, tqdm.asyncio.tqdm())
-    f(assert_none, None)
-    f(assert_none, False)
 
 
 def test__default_cachedir():
@@ -177,7 +158,8 @@ def test_wait_for_dir_to_vanish(tmp_path):
 
 def test_backoff_seconds():
     f = _cache._backoff_seconds
-    assert list(f(1, 0)) == [-1]
-    assert list(f(1, 1)) == [1, -1]
-    assert list(f(1, 0.1)) == [0.1, -1]
-    assert list(f(1, 10, factor=2)) == [1, 2, 4, 3, -1]
+    assert list(f(1, 1, 0)) == [-1]
+    assert list(f(1, 1, 1)) == [1, -1]
+    assert list(f(1, 1, 0.1)) == [0.1, -1]
+    assert list(f(1, 5, 10, factor=2)) == [1, 2, 4, 3, -1]
+    assert list(f(1, 2, 10, factor=2)) == [1, 2, 2, 2, 2, 1, -1]

@@ -26,7 +26,7 @@ def test_download():
     with mock_server.start(download_size=size) as server:
         response = requests.get(server.url("/download"))
         assert int(response.headers["content-length"]) == size
-        for chunk in response.iter_content(chunk_size=None):
+        for chunk in response.iter_content(chunk_size=4096):
             assert chunk == b"*" * len(chunk)
             size -= len(chunk)
         assert size == 0

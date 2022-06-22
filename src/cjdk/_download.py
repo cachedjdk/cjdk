@@ -8,6 +8,7 @@ import zipfile
 from pathlib import Path
 
 import requests
+from tqdm.auto import tqdm
 
 __all__ = [
     "download_jdk",
@@ -15,7 +16,7 @@ __all__ = [
 
 
 def download_jdk(
-    destdir, url, *, progress=None, _allow_insecure_for_testing=False
+    destdir, url, *, progress=True, _allow_insecure_for_testing=False
 ):
     """
     Download the JDK at url and extract to destdir.
@@ -23,7 +24,7 @@ def download_jdk(
     Arguments:
     destdir -- a pathlib.Path
     url -- a zip+https or tgz+https URL
-    progress -- tqdm or None
+    progress -- bool
     """
     scheme, rest = url.split(":", 1)
     try:
@@ -42,28 +43,32 @@ def download_jdk(
         extract(destdir, file, progress)
 
 
-def _download_large_file(destfile, srcurl, progress=None):
+def _download_large_file(destfile, srcurl, progress=True):
     response = requests.get(srcurl, stream=True)
     size = int(response.headers.get("content-length", None))
-    if size and progress is not None:
-        progress.reset(total=size)
-        progress.set_description("Downloading")
-    with open(destfile, "wb") as outfile:
-        total = 0
-        for chunk in response.iter_content(chunk_size=None):
-            outfile.write(chunk)
-            total += len(chunk)
-            if progress is not None:
-                progress.update(total)
+    with tqdm(
+        desc="Downloading",
+        total=size,
+        disable=(None if progress else True),
+        unit="B",
+        unit_scale=True,
+    ) as tq:
+        with open(destfile, "wb") as outfile:
+            for chunk in response.iter_content(chunk_size=16384):
+                outfile.write(chunk)
+                tq.update(len(chunk))
 
 
-def _extract_zip(destdir, srcfile, progress=None):
+def _extract_zip(destdir, srcfile, progress=True):
     with zipfile.ZipFile(srcfile) as zf:
         infolist = zf.infolist()
-        if progress is not None:
-            progress.reset(len(infolist))
-            progress.set_description("Extracting")
-        for i, member in enumerate(infolist):
+        for member in tqdm(
+            infolist,
+            desc="Extracting",
+            total=len(infolist),
+            disable=(None if progress else True),
+            unit="files",
+        ):
             extracted = Path(zf.extract(member, destdir))
 
             # Recover executable bits; see https://stackoverflow.com/a/46837272
@@ -71,16 +76,13 @@ def _extract_zip(destdir, srcfile, progress=None):
                 mode = (member.external_attr >> 16) & 0o111
                 extracted.chmod(extracted.stat().st_mode | mode)
 
-            if progress is not None:
-                progress.update(i)
 
-
-def _extract_tgz(destdir, srcfile, progress=None):
+def _extract_tgz(destdir, srcfile, progress=True):
     with tarfile.open(srcfile, "r:gz", bufsize=65536) as tf:
-        if progress is not None:
-            progress.reset()
-            progress.set_description("Extracting")
-        for i, member in enumerate(tf):
+        for member in tqdm(
+            tf,
+            desc="Extracting",
+            disable=(None if progress else True),
+            unit="files",
+        ):
             tf.extract(member, destdir)
-            if progress is not None:
-                progress.update(i)

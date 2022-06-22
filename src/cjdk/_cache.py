@@ -78,7 +78,6 @@ def atomic_file(
     cachedir=None,
     timeout_for_fetch_elsewhere=10,
     timeout_for_read_elsewhere=2.5,
-    progress=None,
 ):
     """
     Retrieve cached file for key, fetching with fetchfunc if necessary.
@@ -87,22 +86,14 @@ def atomic_file(
     key -- The cache key; must be a tuple of strings, each safe as a URL path
            component.
     fetchfunc -- A function taking a single positional argument (the
-                 destination file path) and arbitrary keyword arguments (see
-                 below). The function must populate the given path with the
-                 desired file content.
+                 destination file path). The function must populate the given
+                 path with the desired file content.
 
     Keyword arguments:
     ttl -- Time to live for the cached file, in seconds. If the cached file
            exists but is older than the TTL, it will be re-fetched and
            replaced (default: for ever).
     cachedir -- The root cache directory (default: default_cachedir()).
-    progress -- A tqdm object for progress display, or True to create one
-                automatically. If false, do not display progress.
-
-    Keyword arguments that may be passed to fetchfunc:
-    progress -- A tqdm object for progress display, or None. The fetchfunc
-                should never create its own tqdm object.
-    The fetchfunc must also ignore any other keyword arguments.
     """
     if ttl is None:
         ttl = _FOREVER
@@ -111,23 +102,6 @@ def atomic_file(
     elif not isinstance(cachedir, Path):
         cachedir = Path(cachedir)
 
-    impl = lambda tq: _atomic_file(
-        key,
-        filename,
-        fetchfunc,
-        ttl,
-        cachedir,
-        timeout_for_fetch_elsewhere,
-        timeout_for_read_elsewhere,
-        tq,
-    )
-
-    return _call_with_optional_tqdm(impl, progress)
-
-
-def _atomic_file(
-    key, filename, fetchfunc, ttl, cachedir, timeout_fetch, timeout_read, tq
-):
     _check_key(key)
     cachedir.mkdir(parents=True, exist_ok=True)
 
@@ -136,18 +110,16 @@ def _atomic_file(
     if not _file_exists_and_is_fresh(target, ttl):
         with _create_key_tmpdir(cachedir, key) as tmpdir:
             if tmpdir:
-                fetchfunc(tmpdir / filename, progress=tq)
+                fetchfunc(tmpdir / filename)
                 _swap_in_fetched_file(
                     target,
                     tmpdir / filename,
-                    timeout=timeout_read,
-                    tq=tq,
+                    timeout=timeout_for_read_elsewhere,
                 )
             else:  # Somebody else is currently fetching
                 _wait_for_dir_to_vanish(
                     _key_tmpdir(cachedir, key),
-                    timeout=timeout_fetch,
-                    tq=tq,
+                    timeout=timeout_for_fetch_elsewhere,
                 )
                 if not _file_exists_and_is_fresh(target, ttl=_FOREVER):
                     raise Exception(
@@ -161,7 +133,6 @@ def permanent_directory(
     fetchfunc,
     cachedir=None,
     timeout_for_fetch_elsewhere=60,
-    progress=None,
 ):
     """
     Retrieve cached directory for key, fetching with fetchfunc if necessary.
@@ -170,33 +141,17 @@ def permanent_directory(
     key -- The cache key; must be a tuple of strings, each safe as a URL path
            component.
     fetchfunc -- A function taking a single positional argument (the
-                 destination directory as a pathlib.Path) and arbitrary keyword
-                 arguments (see below). The function must populate the given
-                 directory with the desired cached content.
+                 destination directory as a pathlib.Path). The function must
+                 populate the given directory with the desired cached content.
 
     Keyword arguments:
     cachedir -- The root cache directory (default: default_cachedir()).
-    progress -- A tqdm object for progress display, or True to creqte one
-                automatically. If false, do not display progress.
-
-    Keyword arguments that may be passed to fetchfunc:
-    progress -- A tqdm object for progress display, or None. The fetchfunc
-                should never create its own tqdm object.
-    The fetchfunc must also ignore any other keyword arguments.
     """
     if not cachedir:
         cachedir = default_cachedir()
     if not isinstance(cachedir, Path):
         cachedir = Path(cachedir)
 
-    impl = lambda tq: _permanent_directory(
-        key, fetchfunc, cachedir, timeout_for_fetch_elsewhere, tq
-    )
-
-    return _call_with_optional_tqdm(impl, progress)
-
-
-def _permanent_directory(key, fetchfunc, cachedir, timeout_fetch, tq):
     _check_key(key)
     cachedir.mkdir(parents=True, exist_ok=True)
 
@@ -204,29 +159,18 @@ def _permanent_directory(key, fetchfunc, cachedir, timeout_fetch, tq):
     if not keydir.is_dir():
         with _create_key_tmpdir(cachedir, key) as tmpdir:
             if tmpdir:
-                fetchfunc(tmpdir, progress=tq)
+                fetchfunc(tmpdir)
                 _move_in_fetched_directory(keydir, tmpdir)
             else:  # Somebody else is currently fetching
                 _wait_for_dir_to_vanish(
                     _key_tmpdir(cachedir, key),
-                    timeout=timeout_fetch,
-                    tq=tq,
+                    timeout=timeout_for_fetch_elsewhere,
                 )
                 if not keydir.is_dir():
                     raise Exception(
                         f"Fetching of directory {keydir} appears to have been completed elsewhere, but directory does not exist"
                     )
     return keydir
-
-
-def _call_with_optional_tqdm(func, progress):
-    if progress is True:
-        with tqdm() as tq:
-            return func(tq)
-    else:
-        if progress is None or progress is False:
-            return func(None)
-        return func(progress)
 
 
 def _default_cachedir():
@@ -297,7 +241,7 @@ def _check_key(key):
             raise ValueError(f"Invalid cache key: {key}")
 
 
-def _swap_in_fetched_file(target, tmpfile, timeout, tq=None):
+def _swap_in_fetched_file(target, tmpfile, timeout):
     # On POSIX, we only need to try once to move tmpfile to target; this will
     # work even if target is opened by others, and any failure (e.g.
     # insufficient permissions) is permanent.
@@ -313,12 +257,8 @@ def _swap_in_fetched_file(target, tmpfile, timeout, tq=None):
     # always results in the intended behavior.
     WINDOWS_ERROR_ACCESS_DENIED = 5
 
-    if tq is not None:
-        tq.set_description(f"Waiting for file that may be in use")
-        tq.set_postfix({"file": tmpfile.name})
-
     target.parent.mkdir(parents=True, exist_ok=True)
-    for wait_seconds in _backoff_seconds(0.001, timeout, tq):
+    for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
         try:
             tmpfile.replace(target)
         except OSError as e:
@@ -339,12 +279,10 @@ def _move_in_fetched_directory(target, tmpdir):
     tmpdir.replace(target)
 
 
-def _wait_for_dir_to_vanish(directory, timeout, tq=None):
-    if tq is not None:
-        tq.set_description("Waiting for download by another process")
-        tq.set_postfix({"dir": directory})
-
-    for wait_seconds in _backoff_seconds(0.001, timeout, tq):
+def _wait_for_dir_to_vanish(directory, timeout, progress=True):
+    for wait_seconds in _backoff_seconds(
+        0.001, 0.5, timeout, progress=progress
+    ):
         if not directory.is_dir():
             return
         if wait_seconds < 0:
@@ -354,7 +292,9 @@ def _wait_for_dir_to_vanish(directory, timeout, tq=None):
         time.sleep(wait_seconds)
 
 
-def _backoff_seconds(initial_interval, max_total, tq=None, factor=1.5):
+def _backoff_seconds(
+    initial_interval, max_interval, max_total, factor=1.5, progress=True
+):
     """
     Yield intervals to sleep after repeated attempts with exponential backoff.
 
@@ -364,22 +304,26 @@ def _backoff_seconds(initial_interval, max_total, tq=None, factor=1.5):
     assert initial_interval > 0
     assert max_total >= 0
     assert factor > 1
-    if tq is not None:
-        tq.reset(total=max_total)
-    total = 0
-    next_interval = initial_interval
-    while max_total > 0:
-        next_total = total + next_interval
-        if next_total > max_total:
-            remaining = max_total - total
-            if remaining > 0.01:
-                yield remaining
-            if tq is not None:
-                tq.update(max_total)
-            break
-        yield next_interval
-        total = next_total
-        if tq is not None:
-            tq.update(total)
-        next_interval *= factor
-    yield -1
+    with tqdm(
+        desc="Waiting for download elsewhere",
+        # Intentionally not showing total; percentage makes no sense here
+        disable=(None if progress else True),
+        unit="s",
+    ) as tq:
+        total = 0
+        next_interval = initial_interval
+        while max_total > 0:
+            next_total = total + next_interval
+            if next_total > max_total:
+                remaining = max_total - total
+                if remaining > 0.01:
+                    yield remaining
+                    tq.update(remaining)
+                break
+            yield next_interval
+            tq.update(next_interval)
+            total = next_total
+            next_interval *= factor
+            if next_interval > max_interval:
+                next_interval = max_interval
+        yield -1
