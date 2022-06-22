@@ -51,7 +51,7 @@ def configure(**kwargs):
         os=canonicalize_os(kwargs.pop("os", None)),
         arch=canonicalize_arch(kwargs.pop("arch", None)),
         vendor=kwargs.pop("vendor", None) or default_vendor(),
-        version=kwargs.pop("version", ""),
+        version=kwargs.pop("version", "") or "",
         cache_dir=kwargs.pop("cache_dir", None) or default_cachedir(),
         index_url=kwargs.pop("index_url", None) or default_index_url(),
         index_ttl=kwargs.pop("index_ttl", 86400),
