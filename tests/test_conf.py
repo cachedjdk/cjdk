@@ -9,8 +9,8 @@ import pytest
 from cjdk import _cache, _conf
 
 
-def test_check_kwargs():
-    f = _conf.check_kwargs
+def test_configure():
+    f = _conf.configure
 
     conf = f("temurin", "17")
     assert conf.vendor == "temurin"

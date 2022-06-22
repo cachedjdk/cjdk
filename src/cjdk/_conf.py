@@ -10,7 +10,7 @@ from . import _cache, _index
 
 __all__ = [
     "Configuration",
-    "check_kwargs",
+    "configure",
 ]
 
 
@@ -26,7 +26,7 @@ class Configuration:
     _allow_insecure_for_testing = False
 
 
-def check_kwargs(vendor=None, version=None, **kwargs):
+def configure(vendor=None, version=None, **kwargs):
     # kwargs must have API-specific items removed before passing here.
 
     if "jdk" in kwargs:

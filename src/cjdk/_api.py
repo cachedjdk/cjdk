@@ -24,7 +24,7 @@ def java_home(*, vendor=None, version=None, **kwargs):
     cache_dir -- override the root cache directory
     index_url -- alternative URL for JDK index
     """
-    conf = _conf.check_kwargs(vendor, version, **kwargs)
+    conf = _conf.configure(vendor, version, **kwargs)
     index = _index.jdk_index(
         cachedir=conf.cache_dir,
         url=conf.index_url,
