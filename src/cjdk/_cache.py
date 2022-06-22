@@ -61,7 +61,8 @@ def url_to_key(url):
     # The only likely non-alphanumeric characters occurring in JDK URL path
     # components are + - . _
     # And urllib never encodes - . _ ~
-    # In practice, this usually serves only to normalize '+'.
+    # In practice, this usually serves only to normalize '+' and the case of
+    # percent encoding hex digits.
     def percent_reencode(item):
         decoded = urllib.parse.unquote(item, errors="strict")
         return urllib.parse.quote(decoded, safe="+-._", errors="strict")
