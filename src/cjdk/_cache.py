@@ -251,7 +251,7 @@ def _check_key(key):
             raise ValueError(f"Invalid cache key: {key}")
 
 
-def _swap_in_fetched_file(target, tmpfile, timeout):
+def _swap_in_fetched_file(target, tmpfile, timeout, progress=False):
     # On POSIX, we only need to try once to move tmpfile to target; this will
     # work even if target is opened by others, and any failure (e.g.
     # insufficient permissions) is permanent.
@@ -268,20 +268,28 @@ def _swap_in_fetched_file(target, tmpfile, timeout):
     WINDOWS_ERROR_ACCESS_DENIED = 5
 
     target.parent.mkdir(parents=True, exist_ok=True)
-    for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
-        try:
-            tmpfile.replace(target)
-        except OSError as e:
-            if (
-                hasattr(e, "winerror")
-                and e.winerror == WINDOWS_ERROR_ACCESS_DENIED
-                and wait_seconds > 0
-            ):
-                time.sleep(wait_seconds)
-                continue
-            raise
-        else:
-            return
+    with tqdm(
+        desc="Waiting for another process",
+        # Intentionally not showing total; percentage makes no sense here
+        disable=(None if progress else True),
+        unit="s",
+        delay=0.5,
+    ) as tq:
+        for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
+            try:
+                tmpfile.replace(target)
+            except OSError as e:
+                if (
+                    hasattr(e, "winerror")
+                    and e.winerror == WINDOWS_ERROR_ACCESS_DENIED
+                    and wait_seconds > 0
+                ):
+                    time.sleep(wait_seconds)
+                    tq.update(wait_seconds)
+                    continue
+                raise
+            else:
+                return
 
 
 def _move_in_fetched_directory(target, tmpdir):
@@ -290,21 +298,24 @@ def _move_in_fetched_directory(target, tmpdir):
 
 
 def _wait_for_dir_to_vanish(directory, timeout, progress=True):
-    for wait_seconds in _backoff_seconds(
-        0.001, 0.5, timeout, progress=progress
-    ):
-        if not directory.is_dir():
-            return
-        if wait_seconds < 0:
-            raise Exception(
-                f"Timeout while waiting for directory {directory} to disappear"
-            )
-        time.sleep(wait_seconds)
+    with tqdm(
+        desc="Waiting for another download",
+        # Intentionally not showing total; percentage makes no sense here
+        disable=(None if progress else True),
+        unit="s",
+    ) as tq:
+        for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
+            if not directory.is_dir():
+                return
+            if wait_seconds < 0:
+                raise Exception(
+                    f"Timeout while waiting for directory {directory} to disappear"
+                )
+            time.sleep(wait_seconds)
+            tq.update(wait_seconds)
 
 
-def _backoff_seconds(
-    initial_interval, max_interval, max_total, factor=1.5, progress=True
-):
+def _backoff_seconds(initial_interval, max_interval, max_total, factor=1.5):
     """
     Yield intervals to sleep after repeated attempts with exponential backoff.
 
@@ -314,26 +325,18 @@ def _backoff_seconds(
     assert initial_interval > 0
     assert max_total >= 0
     assert factor > 1
-    with tqdm(
-        desc="Waiting for download elsewhere",
-        # Intentionally not showing total; percentage makes no sense here
-        disable=(None if progress else True),
-        unit="s",
-    ) as tq:
-        total = 0
-        next_interval = initial_interval
-        while max_total > 0:
-            next_total = total + next_interval
-            if next_total > max_total:
-                remaining = max_total - total
-                if remaining > 0.01:
-                    yield remaining
-                    tq.update(remaining)
-                break
-            yield next_interval
-            tq.update(next_interval)
-            total = next_total
-            next_interval *= factor
-            if next_interval > max_interval:
-                next_interval = max_interval
-        yield -1
+    total = 0
+    next_interval = initial_interval
+    while max_total > 0:
+        next_total = total + next_interval
+        if next_total > max_total:
+            remaining = max_total - total
+            if remaining > 0.01:
+                yield remaining
+            break
+        yield next_interval
+        total = next_total
+        next_interval *= factor
+        if next_interval > max_interval:
+            next_interval = max_interval
+    yield -1
