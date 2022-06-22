@@ -18,6 +18,7 @@ __all__ = [
     "default_index_url",
     "canonicalize_os",
     "canonicalize_arch",
+    "default_vendor",
 ]
 
 
@@ -49,7 +50,7 @@ def configure(**kwargs):
     conf = Configuration(
         os=canonicalize_os(kwargs.pop("os", None)),
         arch=canonicalize_arch(kwargs.pop("arch", None)),
-        vendor=kwargs.pop("vendor", "adoptium"),
+        vendor=kwargs.pop("vendor", None) or default_vendor(),
         version=kwargs.pop("version", ""),
         cache_dir=kwargs.pop("cache_dir", None) or default_cachedir(),
         index_url=kwargs.pop("index_url", None) or default_index_url(),
@@ -172,3 +173,15 @@ def canonicalize_arch(arch):
         arch = "x86"
 
     return arch
+
+
+def default_vendor():
+    """
+    Return the default vendor.
+
+    This is either from the environment variable CJDK_DEFAULT_VENDOR, or
+    "adoptium".
+    """
+    if "CJDK_DEFAULT_VENDOR" in os.environ:
+        return os.environ["CJDK_DEFAULT_VENDOR"]
+    return "adoptium"

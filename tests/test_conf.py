@@ -2,6 +2,7 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
+import os
 from pathlib import Path
 
 import pytest
@@ -27,7 +28,7 @@ def test_configure():
     assert conf.version == "17"
 
     conf = f(jdk=":")
-    assert not conf.vendor
+    assert conf.vendor == _conf.default_vendor()
     assert not conf.version
 
     conf = f(cache_dir="abc")
@@ -111,3 +112,11 @@ def test_canonicalize_arch():
     assert f("ppc64le") != f("ppc64")
     assert f("ppcle") != f("ppc")
     assert f("s390x") != f("s390")
+
+
+def test_default_vendor():
+    f = _conf.default_vendor
+    os.environ["CJDK_DEFAULT_VENDOR"] = "zulu"
+    assert f() == "zulu"
+    del os.environ["CJDK_DEFAULT_VENDOR"]
+    assert f() == "adoptium"
