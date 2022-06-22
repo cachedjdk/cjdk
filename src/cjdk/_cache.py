@@ -215,14 +215,24 @@ def _file_exists_and_is_fresh(file, ttl):
 def _create_key_tmpdir(cachedir, key):
     tmpdir = _key_tmpdir(cachedir, key)
     tmpdir.parent.mkdir(parents=True, exist_ok=True)
+
+    already_exists = False
     try:
         tmpdir.mkdir()
     except FileExistsError as e:
+        # Avoid yielding here, because that would mean doing stuff "while
+        # handling an exception". If the stuff has an error (including
+        # KeyboardInterrupt), we have a problem.
+        already_exists = True
+
+    if already_exists:
         yield None
     else:
-        yield tmpdir
-        if tmpdir.is_dir():
-            shutil.rmtree(tmpdir)
+        try:
+            yield tmpdir
+        finally:
+            if tmpdir.is_dir():
+                shutil.rmtree(tmpdir)
 
 
 def _key_directory(cachedir, key):
