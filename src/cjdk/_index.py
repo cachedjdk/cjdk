@@ -16,6 +16,7 @@ from ._conf import Configuration
 __all__ = [
     "jdk_index",
     "available_jdks",
+    "resolve_jdk_version",
     "jdk_url",
 ]
 
@@ -53,14 +54,12 @@ def available_jdks(index, conf: Configuration):
     )
 
 
-def jdk_url(index, conf: Configuration):
+def resolve_jdk_version(index, conf: Configuration):
     """
-    Find in index the URL for the JDK binary for the given vendor and version.
-
-    The returned URL usually has a scheme like tgz+https or zip+https.
+    Find in index the exact JDK version for the given configuration.
 
     Arguments:
-    index -- The JDK index (nested dict)
+    index -- The JDK index (dested dict)
     """
     jdks = available_jdks(index, conf)
     versions = [i[1] for i in jdks if i[0] == conf.vendor]
@@ -73,6 +72,19 @@ def jdk_url(index, conf: Configuration):
         raise KeyError(
             f"No JDK matching version {conf.version} for {conf.os}-{conf.arch}-{conf.vendor}"
         )
+    return matched
+
+
+def jdk_url(index, conf: Configuration):
+    """
+    Find in index the URL for the JDK binary for the given vendor and version.
+
+    The returned URL usually has a scheme like tgz+https or zip+https.
+
+    Arguments:
+    index -- The JDK index (nested dict)
+    """
+    matched = resolve_jdk_version(index, conf)
     return index[conf.os][conf.arch][f"jdk@{conf.vendor}"][matched]
 
 

@@ -18,10 +18,14 @@ def install_jdk(conf: Configuration):
     Install a JDK if it is not already installed.
     """
     index = _index.jdk_index(conf)
+    conf.version = _index.resolve_jdk_version(index, conf)
     url = _index.jdk_url(index, conf)
     key = ("jdks",) + _cache.key_for_url(url)
 
     def fetch(destdir):
+        if conf.progress:
+            print(f"cjdk: Installing JDK: {conf.vendor}:{conf.version}")
+            print(f"cjdk: Destination: {conf.cache_dir}")
         _download.download_jdk(
             destdir,
             url,

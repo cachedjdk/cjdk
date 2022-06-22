@@ -53,6 +53,25 @@ def test_available_jdks(tmp_path):
     assert jdks[0] == ("adoptium", "17.0.1")
 
 
+def test_resolve_jdk_version():
+    index = {
+        "linux": {
+            "amd64": {
+                "jdk@adoptium": {"17.0.1": "tgz+https://example.com/a/b/c.tgz"}
+            }
+        }
+    }
+    assert (
+        _index.resolve_jdk_version(
+            index,
+            configure(
+                os="linux", arch="amd64", vendor="adoptium", version="17+"
+            ),
+        )
+        == "17.0.1"
+    )
+
+
 def test_jdk_url():
     index = {
         "linux": {
