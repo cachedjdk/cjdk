@@ -58,22 +58,28 @@ similarly; for example, `cjdk exec --help`.
 There are currently 2 subcommands: `java-home` and `exec`.
 
 ```console
-$ cjdk --jdk temurin:17 java-home
-/Users/mark/Library/Caches/cjdk/jdks/github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3+7/OpenJDK17U-jdk_aarch64_mac_hotspot_17.0.3_7.tar.gz/jdk-17.0.3+7/Contents/Home
+$ cjdk --jdk temurin:17 java-home
+cjdk: Installing JDK: temurin:1.17.0.3
+cjdk: Destination: /Users/mark/Library/Caches/cjdk
+Downloading: 100%|███████████████████████████| 177M/177M [00:06<00:00, 27.8MB/s]
+Extracting: 545files [00:01, 443.48files/s]
+/Users/mark/Library/Caches/cjdk/v0/jdks/9c70ad108f233bbbba06d095beaa8580f93d3cd3/jdk-17.0.3+7/Contents/Home
 ```
 
-downloads (if necessary) the latest Temurin JDK 17 and prints the path that is
-suitable as the value of `JAVA_HOME`.
+This downloads (if necessary) the latest Temurin JDK 17 and prints the path
+that is suitable as the value of `JAVA_HOME`. (Note that the progress info is
+printed to stderr, whereas the actual Java home directory is printed to
+stdout.)
 
 ```console
-$ cjdk --jdk temurin:17 exec java -version
+$ cjdk --jdk temurin:17 exec java -version
 openjdk version "17.0.3" 2022-04-19
 OpenJDK Runtime Environment Temurin-17.0.3+7 (build 17.0.3+7)
 OpenJDK 64-Bit Server VM Temurin-17.0.3+7 (build 17.0.3+7, mixed mode)
 ```
 
-runs the program `java` (with option `-version`) after setting `JAVA_HOME` and
-`PATH` to point to the latest Temurin JDK 17 (which is downloaded if
+This runs the program `java` (with option `-version`) after setting `JAVA_HOME`
+and `PATH` to point to the latest Temurin JDK 17 (which is downloaded if
 necessary). The same works for any command, whether part of the JDK (such as
 `java`, `javac`) or already on the path (for example, `mvn`).
 
@@ -91,7 +97,7 @@ JDKs are installed.
 ```python
 >>> import cjdk
 >>> print(cjdk.java_home(vendor="temurin", version="17"))
-/Users/mark/Library/Caches/cjdk/jdks/github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3+7/OpenJDK17U-jdk_aarch64_mac_hotspot_17.0.3_7.tar.gz/jdk-17.0.3+7/Contents/Home
+/Users/mark/Library/Caches/cjdk/v0/jdks/9c70ad108f233bbbba06d095beaa8580f93d3cd3/jdk-17.0.3+7/Contents/Home
 ```
 
 downloads (if necessary) the latest Temurin JDK 17 and prints the path that is

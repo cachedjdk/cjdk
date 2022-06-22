@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import contextlib
+import hashlib
 import shutil
 import time
 import urllib
@@ -20,8 +21,6 @@ __all__ = [
 def key_for_url(url):
     """
     Return a cache key suitable to cache content retrieved from the given URL.
-
-    For example, https://example.com/a/b.json -> ("example.com", "a", "b.json")
     """
     if not isinstance(url, tuple):
         url = urllib.parse.urlparse(url, allow_fragments=False)
@@ -44,7 +43,11 @@ def key_for_url(url):
         decoded = urllib.parse.unquote(item, errors="strict")
         return urllib.parse.quote(decoded, safe="+-._", errors="strict")
 
-    return tuple(percent_reencode(i) for i in items)
+    normalized = "/".join(percent_reencode(i) for i in items)
+
+    hasher = hashlib.sha1(usedforsecurity=False)
+    hasher.update(normalized.encode())
+    return (hasher.hexdigest().lower(),)
 
 
 def atomic_file(

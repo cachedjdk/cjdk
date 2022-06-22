@@ -14,8 +14,13 @@ from cjdk import _cache
 
 def test_key_for_url():
     f = _cache.key_for_url
-    assert f("https://x.com/a/b.json") == ("x.com", "a", "b.json")
-    assert f("https://x.com/a%2Bb/c.json") == ("x.com", "a+b", "c.json")
+    key = f("https://x.com/a/b.json")
+    assert len(key) == 1
+    assert len(key[0]) == 40
+    assert isinstance(key[0], str)
+    assert key[0] == key[0].lower()
+    assert f("https://x.com/a%2Bb/c.json") == f("http://x.com/a+b/c.json")
+    assert f("https://x.com/a%2Bb/c.json") == f("https://x.com/a%2bb/c.json")
 
 
 def test_file_exists_and_is_fresh(tmp_path):

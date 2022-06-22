@@ -13,6 +13,9 @@ __all__ = [
 ]
 
 
+_JDK_KEY_PREFIX = ("v0", "jdks")
+
+
 def install_jdk(conf: Configuration):
     """
     Install a JDK if it is not already installed.
@@ -20,7 +23,7 @@ def install_jdk(conf: Configuration):
     index = _index.jdk_index(conf)
     conf.version = _index.resolve_jdk_version(index, conf)
     url = _index.jdk_url(index, conf)
-    key = ("jdks",) + _cache.key_for_url(url)
+    key = _JDK_KEY_PREFIX + _cache.key_for_url(url)
 
     def fetch(destdir):
         if conf.progress:

@@ -98,7 +98,7 @@ def test_cached_index(tmp_path):
         url = server.url("/index.json")
         expected_path = (
             tmp_path
-            / _index._INDEX_KEY_PREFIX
+            / Path(*_index._INDEX_KEY_PREFIX)
             / Path(*_cache.key_for_url(url))
             / _index._INDEX_FILENAME
         )

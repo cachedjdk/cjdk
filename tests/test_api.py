@@ -5,10 +5,11 @@
 import json
 import os
 import zipfile
+from pathlib import Path
 
 import mock_server
 
-from cjdk import _api, _index
+from cjdk import _api, _cache, _index, _jdk
 
 
 def test_java_home(tmp_path):
@@ -55,11 +56,11 @@ def test_java_home(tmp_path):
 def test_java_env(tmp_path):
     # Pretend cache (= tmp_path) is pre-populated
     port = mock_server.port()
+    index_url = f"http://127.0.0.1:{port}/index.json"
     index_dir = (
         tmp_path
-        / _index._INDEX_KEY_PREFIX
-        / f"127.0.0.1%3A{port}"
-        / "index.json"
+        / Path(*_index._INDEX_KEY_PREFIX)
+        / Path(*_cache.key_for_url(index_url))
     )
     index_dir.mkdir(parents=True)
     with open(index_dir / _index._INDEX_FILENAME, "w") as f:
@@ -75,7 +76,11 @@ def test_java_env(tmp_path):
             },
             f,
         )
-    jdk_dir = tmp_path / "jdks" / f"127.0.0.1%3A{port}" / "jdk.zip"
+    jdk_dir = (
+        tmp_path
+        / Path(*_jdk._JDK_KEY_PREFIX)
+        / Path(*_cache.key_for_url(f"http://127.0.0.1:{port}/jdk.zip"))
+    )
     (jdk_dir / "bin").mkdir(parents=True)
     (jdk_dir / "bin" / "java").touch()
 
@@ -88,7 +93,7 @@ def test_java_env(tmp_path):
             os="linux",
             arch="amd64",
             cache_dir=tmp_path,
-            index_url=f"http://127.0.0.1:{port}/index.json",
+            index_url=index_url,
         ):
             assert os.environ["JAVA_HOME"] == str(jdk_dir)
             assert os.environ["PATH"].startswith(

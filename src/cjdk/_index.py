@@ -21,7 +21,7 @@ __all__ = [
 ]
 
 
-_INDEX_KEY_PREFIX = "jdk-index"
+_INDEX_KEY_PREFIX = ("v0", "index")
 _INDEX_FILENAME = "jdk-index.json"
 
 
@@ -89,9 +89,9 @@ def jdk_url(index, conf: Configuration):
 
 
 def _cached_index(conf):
-    cache_key = (_INDEX_KEY_PREFIX,) + _cache.key_for_url(conf.index_url)
+    cache_key = _INDEX_KEY_PREFIX + _cache.key_for_url(conf.index_url)
 
-    def fetch(dest, **kwargs):
+    def fetch(dest):
         _fetch_index(dest, conf)
 
     return _cache.atomic_file(
