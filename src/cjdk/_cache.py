@@ -11,7 +11,7 @@ from pathlib import Path
 from tqdm.auto import tqdm
 
 __all__ = [
-    "url_to_key",
+    "key_for_url",
     "atomic_file",
     "permanent_directory",
 ]
@@ -20,7 +20,7 @@ __all__ = [
 _FOREVER = 2**63  # seconds
 
 
-def url_to_key(url):
+def key_for_url(url):
     """
     Return a cache key suitable to cache content retrieved from the given URL.
 

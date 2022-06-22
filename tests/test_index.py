@@ -71,7 +71,7 @@ def test_cached_index(tmp_path):
         expected_path = (
             tmp_path
             / _index._INDEX_KEY_PREFIX
-            / Path(*_cache.url_to_key(url))
+            / Path(*_cache.key_for_url(url))
             / _index._INDEX_FILENAME
         )
         path = _index._cached_index(

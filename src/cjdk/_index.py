@@ -100,7 +100,7 @@ def jdk_url(index, os, arch, vendor, version):
 
 
 def _cached_index(url, ttl, cachedir, _allow_insecure_for_testing=False):
-    cache_key = (_INDEX_KEY_PREFIX,) + _cache.url_to_key(url)
+    cache_key = (_INDEX_KEY_PREFIX,) + _cache.key_for_url(url)
 
     def fetch(dest, **kwargs):
         _fetch_index(

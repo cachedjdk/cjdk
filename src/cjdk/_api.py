@@ -34,7 +34,7 @@ def java_home(*, vendor=None, version=None, **kwargs):
         _allow_insecure_for_testing=conf._allow_insecure_for_testing,
     )
     url = _index.jdk_url(index, conf.os, conf.arch, conf.vendor, conf.version)
-    key = ("jdks",) + _cache.url_to_key(url)
+    key = ("jdks",) + _cache.key_for_url(url)
 
     def fetch(destdir):
         _download.download_jdk(

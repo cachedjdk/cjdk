@@ -12,8 +12,8 @@ import pytest
 from cjdk import _cache
 
 
-def test_url_to_key():
-    f = _cache.url_to_key
+def test_key_for_url():
+    f = _cache.key_for_url
     assert f("https://x.com/a/b.json") == ("x.com", "a", "b.json")
     assert f("https://x.com/a%2Bb/c.json") == ("x.com", "a+b", "c.json")
 
