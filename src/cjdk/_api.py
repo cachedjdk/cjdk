@@ -23,6 +23,9 @@ def java_home(*, vendor=None, version=None, **kwargs):
     jdk -- string with format vendor:version
     cache_dir -- override the root cache directory
     index_url -- alternative URL for JDK index
+    os -- operating system for the JDK
+    arch -- architecture for the JDK
+    progress -- show progress if true
     """
     conf = _conf.configure(vendor, version, **kwargs)
     index = _index.jdk_index(
@@ -60,13 +63,8 @@ def java_env(*, vendor=None, version=None, add_bin=True, **kwargs):
     Context manager to set environment for the given JDK, installing if
     necessary.
 
-    Keyword arguments:
-    vendor -- JDK vendor name
-    version -- JDK version expression
-    jdk -- string with format vendor:version
-    add_bin -- if False, do not modify PATH; only JAVA_HOME
-    cache_dir -- override the root cache directory
-    index_url -- alternative URL for JDK index
+    Keyword arguments: Same as java_home(), plus
+    add_bin -- if False, do not modify PATH; set only JAVA_HOME
     """
     home = java_home(vendor=vendor, version=version, **kwargs)
     with _env_var_set("JAVA_HOME", str(home)):
