@@ -54,8 +54,8 @@ def atomic_file(
     key,
     filename,
     fetchfunc,
+    cachedir,
     ttl=None,
-    cachedir=None,
     timeout_for_fetch_elsewhere=10,
     timeout_for_read_elsewhere=2.5,
 ):
@@ -68,17 +68,15 @@ def atomic_file(
     fetchfunc -- A function taking a single positional argument (the
                  destination file path). The function must populate the given
                  path with the desired file content.
+    cachedir -- The root cache directory.
 
     Keyword arguments:
     ttl -- Time to live for the cached file, in seconds. If the cached file
            exists but is older than the TTL, it will be re-fetched and
            replaced (default: for ever).
-    cachedir -- The root cache directory (default: default_cachedir()).
     """
     if ttl is None:
         ttl = _FOREVER
-    if not cachedir:
-        cachedir = default_cachedir()
     elif not isinstance(cachedir, Path):
         cachedir = Path(cachedir)
 
@@ -111,7 +109,7 @@ def atomic_file(
 def permanent_directory(
     key,
     fetchfunc,
-    cachedir=None,
+    cachedir,
     timeout_for_fetch_elsewhere=60,
 ):
     """
@@ -123,12 +121,8 @@ def permanent_directory(
     fetchfunc -- A function taking a single positional argument (the
                  destination directory as a pathlib.Path). The function must
                  populate the given directory with the desired cached content.
-
-    Keyword arguments:
-    cachedir -- The root cache directory (default: default_cachedir()).
+    cachedir -- The root cache directory.
     """
-    if not cachedir:
-        cachedir = default_cachedir()
     if not isinstance(cachedir, Path):
         cachedir = Path(cachedir)
 
