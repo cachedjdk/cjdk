@@ -44,7 +44,7 @@ environments and build tooling (such as Git hooks).
 
 ## Requirements
 
-No pre-installed JDK or JRE is required. Python 3.9 or later is required.
+No pre-installed JDK or JRE is required. Python 3.8 or later is required.
 
 ## Installing
 
