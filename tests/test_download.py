@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import stat
+import sys
 import tarfile
 import zipfile
 
@@ -70,8 +71,9 @@ def test_extract_zip(tmp_path):
     assert (extracted / "b").is_file()
     assert (extracted / "c").is_dir()
     assert (extracted / "c" / "d").is_file()
-    assert not (extracted / "a").stat().st_mode & stat.S_IEXEC
-    assert (extracted / "b").stat().st_mode & stat.S_IXUSR
+    if sys.platform != "win32":
+        assert not (extracted / "a").stat().st_mode & stat.S_IEXEC
+        assert (extracted / "b").stat().st_mode & stat.S_IXUSR
 
 
 def test_extract_tar(tmp_path):
@@ -96,5 +98,6 @@ def test_extract_tar(tmp_path):
     assert (extracted / "b").is_file()
     assert (extracted / "c").is_dir()
     assert (extracted / "c" / "d").is_file()
-    assert not (extracted / "a").stat().st_mode & stat.S_IEXEC
-    assert (extracted / "b").stat().st_mode & stat.S_IXUSR
+    if sys.platform != "win32":
+        assert not (extracted / "a").stat().st_mode & stat.S_IEXEC
+        assert (extracted / "b").stat().st_mode & stat.S_IXUSR

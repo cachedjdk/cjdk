@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import os
+import sys
 from pathlib import Path
 
 import pytest
@@ -52,8 +53,9 @@ def test_read_vendor_version():
 
 def test_default_cachedir(monkeypatch):
     f = _conf.default_cachedir
-    monkeypatch.setenv("CJDK_CACHE_DIR", "/a/b/c")
-    assert f() == Path("/a/b/c")
+    testdir = "C:\\b\\a" if sys.platform == "win32" else "/a/b/c"
+    monkeypatch.setenv("CJDK_CACHE_DIR", testdir)
+    assert f() == Path(testdir)
     monkeypatch.delenv("CJDK_CACHE_DIR")
     assert Path.home() in f().parents
     assert "cache" in str(f().relative_to(Path.home())).lower()
