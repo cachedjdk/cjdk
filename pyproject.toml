@@ -11,7 +11,7 @@ name = "cjdk"
 version = "0.1.0.dev0"
 description = "Download JDK or JRE distributions on the fly"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.8"
 license = {file = "LICENSE.txt"}
 keywords = ["Java", "JDK", "JRE", "JVM"]
 authors = [

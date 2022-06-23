@@ -5,6 +5,7 @@
 import contextlib
 import hashlib
 import shutil
+import sys
 import time
 import urllib
 from pathlib import Path
@@ -44,7 +45,10 @@ def _key_for_url(url):
 
     normalized = "/".join(percent_reencode(i) for i in items)
 
-    hasher = hashlib.sha1(usedforsecurity=False)
+    hasher_kwargs = {}
+    if sys.version_info >= (3, 9):
+        hasher_kwargs["usedforsecurity"] = False
+    hasher = hashlib.sha1(**hasher_kwargs)
     hasher.update(normalized.encode())
     return hasher.hexdigest().lower()
 

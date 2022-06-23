@@ -213,3 +213,12 @@ def test_is_version_compatible_with_spec():
     assert f("11.1.2.3", "11.1+")
     assert not f("11.1.2.3", "11.2+")
     assert not f("11.1.2.3", "12+")
+
+
+def test_str_removeprefix():
+    f = _index._str_removeprefix
+    assert f("", "") == ""
+    assert f("", "x") == ""
+    assert f("x", "x") == ""
+    assert f("xy", "x") == "y"
+    assert f("xy", "z") == "xy"
