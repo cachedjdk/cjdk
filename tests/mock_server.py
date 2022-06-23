@@ -56,6 +56,10 @@ def _start(
         app = flask.Flask("mock_server")
         request_count = 0
 
+        @app.route("/health")
+        def health():
+            return flask.jsonify({})
+
         @app.route("/shutdown")
         def shutdown():
             nonlocal server
@@ -111,7 +115,16 @@ def _start(
 
     th = threading.Thread(target=run_server, args=(endpoint, data))
     th.start()
-    return _MockServer(_PORT, endpoint, th)
+    server = _MockServer(_PORT, endpoint, th)
+
+    # Now wait until the server comes up
+    while True:
+        try:
+            response = requests.get(server.url("/health"))
+            if response.status_code == 200:
+                return server
+        except Exception:
+            pass
 
 
 class _MockServer:
