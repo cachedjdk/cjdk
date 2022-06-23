@@ -2,7 +2,6 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-import os
 import sys
 from pathlib import Path
 
@@ -115,9 +114,9 @@ def test_canonicalize_arch():
     assert f("s390x") != f("s390")
 
 
-def test_default_vendor():
+def test_default_vendor(monkeypatch):
     f = _conf.default_vendor
-    os.environ["CJDK_DEFAULT_VENDOR"] = "zulu"
+    monkeypatch.setenv("CJDK_DEFAULT_VENDOR", "zulu")
     assert f() == "zulu"
-    del os.environ["CJDK_DEFAULT_VENDOR"]
+    monkeypatch.delenv("CJDK_DEFAULT_VENDOR")
     assert f() == "adoptium"
