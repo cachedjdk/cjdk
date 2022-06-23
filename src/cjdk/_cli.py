@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: MIT
 
 import os
+import subprocess
+import sys
 
 import click
 
@@ -40,7 +42,12 @@ def java_home(ctx):
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def exec(ctx, prog, args):
     with _api.java_env(**ctx.obj):
-        os.execvp(prog, (prog,) + tuple(args))
+        # os.exec*() do not work well on Windows
+        if sys.platform == "win32":
+            r = subprocess.run((prog,) + tuple(args))
+            sys.exit(r.returncode)
+        else:
+            os.execvp(prog, (prog,) + tuple(args))
 
 
 main.add_command(java_home)
