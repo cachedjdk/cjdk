@@ -42,13 +42,26 @@ The ability to use simple commands to use a particular JDK, whether or not it
 is already available on the system, makes it easy to manage and share test
 environments and build tooling (such as Git hooks).
 
+**cjdk** was inspired by [Coursier](https://get-coursier.io/)'s
+[`java`](https://get-coursier.io/docs/cli-java) subcommand (and depends on
+Coursier's [JDK index](#jdk-index)). Unlike Coursier, **cjdk** does not require
+a Java runtime to bootstrap.
+
 ## Requirements
 
-No pre-installed JDK or JRE is required. Python 3.8 or later is required.
+**cjdk** is a pure-Python package. No pre-installed JDK or JRE is required.
+Python 3.8 or later is required.
 
 ## Installing
 
-To be written once package is available on PyPI.
+```sh
+pip install cjdk
+```
+
+This installs the `cjdk` Python package and the `cjdk` command-line tool.
+
+As usual, make sure you are using the right `pip` for your Python installation;
+use of a virtual environment is recommended.
 
 ## Command line interface
 
@@ -161,7 +174,7 @@ downloaded JDKs and other data. The defaults are:
   `%USERPROFILE%\AppData\Local\cjdk\cache`.
 
 You can delete this directory at any time (provided that no program is running
-using a JDK installed by cjdk).
+using a JDK installed by **cjdk**).
 
 You can override the default cache directory by setting the environment
 variable `CJDK_CACHE_DIR` to the desired directory.
