@@ -45,6 +45,7 @@ def download_jdk(
 
 def _download_large_file(destfile, srcurl, progress=True):
     response = requests.get(srcurl, stream=True)
+    response.raise_for_status()
     size = int(response.headers.get("content-length", None))
     with tqdm(
         desc="Downloading",
