@@ -16,7 +16,7 @@ _TEST_URL = "http://x.com/y"
 
 
 def test_atomic_file_uncached(tmp_path):
-    def fetch(path, **kwargs):
+    def fetch(path):
         path.touch()
         assert path.samefile(
             tmp_path
@@ -40,7 +40,7 @@ def test_atomic_file_uncached(tmp_path):
 
 
 def test_atomic_file_cached(tmp_path):
-    def fetch(path, **kwargs):
+    def fetch(path):
         assert False
 
     keydir = tmp_path / "v0" / "p" / _cache._key_for_url(_TEST_URL)
@@ -58,7 +58,7 @@ def test_atomic_file_cached(tmp_path):
 def test_atomic_file_expired(tmp_path):
     new_mtime = 0
 
-    def fetch(path, **kwargs):
+    def fetch(path):
         path.touch()
         assert path.samefile(
             tmp_path
@@ -88,7 +88,7 @@ def test_atomic_file_expired(tmp_path):
 def test_atomic_file_fetching_elsewhere(tmp_path):
     exec = ThreadPoolExecutor()
 
-    def fetch(path, **kwargs):
+    def fetch(path):
         assert False
 
     keydir = tmp_path / "v0" / "p" / _cache._key_for_url(_TEST_URL)
@@ -96,7 +96,7 @@ def test_atomic_file_fetching_elsewhere(tmp_path):
     (keydir / "testfile").touch()
 
     def other_fetch():
-        def fetch(path, **kwargs):
+        def fetch(path):
             time.sleep(0.1)
             with open(path, "w") as f:
                 f.write("other")
@@ -118,7 +118,7 @@ def test_atomic_file_fetching_elsewhere(tmp_path):
 
 
 def test_atomic_file_fetching_elsewhere_timeout(tmp_path):
-    def fetch(path, **kwargs):
+    def fetch(path):
         assert False
 
     (
@@ -140,7 +140,7 @@ def test_atomic_file_fetching_elsewhere_timeout(tmp_path):
 def test_atomic_file_open_elsewhere(tmp_path):
     exec = ThreadPoolExecutor()
 
-    def fetch(path, **kwargs):
+    def fetch(path):
         with open(path, "w") as f:
             f.write("new")
 
@@ -170,7 +170,7 @@ def test_atomic_file_open_elsewhere(tmp_path):
 def test_atomic_file_open_elsewhere_timeout(tmp_path):
     wrote_new = False
 
-    def fetch(path, **kwargs):
+    def fetch(path):
         with open(path, "w") as f:
             f.write("new")
             nonlocal wrote_new

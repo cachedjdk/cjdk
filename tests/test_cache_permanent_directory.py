@@ -15,7 +15,7 @@ _TEST_URL = "http://x.com/y"
 
 
 def test_permanent_directory_uncached(tmp_path):
-    def fetch(path, **kwargs):
+    def fetch(path):
         (path / "testfile").touch()
         assert path.samefile(
             tmp_path / "v0" / "fetching" / "p" / _cache._key_for_url(_TEST_URL)
@@ -33,7 +33,7 @@ def test_permanent_directory_uncached(tmp_path):
 
 
 def test_permanent_directory_cached(tmp_path):
-    def fetch(path, **kwargs):
+    def fetch(path):
         assert False
 
     target = tmp_path / "v0" / "p" / _cache._key_for_url(_TEST_URL)
@@ -48,11 +48,11 @@ def test_permanent_directory_cached(tmp_path):
 def test_permanent_directory_fetching_elsewhere(tmp_path):
     exec = ThreadPoolExecutor()
 
-    def fetch(path, **kwargs):
+    def fetch(path):
         assert False
 
     def other_fetch():
-        def fetch(path, **kwargs):
+        def fetch(path):
             time.sleep(0.1)
             (path / "otherfile").touch()
 
@@ -68,7 +68,7 @@ def test_permanent_directory_fetching_elsewhere(tmp_path):
 
 
 def test_permament_directory_fetching_elsewhere_timeout(tmp_path):
-    def fetch(path, **kwargs):
+    def fetch(path):
         assert False
 
     (
