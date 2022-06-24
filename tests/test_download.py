@@ -8,6 +8,7 @@ import tarfile
 import zipfile
 
 import mock_server
+import pytest
 
 from cjdk import _download
 
@@ -47,6 +48,10 @@ def test_download_large_file(tmp_path):
     assert destfile.stat().st_size == size
     with open(destfile, "rb") as f:
         assert f.read(10) == b"*" * 10
+
+    with mock_server.start() as server:
+        with pytest.raises(Exception):
+            _download._download_large_file(destfile, server.url("/error"))
 
 
 def test_extract_zip(tmp_path):

@@ -147,6 +147,16 @@ def test_fetch_index(tmp_path):
         assert "hello" in data
         assert data["hello"] == "world"
 
+    with mock_server.start() as server:
+        with pytest.raises(Exception):
+            _index._fetch_index(
+                path,
+                configure(
+                    index_url=server.url("/error"),
+                    _allow_insecure_for_testing=True,
+                ),
+            )
+
 
 def test_read_index(tmp_path):
     data = {
