@@ -4,12 +4,12 @@
 
 import time
 from concurrent.futures import ThreadPoolExecutor
+from queue import SimpleQueue
 
 import pytest
 
 from cjdk import _cache
 from cjdk._cache import permanent_directory
-
 
 _TEST_URL = "http://x.com/y"
 
@@ -47,19 +47,24 @@ def test_permanent_directory_cached(tmp_path):
 
 def test_permanent_directory_fetching_elsewhere(tmp_path):
     exec = ThreadPoolExecutor()
+    q1 = SimpleQueue()
+    q2 = SimpleQueue()
 
     def fetch(path):
         assert False
 
     def other_fetch():
         def fetch(path):
+            q1.put("other fetch started")
+            assert q2.get() == "ready to start"
             time.sleep(0.1)
             (path / "otherfile").touch()
 
         permanent_directory("p", _TEST_URL, fetch, cache_dir=tmp_path)
 
     exec.submit(other_fetch)
-    time.sleep(0.05)
+    assert q1.get() == "other fetch started"
+    q2.put("ready to start")
     cached = permanent_directory("p", _TEST_URL, fetch, cache_dir=tmp_path)
     assert cached.is_dir()
     assert (cached / "otherfile").is_file()
@@ -67,7 +72,7 @@ def test_permanent_directory_fetching_elsewhere(tmp_path):
     exec.shutdown()
 
 
-def test_permament_directory_fetching_elsewhere_timeout(tmp_path):
+def test_permanent_directory_fetching_elsewhere_timeout(tmp_path):
     def fetch(path):
         assert False
 

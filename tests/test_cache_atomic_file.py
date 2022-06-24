@@ -5,12 +5,12 @@
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
+from queue import SimpleQueue
 
 import pytest
 
 from cjdk import _cache
 from cjdk._cache import atomic_file
-
 
 _TEST_URL = "http://x.com/y"
 
@@ -87,6 +87,8 @@ def test_atomic_file_expired(tmp_path):
 
 def test_atomic_file_fetching_elsewhere(tmp_path):
     exec = ThreadPoolExecutor()
+    q1 = SimpleQueue()
+    q2 = SimpleQueue()
 
     def fetch(path):
         assert False
@@ -97,6 +99,8 @@ def test_atomic_file_fetching_elsewhere(tmp_path):
 
     def other_fetch():
         def fetch(path):
+            q1.put("other fetch started")
+            assert q2.get() == "ready to start"
             time.sleep(0.1)
             with open(path, "w") as f:
                 f.write("other")
@@ -106,7 +110,8 @@ def test_atomic_file_fetching_elsewhere(tmp_path):
         )
 
     exec.submit(other_fetch)
-    time.sleep(0.05)
+    assert q1.get() == "other fetch started"
+    q2.put("ready to start")
     cached = atomic_file(
         "p", _TEST_URL, "testfile", fetch, ttl=0, cache_dir=tmp_path
     )
@@ -139,6 +144,8 @@ def test_atomic_file_fetching_elsewhere_timeout(tmp_path):
 
 def test_atomic_file_open_elsewhere(tmp_path):
     exec = ThreadPoolExecutor()
+    q1 = SimpleQueue()
+    q2 = SimpleQueue()
 
     def fetch(path):
         with open(path, "w") as f:
@@ -149,11 +156,15 @@ def test_atomic_file_open_elsewhere(tmp_path):
     (keydir / "testfile").touch()
 
     def close_after_delay(f):
+        q1.put("other reader started")
+        assert q2.get() == "ready to start"
         time.sleep(0.1)
         f.close()
 
     with open(keydir / "testfile") as fp:
         exec.submit(close_after_delay, fp)
+        assert q1.get() == "other reader started"
+        q2.put("ready to start")
         cached = atomic_file(
             "p", _TEST_URL, "testfile", fetch, ttl=0, cache_dir=tmp_path
         )
@@ -168,13 +179,13 @@ def test_atomic_file_open_elsewhere(tmp_path):
     sys.platform != "win32", reason="applicable only to Windows"
 )
 def test_atomic_file_open_elsewhere_timeout(tmp_path):
-    wrote_new = False
+    fetch_ran = False
 
     def fetch(path):
         with open(path, "w") as f:
             f.write("new")
-            nonlocal wrote_new
-            wrote_new = True
+            nonlocal fetch_ran
+            fetch_ran = True
 
     keydir = tmp_path / "v0" / "p" / _cache._key_for_url(_TEST_URL)
     keydir.mkdir(parents=True)
@@ -192,4 +203,4 @@ def test_atomic_file_open_elsewhere_timeout(tmp_path):
                 cache_dir=tmp_path,
             )
 
-        assert wrote_new
+        assert fetch_ran
