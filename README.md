@@ -265,3 +265,15 @@ To run the tests (best done in a virtual environment),
 pip install -e .[testing]
 pytest
 ```
+
+## Versioning
+
+**cjdk** uses [SemVer](https://semver.org/), with the API for versioning
+purposes comprising both the Python API and the command-line interface.
+
+As specified by SemVer, anything can change during the 0.x series (but the plan
+is to keep disruptive changes to a minimum).
+
+## Licensing
+
+**cjdk** is distributed under the MIT license. Please see LICENSE.txt.
