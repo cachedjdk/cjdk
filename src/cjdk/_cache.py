@@ -160,7 +160,9 @@ def _file_exists_and_is_fresh(file, ttl):
     now = time.time()
     mtime = file.stat().st_mtime
     expiration = mtime + ttl
-    return now < expiration
+    # To avoid all possibilities of races, err on the side of considering the
+    # file stale when the difference is less than 1 second.
+    return now + 1.0 < expiration
 
 
 @contextlib.contextmanager
