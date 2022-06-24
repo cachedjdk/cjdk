@@ -28,10 +28,10 @@ def test_file_exists_and_is_fresh(tmp_path):
     assert not f(path, ttl=0)
     assert not f(path, ttl=2**63)
     path.touch()
-    assert f(path, ttl=1)
-    time.sleep(0.1)
-    assert not f(path, ttl=0.05)
-    assert f(path, ttl=1)
+    assert f(path, ttl=2)
+    time.sleep(1)
+    assert not f(path, ttl=0)
+    assert f(path, ttl=3)
 
 
 def test_key_directory():
