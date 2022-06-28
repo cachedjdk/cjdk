@@ -24,7 +24,7 @@ __all__ = [
     default=True,
     help="Show progress bars.",
 )
-@click.version_option()
+@click.version_option(version=__version__)
 def main(ctx, jdk, cache_dir, progress):
     ctx.ensure_object(dict)
     ctx.obj.update(dict(jdk=jdk, cache_dir=cache_dir, progress=progress))
