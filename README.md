@@ -259,11 +259,19 @@ Clone the Git repository and make sure to enable the Git hooks by running
 `pre-commit install`. You can install [pre-commit](https://pre-commit.com/)
 using `pip`, `brew`, and other means.
 
-To run the tests (best done in a virtual environment),
+To run the tests using an editable install (best done in a virtual
+environment),
 
 ```sh
 pip install -e .[testing]
 pytest
+```
+
+To run the tests as they are run by CI, use Nox:
+
+```sh
+pip install nox
+nox
 ```
 
 ## Versioning
