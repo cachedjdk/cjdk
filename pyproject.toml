@@ -3,12 +3,14 @@
 # SPDX-License-Identifier: MIT
 
 [build-system]
-requires = ["setuptools>=43"]
+requires = [
+    "setuptools>=43",
+    "setuptools_scm[toml]>=6.2",
+]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "cjdk"
-version = "0.1.2.dev0"
 description = "Download JDK or JRE distributions on the fly"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -43,6 +45,9 @@ repository = "https://github.com/marktsuchida/cjdk"
 
 [project.scripts]
 cjdk = "cjdk._cli:main"
+
+[tool.setuptools_scm]
+write_to = "src/cjdk/_version.py"
 
 [tool.black]
 line-length = 79

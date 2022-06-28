@@ -12,7 +12,9 @@ def test_version():
     # is translated to '.dev0' for PEP 440 format.
 
     parts = cjdk.__version__.split(".")
-    assert len(parts) in (3, 4)
+    assert len(parts) >= 3
+    if len(parts) > 3:
+        assert parts[3].startswith("dev")
 
     n = r"(([1-9][0-9]*)|0)"
     assert re.fullmatch(n, "0")
@@ -24,5 +26,3 @@ def test_version():
     assert re.fullmatch(n, parts[0])
     assert re.fullmatch(n, parts[1])
     assert re.fullmatch(n, parts[2])
-    if len(parts) == 4:
-        assert parts[3] == "dev0"
