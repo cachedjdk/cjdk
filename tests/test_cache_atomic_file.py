@@ -191,7 +191,7 @@ def test_atomic_file_open_elsewhere_timeout(tmp_path):
     keydir.mkdir(parents=True)
     (keydir / "testfile").touch()
 
-    with open(keydir / "testfile") as fp:
+    with open(keydir / "testfile"):
         with pytest.raises(Exception):
             atomic_file(
                 "p",

@@ -143,7 +143,6 @@ def _match_version(vendor, candidates, requested):
         normcands[normcand] = candidate
 
     # Find the newest candidate compatible with the request
-    match_elems = None
     for normcand in sorted(normcands.keys(), reverse=True):
         if _is_version_compatible_with_spec(normcand, normreq):
             return normcands[normcand]

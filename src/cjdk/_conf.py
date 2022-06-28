@@ -9,8 +9,6 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import _index
-
 __all__ = [
     "Configuration",
     "configure",

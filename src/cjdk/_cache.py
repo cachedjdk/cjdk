@@ -173,7 +173,7 @@ def _create_key_tmpdir(cache_dir, key):
     already_exists = False
     try:
         tmpdir.mkdir()
-    except FileExistsError as e:
+    except FileExistsError:
         # Avoid yielding here, because that would mean doing stuff "while
         # handling an exception". If the stuff has an error (including
         # KeyboardInterrupt), we have a problem.

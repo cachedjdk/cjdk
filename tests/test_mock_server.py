@@ -7,7 +7,7 @@ import requests
 
 
 def test_shutdown():
-    with mock_server.start() as server:
+    with mock_server.start():
         pass
 
 

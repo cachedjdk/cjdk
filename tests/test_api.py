@@ -5,7 +5,6 @@
 import json
 import os
 import zipfile
-from pathlib import Path
 
 import mock_server
 
@@ -86,7 +85,7 @@ def test_java_env(tmp_path):
     (jdk_dir / "bin").mkdir(parents=True)
     (jdk_dir / "bin" / "java").touch()
 
-    with mock_server.start() as server:  # No requests expected
+    with mock_server.start():  # No requests expected
         old_java_home = os.environ.get("JAVA_HOME", None)
         old_path = os.environ.get("PATH", None)
         with _api.java_env(
