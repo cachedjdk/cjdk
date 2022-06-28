@@ -29,6 +29,8 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Full history needed for setuptools_scm
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
@@ -49,6 +51,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Full history needed for setuptools_scm
       - uses: actions/setup-python@v4
         with:
           python-version: "3.8"
