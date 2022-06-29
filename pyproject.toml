@@ -54,5 +54,8 @@ write_to = "src/cjdk/_version.py"
 line-length = 79
 target-version = ["py37"]
 
+[tool.isort]
+profile = "black"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -5,7 +5,7 @@
 import os
 from contextlib import contextmanager
 
-from . import _jdk, _conf
+from . import _conf, _jdk
 
 __all__ = [
     "java_env",
