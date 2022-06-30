@@ -25,6 +25,12 @@ pip install nox
 nox
 ```
 
+To build the documentation, use
+
+```sh
+nox -s docs
+```
+
 ## Versioning
 
 **cjdk** uses [SemVer](https://semver.org/), with the API for versioning
