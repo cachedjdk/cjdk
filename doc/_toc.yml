@@ -5,5 +5,12 @@
 format: jb-book
 root: overview
 chapters:
+  - file: install
+  - file: cachedir
+  - file: jdk-index
+  - file: vendors
+  - file: versions
   - file: api
   - file: cli
+  - file: environ
+  - file: development

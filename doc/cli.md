@@ -15,6 +15,10 @@ option.
 ```{command-output} cjdk --help
 ```
 
+More details about the choices and defaults for [`VENDOR`](./vendors.md),
+[`VERSION`](./versions.md), and [`--cache_dir`](./cachedir.md) are available on
+separate pages.
+
 ## `exec`
 
 ```{command-output} cjdk exec --help
