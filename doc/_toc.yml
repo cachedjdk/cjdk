@@ -6,3 +6,4 @@ format: jb-book
 root: overview
 chapters:
   - file: api
+  - file: cli
