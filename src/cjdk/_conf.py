@@ -191,9 +191,8 @@ def _default_vendor():
     """
     Return the default vendor.
 
-    This is either from the environment variable CJDK_DEFAULT_VENDOR, or
-    "adoptium".
+    This is either from the environment variable CJDK_VENDOR, or "adoptium".
     """
-    if "CJDK_DEFAULT_VENDOR" in os.environ:
-        return os.environ["CJDK_DEFAULT_VENDOR"]
+    if "CJDK_VENDOR" in os.environ:
+        return os.environ["CJDK_VENDOR"]
     return "adoptium"

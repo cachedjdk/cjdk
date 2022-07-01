@@ -12,8 +12,7 @@ select a particular series of JDKs. These names are referred to as "vendors",
 even though they do not map 1:1 to companies.
 
 If no vendor is specified, `adoptium` is used unless the environment variable
-[`CJDK_DEFAULT_VENDOR`](environ-cjdk-default-vendor) is set to an alternative
-default.
+[`CJDK_VENDOR`](environ-cjdk-vendor) is set to an alternative default.
 
 ## About available vendors
 

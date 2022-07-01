@@ -110,7 +110,7 @@ def test_canonicalize_arch():
 
 def test_default_vendor(monkeypatch):
     f = _conf._default_vendor
-    monkeypatch.setenv("CJDK_DEFAULT_VENDOR", "zulu")
+    monkeypatch.setenv("CJDK_VENDOR", "zulu")
     assert f() == "zulu"
-    monkeypatch.delenv("CJDK_DEFAULT_VENDOR")
+    monkeypatch.delenv("CJDK_VENDOR")
     assert f() == "adoptium"
