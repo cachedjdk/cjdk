@@ -12,11 +12,6 @@ from pathlib import Path
 __all__ = [
     "Configuration",
     "configure",
-    "default_cachedir",
-    "default_index_url",
-    "canonicalize_os",
-    "canonicalize_arch",
-    "default_vendor",
 ]
 
 
@@ -45,12 +40,12 @@ def configure(**kwargs):
         kwargs["vendor"], kwargs["version"] = _parse_vendor_version(jdk)
 
     conf = Configuration(
-        os=canonicalize_os(kwargs.pop("os", None)),
-        arch=canonicalize_arch(kwargs.pop("arch", None)),
-        vendor=kwargs.pop("vendor", None) or default_vendor(),
+        os=_canonicalize_os(kwargs.pop("os", None)),
+        arch=_canonicalize_arch(kwargs.pop("arch", None)),
+        vendor=kwargs.pop("vendor", None) or _default_vendor(),
         version=kwargs.pop("version", "") or "",
-        cache_dir=kwargs.pop("cache_dir", None) or default_cachedir(),
-        index_url=kwargs.pop("index_url", None) or default_index_url(),
+        cache_dir=kwargs.pop("cache_dir", None) or _default_cachedir(),
+        index_url=kwargs.pop("index_url", None) or _default_index_url(),
         index_ttl=kwargs.pop("index_ttl", None),
         progress=kwargs.pop("progress", True),
         _allow_insecure_for_testing=kwargs.pop(
@@ -86,7 +81,7 @@ def _parse_vendor_version(spec):
     raise ValueError(f"Cannot parse JDK spec '{spec}'")
 
 
-def default_cachedir():
+def _default_cachedir():
     """
     Return the cache directory path to be used by default.
 
@@ -100,10 +95,7 @@ def default_cachedir():
                 f"CJDK_CACHE_DIR must be an absolute path (found '{ret}')"
             )
         return ret
-    return _default_cachedir()
 
-
-def _default_cachedir():
     if sys.platform == "win32":
         return _windows_cachedir()
     elif sys.platform == "darwin":
@@ -152,7 +144,7 @@ def _xdg_cachedir(*, create=True):
     return caches / "cjdk"
 
 
-def default_index_url():
+def _default_index_url():
     # The Coursier JDK index is auto-generated, well curated, and clean.
     return "https://raw.githubusercontent.com/coursier/jvm-index/master/index.json"
 
@@ -163,7 +155,7 @@ def default_index_url():
     # "https://raw.githubusercontent.com/shyiko/jabba/master/index.json"
 
 
-def canonicalize_os(os):
+def _canonicalize_os(os):
     if not os:
         os = sys.platform
     os = os.lower()
@@ -180,7 +172,7 @@ def canonicalize_os(os):
     return os
 
 
-def canonicalize_arch(arch):
+def _canonicalize_arch(arch):
     if not arch:
         arch = platform.machine()
     arch = arch.lower()
@@ -195,7 +187,7 @@ def canonicalize_arch(arch):
     return arch
 
 
-def default_vendor():
+def _default_vendor():
     """
     Return the default vendor.
 

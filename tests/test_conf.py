@@ -16,7 +16,7 @@ def test_configure():
     conf = f(vendor="temurin", version="17")
     assert conf.vendor == "temurin"
     assert conf.version == "17"
-    assert conf.cache_dir == _conf.default_cachedir()
+    assert conf.cache_dir == _conf._default_cachedir()
 
     with pytest.raises(ValueError):
         f(vendor="temurin", jdk="temurin:17")
@@ -28,7 +28,7 @@ def test_configure():
     assert conf.version == "17"
 
     conf = f(jdk=":")
-    assert conf.vendor == _conf.default_vendor()
+    assert conf.vendor == _conf._default_vendor()
     assert not conf.version
 
     conf = f(cache_dir="abc")
@@ -51,17 +51,11 @@ def test_read_vendor_version():
 
 
 def test_default_cachedir(monkeypatch):
-    f = _conf.default_cachedir
+    f = _conf._default_cachedir
     testdir = "C:\\b\\a" if sys.platform == "win32" else "/a/b/c"
     monkeypatch.setenv("CJDK_CACHE_DIR", testdir)
     assert f() == Path(testdir)
     monkeypatch.delenv("CJDK_CACHE_DIR")
-    assert Path.home() in f().parents
-    assert "cache" in str(f().relative_to(Path.home())).lower()
-
-
-def test__default_cachedir():
-    f = _conf._default_cachedir
     assert Path.home() in f().parents
     assert "cache" in str(f().relative_to(Path.home())).lower()
 
@@ -88,7 +82,7 @@ def test_xdg_cachedir(monkeypatch):
 
 
 def test_canonicalize_os():
-    f = _conf.canonicalize_os
+    f = _conf._canonicalize_os
     f(None)  # Current OS
     assert f("Win32") == "windows"
     assert f("macOS") == "darwin"
@@ -97,7 +91,7 @@ def test_canonicalize_os():
 
 
 def test_canonicalize_arch():
-    f = _conf.canonicalize_arch
+    f = _conf._canonicalize_arch
     f(None)  # Current architecture
     aliases = {
         "x86": ["386", "i386", "586", "i586", "686", "i686", "X86"],
@@ -115,7 +109,7 @@ def test_canonicalize_arch():
 
 
 def test_default_vendor(monkeypatch):
-    f = _conf.default_vendor
+    f = _conf._default_vendor
     monkeypatch.setenv("CJDK_DEFAULT_VENDOR", "zulu")
     assert f() == "zulu"
     monkeypatch.delenv("CJDK_DEFAULT_VENDOR")
