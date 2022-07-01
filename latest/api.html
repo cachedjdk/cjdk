@@ -299,26 +299,13 @@ SPDX-License-Identifier: MIT
 <dt class="sig sig-object py" id="cjdk.java_home">
 <span class="sig-prename descclassname"><span class="pre">cjdk.</span></span><span class="sig-name descname"><span class="pre">java_home</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vendor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cjdk.java_home" title="Permalink to this definition">#</a></dt>
 <dd><p>Return the JDK home directory for the given JDK, installing if necessary.</p>
+<p>Parameters are the same as for install_jdk().</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vendor</strong> (<em>str</em><em>, </em><em>optional</em>) – JDK vendor name, such as “adoptium”.</p></li>
-<li><p><strong>version</strong> (<em>str</em><em>, </em><em>optional</em>) – JDK version expression, such as “17+”.</p></li>
-<li><p><strong>jdk</strong> (<em>str</em><em>, </em><em>optional</em>) – JDK vendor and version, such as “adoptium:17+”. Cannot be specified
-together with <cite>vendor</cite> or <cite>version</cite>.</p></li>
-<li><p><strong>cache_dir</strong> (<em>pathlib.Path</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – Override the root cache directory.</p></li>
-<li><p><strong>index_url</strong> (<em>str</em><em>, </em><em>optional</em>) – Alternative URL for the JDK index.</p></li>
-<li><p><strong>index_ttl</strong> (<em>int</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – Time to live (in seconds) for the cached index.</p></li>
-<li><p><strong>os</strong> (<em>str</em><em>, </em><em>optional</em>) – Operating system for the JDK (default: current operating system).</p></li>
-<li><p><strong>arch</strong> (<em>str</em><em>, </em><em>optional</em>) – CPU architecture for the JDK (default: current architecture).</p></li>
-<li><p><strong>progress</strong> (<em>bool</em><em>, </em><em>default: True</em>) – Whether to show progress bars.</p></li>
-</ul>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The JDK home directory satisfying the requested parameters.</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The JDK home directory satisfying the requested parameters.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pathlib.Path</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pathlib.Path</p>
 </dd>
 </dl>
 </dd></dl>
@@ -328,22 +315,11 @@ together with <cite>vendor</cite> or <cite>version</cite>.</p></li>
 <span class="sig-prename descclassname"><span class="pre">cjdk.</span></span><span class="sig-name descname"><span class="pre">java_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vendor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_bin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cjdk.java_env" title="Permalink to this definition">#</a></dt>
 <dd><p>Context manager to set environment variables for the given JDK, installing
 if necessary.</p>
+<p>Parameters are the same as for install_jdk(), with the following addition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vendor</strong> (<em>str</em><em>, </em><em>optional</em>) – JDK vendor name, such as “adoptium”.</p></li>
-<li><p><strong>version</strong> (<em>str</em><em>, </em><em>optional</em>) – JDK version expression, such as “17+”.</p></li>
-<li><p><strong>add_bin</strong> (<em>bool</em><em>, </em><em>default: True</em>) – Whether to prepend the Java “bin” directory to <cite>PATH</cite>, in addition to
-setting <cite>JAVA_HOME</cite>. If false, <cite>PATH</cite> is not modified.</p></li>
-<li><p><strong>jdk</strong> (<em>str</em><em>, </em><em>optional</em>) – JDK vendor and version, such as “adoptium:17+”. Cannot be specified
-together with <cite>vendor</cite> or <cite>version</cite>.</p></li>
-<li><p><strong>cache_dir</strong> (<em>pathlib.Path</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – Override the root cache directory.</p></li>
-<li><p><strong>index_url</strong> (<em>str</em><em>, </em><em>optional</em>) – Alternative URL for the JDK index.</p></li>
-<li><p><strong>index_ttl</strong> (<em>int</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – Time to live (in seconds) for the cached index.</p></li>
-<li><p><strong>os</strong> (<em>str</em><em>, </em><em>optional</em>) – Operating system for the JDK (default: current operating system).</p></li>
-<li><p><strong>arch</strong> (<em>str</em><em>, </em><em>optional</em>) – CPU architecture for the JDK (default: current architecture).</p></li>
-<li><p><strong>progress</strong> (<em>bool</em><em>, </em><em>default: True</em>) – Whether to show progress bars.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>add_bin</strong> (<em>bool</em><em>, </em><em>default: True</em>) – Whether to prepend the Java “bin” directory to <cite>PATH</cite>, in addition to
+setting <cite>JAVA_HOME</cite>. If false, <cite>PATH</cite> is not modified.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Context manager that temporarily sets the <cite>JAVA_HOME</cite> and (optionally)
@@ -356,9 +332,35 @@ parameters. Its value is the JDK home directory.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="cjdk.install_jdk">
+<span class="sig-prename descclassname"><span class="pre">cjdk.</span></span><span class="sig-name descname"><span class="pre">install_jdk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vendor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cjdk.install_jdk" title="Permalink to this definition">#</a></dt>
+<dd><p>Download and install the given JDK if it is not already cached.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vendor</strong> (<em>str</em><em>, </em><em>optional</em>) – JDK vendor name, such as “adoptium”.</p></li>
+<li><p><strong>version</strong> (<em>str</em><em>, </em><em>optional</em>) – JDK version expression, such as “17+”.</p></li>
+<li><p><strong>jdk</strong> (<em>str</em><em>, </em><em>optional</em>) – JDK vendor and version, such as “adoptium:17+”. Cannot be specified
+together with <cite>vendor</cite> or <cite>version</cite>.</p></li>
+<li><p><strong>cache_dir</strong> (<em>pathlib.Path</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – Override the root cache directory.</p></li>
+<li><p><strong>index_url</strong> (<em>str</em><em>, </em><em>optional</em>) – Alternative URL for the JDK index.</p></li>
+<li><p><strong>index_ttl</strong> (<em>int</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – Time to live (in seconds) for the cached index.</p></li>
+<li><p><strong>os</strong> (<em>str</em><em>, </em><em>optional</em>) – Operating system for the JDK (default: current operating system).</p></li>
+<li><p><strong>arch</strong> (<em>str</em><em>, </em><em>optional</em>) – CPU architecture for the JDK (default: current architecture).</p></li>
+<li><p><strong>progress</strong> (<em>bool</em><em>, </em><em>default: True</em>) – Whether to show progress bars.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <p>More details about the choices and defaults for <a class="reference internal" href="vendors.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">vendor</span></code></span></a>,
-<a class="reference internal" href="versions.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">version</span></code></span></a>, <a class="reference internal" href="cachedir.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">cache_dir</span></code></span></a>, and
-<a class="reference internal" href="jdk-index.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">index_url</span></code></span></a> are available on separate pages.</p>
+<a class="reference internal" href="versions.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">version</span></code></span></a>, <a class="reference internal" href="cachedir.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">cache_dir</span></code></span></a>,
+<a class="reference internal" href="jdk-index.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">index_url</span></code></span></a>, and <a class="reference internal" href="jdk-index.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">index_ttl</span></code></span></a> are available
+on separate pages.</p>
 </section>
 
     <script type="text/x-thebe-config">
