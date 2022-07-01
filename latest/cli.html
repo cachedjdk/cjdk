@@ -384,6 +384,10 @@ Usage: cjdk [OPTIONS] COMMAND [ARGS]...
 Options:
   -j, --jdk VENDOR:VERSION    Specify JDK vendor and version.
   --cache-dir DIR             Override root cache directory.
+  --index-url URL             Use alternative JDK index URL.
+  --index-ttl SECONDS         Time to live for cached JDK index.
+  --os NAME                   Operating system for JDK.
+  --arch NAME                 Architecture for JDK.
   --progress / --no-progress  Show or do not show progress bars.
   --version                   Show the version and exit.
   --help                      Show this message and exit.
@@ -441,10 +445,12 @@ Options:
 </div>
 <p>For example, to print the Java home directory for the Temurin JRE 17.0.3,
 installing it if necessary:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>cjdk --jdk temurin-jre:17.0.3 java-home
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ cjdk --jdk temurin-jre:17.0.3 java-home
+/Users/mark/Library/Caches/cjdk/v0/jdks/0f77e52f812d326e1137d7a22b81d6c328679c68/jdk-17.0.3+7-jre/Contents/Home
 </pre></div>
 </div>
-<p>(Output will depend on your operating system and configuration.)</p>
+<p>(The output will depend on your operating system and configuration; the example
+shown was on macOS.)</p>
 </section>
 </section>
 
