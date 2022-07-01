@@ -39,7 +39,9 @@ For example, to print the Java home directory for the Temurin JRE 17.0.3,
 installing it if necessary:
 
 ```text
-cjdk --jdk temurin-jre:17.0.3 java-home
+$ cjdk --jdk temurin-jre:17.0.3 java-home
+/Users/mark/Library/Caches/cjdk/v0/jdks/0f77e52f812d326e1137d7a22b81d6c328679c68/jdk-17.0.3+7-jre/Contents/Home
 ```
 
-(Output will depend on your operating system and configuration.)
+(The output will depend on your operating system and configuration; the example
+shown was on macOS.)
