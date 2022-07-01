@@ -160,26 +160,26 @@ def _default_index_ttl():
     return int(os.environ.get("CJDK_INDEX_TTL", "86400"))
 
 
-def _canonicalize_os(os):
-    if not os:
-        os = sys.platform
-    os = os.lower()
+def _canonicalize_os(osname):
+    if not osname:
+        osname = os.environ.get("CJDK_OS", sys.platform)
+    osname = osname.lower()
 
-    if os == "win32":
-        os = "windows"
-    elif os == "macos":
-        os = "darwin"
-    elif os.startswith("aix"):
-        os = "aix"
-    elif os.startswith("solaris"):
-        os = "solaris"
+    if osname == "win32":
+        osname = "windows"
+    elif osname == "macos":
+        osname = "darwin"
+    elif osname.startswith("aix"):
+        osname = "aix"
+    elif osname.startswith("solaris"):
+        osname = "solaris"
 
-    return os
+    return osname
 
 
 def _canonicalize_arch(arch):
     if not arch:
-        arch = platform.machine()
+        arch = os.environ.get("CJDK_ARCH", platform.machine())
     arch = arch.lower()
 
     if arch in ("x86_64", "x86-64", "x64"):

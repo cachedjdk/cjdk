@@ -103,8 +103,12 @@ def test_default_index_ttl(monkeypatch):
     assert f() == 24 * 3600
 
 
-def test_canonicalize_os():
+def test_canonicalize_os(monkeypatch):
     f = _conf._canonicalize_os
+    monkeypatch.setenv("CJDK_OS", "aix10")
+    assert f(None) == "aix"
+    assert f("linux") == "linux"
+    monkeypatch.delenv("CJDK_OS")
     f(None)  # Current OS
     assert f("Win32") == "windows"
     assert f("macOS") == "darwin"
@@ -112,8 +116,12 @@ def test_canonicalize_os():
     assert f("solaris100") == "solaris"
 
 
-def test_canonicalize_arch():
+def test_canonicalize_arch(monkeypatch):
     f = _conf._canonicalize_arch
+    monkeypatch.setenv("CJDK_ARCH", "aarch64")
+    assert f(None) == "arm64"
+    assert f("x86_64") == "amd64"
+    monkeypatch.delenv("CJDK_ARCH")
     f(None)  # Current architecture
     aliases = {
         "x86": ["386", "i386", "586", "i586", "686", "i686", "X86"],
