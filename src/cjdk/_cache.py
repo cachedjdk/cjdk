@@ -3,14 +3,14 @@
 # SPDX-License-Identifier: MIT
 
 import contextlib
-import hashlib
 import shutil
-import sys
 import time
 import urllib
 from pathlib import Path
 
 from tqdm.auto import tqdm
+
+from . import _compat
 
 __all__ = [
     "atomic_file",
@@ -45,10 +45,7 @@ def _key_for_url(url):
 
     normalized = "/".join(percent_reencode(i) for i in items)
 
-    hasher_kwargs = {}
-    if sys.version_info >= (3, 9):
-        hasher_kwargs["usedforsecurity"] = False
-    hasher = hashlib.sha1(**hasher_kwargs)
+    hasher = _compat.sha1_not_for_security()
     hasher.update(normalized.encode())
     return hasher.hexdigest().lower()
 

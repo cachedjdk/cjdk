@@ -4,14 +4,13 @@
 
 import json
 import re
-import sys
 import warnings
 from pathlib import Path
 from urllib.parse import urlparse
 
 import requests
 
-from . import _cache
+from . import _cache, _compat
 from ._conf import Configuration
 
 __all__ = [
@@ -49,7 +48,7 @@ def available_jdks(index, conf: Configuration):
         return []
 
     return sorted(
-        (_str_removeprefix(vendor, "jdk@"), version)
+        (_compat.str_removeprefix(vendor, "jdk@"), version)
         for vendor, versions in jdks.items()
         for version in versions
     )
@@ -196,11 +195,3 @@ def _is_version_compatible_with_spec(version, spec):
             and version[len(spec) - 1] >= spec[-1]
         )
     return len(version) >= len(spec) and version[: len(spec)] == spec
-
-
-def _str_removeprefix(s, prefix):
-    if sys.version_info >= (3, 9):
-        return s.removeprefix(prefix)
-    if s.startswith(prefix):
-        return s[len(prefix) :]
-    return s
