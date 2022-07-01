@@ -12,5 +12,5 @@ def test(session):
 @nox.session
 def docs(session):
     session.install(".")
-    session.install("-r", "doc/requirements.txt")
-    session.run("jb", "build", "doc/")
+    session.install("-r", "docs/requirements.txt")
+    session.run("jb", "build", "docs/")
