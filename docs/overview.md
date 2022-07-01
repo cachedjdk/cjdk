@@ -1,4 +1,4 @@
-# cjdk
+# Overview
 
 <!--
 This file is part of cjdk.
@@ -10,10 +10,10 @@ SPDX-License-Identifier: MIT
 download and run JDK (Java Development Kit) or JRE (Java Runtime Environment)
 distributions.
 
-Previously used JDKs are kept in the user's cache directory, so that future
-invocations do now require a download.
+Previously used JDKs are kept in the user's [cache directory](./cachedir.md),
+so that future invocations do not require a download.
 
-## What for
+Possible use cases include:
 
 - Installing exact JDK versions for reproducible testing
 - Working with multiple versions of JDKs
@@ -28,27 +28,13 @@ For example, the following command will run
 downloaded if this is the first time it is requested):
 
 ```sh
-cjdk --jdk=temurin-jre:11 exec java -jar checkstyle-10.3-all.jar -c style.xml MyApp.java
+cjdk --jdk=temurin-jre:17 exec java -jar checkstyle-10.3-all.jar -c style.xml MyApp.java
 ```
 
-See the [documentation](https://marktsuchida.github.io/cjdk/latest) for
-detailed usage.
+**cjdk** is distrubuted under the MIT license.
+
+## Acknowledgments
 
 **cjdk** was inspired by [Coursier](https://get-coursier.io/)'s
 [`java`](https://get-coursier.io/docs/cli-java) command, and uses Coursier's
-[JDK index](https://github.com/coursier/jvm-index)). Unlike Coursier, **cjdk**
-does not require a Java runtime to bootstrap.
-
-## Installing
-
-**cjdk** requires Python 3.8.
-
-```sh
-pip install cjdk
-```
-
-## [Documentation](https://marktsuchida.github.io/cjdk/latest)
-
-## Licensing
-
-**cjdk** is distributed under the MIT license. Please see LICENSE.txt.
+[JDK index](https://github.com/coursier/jvm-index).

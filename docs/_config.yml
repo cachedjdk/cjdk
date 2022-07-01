@@ -1,0 +1,13 @@
+# This file is part of cjdk.
+# Copyright 2022, Board of Regents of the University of Wisconsin System
+# SPDX-License-Identifier: MIT
+
+title: cjdk Documentation
+author: Mark A. Tsuchida
+copyright: "2022 Board of Regents of the University of Wisconsin System"
+
+sphinx:
+  extra_extensions:
+    - "sphinx.ext.autodoc"
+    - "sphinx.ext.napoleon"
+    - "sphinxcontrib.programoutput"

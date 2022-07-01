@@ -17,30 +17,65 @@ __all__ = [
 
 @click.group()
 @click.pass_context
-@click.option("--jdk", "-j", help="JDK vendor:version specifier.")
-@click.option("--cache-dir", help="Override root cache directory.")
+@click.option(
+    "--jdk",
+    "-j",
+    metavar="VENDOR:VERSION",
+    help="Specify JDK vendor and version.",
+)
+@click.option(
+    "--cache-dir", metavar="DIR", help="Override root cache directory."
+)
 @click.option(
     "--progress/--no-progress",
     default=True,
-    help="Show progress bars.",
+    help="Show or do not show progress bars.",
 )
 @click.version_option(version=__version__)
 def main(ctx, jdk, cache_dir, progress):
+    """
+    Download, cache, and run JDK or JRE distributions.
+
+    Use 'cjdk COMMAND --help' to see usage of each command.
+    The common options shown here must be given before COMMAND.
+    """
     ctx.ensure_object(dict)
     ctx.obj.update(dict(jdk=jdk, cache_dir=cache_dir, progress=progress))
 
 
-@click.command()
+@click.command(
+    short_help="Print the Java home directory for the requested JDK."
+)
 @click.pass_context
 def java_home(ctx):
+    """
+    Print the path that is suitable as the value of JAVA_HOME for the requested
+    JDK.
+
+    The JDK is downloaded if not already cached.
+
+    See `cjdk --help` for the common options used to specify the JDK and how it
+    is obtained.
+    """
     print(_api.java_home(**ctx.obj))
 
 
-@click.command(context_settings=dict(ignore_unknown_options=True))
+@click.command(
+    context_settings=dict(ignore_unknown_options=True),
+    short_help="Run a program using the requested JDK.",
+)
 @click.pass_context
 @click.argument("prog", nargs=1)
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def exec(ctx, prog, args):
+    """
+    Run PROG with the environment variables set for the requested JDK.
+
+    The JDK is download if not already cached.
+
+    See `cjdk --help` for the common options used to specify the JDK and how it
+    is obtained.
+    """
     with _api.java_env(**ctx.obj):
         # os.exec*() do not work well on Windows
         if sys.platform == "win32":

@@ -17,16 +17,35 @@ def java_home(*, vendor=None, version=None, **kwargs):
     """
     Return the JDK home directory for the given JDK, installing if necessary.
 
-    Keyword arguments:
-    vendor -- JDK vendor name
-    version -- JDK version expression
-    jdk -- string with format vendor:version
-    cache_dir -- override the root cache directory
-    index_url -- alternative URL for JDK index
-    index_ttl -- time to live (seconds) for cached index
-    os -- operating system for the JDK
-    arch -- architecture for the JDK
-    progress -- show progress if true
+    Parameters
+    ----------
+    vendor : str, optional
+        JDK vendor name, such as "adoptium".
+    version : str, optional
+        JDK version expression, such as "17+".
+
+    Other Parameters
+    ----------------
+    jdk : str, optional
+        JDK vendor and version, such as "adoptium:17+". Cannot be specified
+        together with `vendor` or `version`.
+    cache_dir : pathlib.Path or str, optional
+        Override the root cache directory.
+    index_url : str, optional
+        Alternative URL for the JDK index.
+    index_ttl : int or float, optional
+        Time to live (in seconds) for the cached index.
+    os : str, optional
+        Operating system for the JDK (default: current operating system).
+    arch : str, optional
+        CPU architecture for the JDK (default: current architecture).
+    progress : bool, default: True
+        Whether to show progress bars.
+
+    Returns
+    -------
+    pathlib.Path
+        The JDK home directory satisfying the requested parameters.
     """
     conf = _conf.configure(vendor=vendor, version=version, **kwargs)
     path = _jdk.install_jdk(conf)
@@ -36,11 +55,43 @@ def java_home(*, vendor=None, version=None, **kwargs):
 @contextmanager
 def java_env(*, vendor=None, version=None, add_bin=True, **kwargs):
     """
-    Context manager to set environment for the given JDK, installing if
-    necessary.
+    Context manager to set environment variables for the given JDK, installing
+    if necessary.
 
-    Keyword arguments: Same as java_home(), plus
-    add_bin -- if False, do not modify PATH; set only JAVA_HOME
+    Parameters
+    ----------
+    vendor : str, optional
+        JDK vendor name, such as "adoptium".
+    version : str, optional
+        JDK version expression, such as "17+".
+    add_bin : bool, default: True
+        Whether to prepend the Java "bin" directory to `PATH`, in addition to
+        setting `JAVA_HOME`. If false, `PATH` is not modified.
+
+    Other Parameters
+    ----------------
+    jdk : str, optional
+        JDK vendor and version, such as "adoptium:17+". Cannot be specified
+        together with `vendor` or `version`.
+    cache_dir : pathlib.Path or str, optional
+        Override the root cache directory.
+    index_url : str, optional
+        Alternative URL for the JDK index.
+    index_ttl : int or float, optional
+        Time to live (in seconds) for the cached index.
+    os : str, optional
+        Operating system for the JDK (default: current operating system).
+    arch : str, optional
+        CPU architecture for the JDK (default: current architecture).
+    progress : bool, default: True
+        Whether to show progress bars.
+
+    Returns
+    -------
+    ContextManager[pathlib.Path]
+        Context manager that temporarily sets the `JAVA_HOME` and (optionally)
+        `PATH` environment variables for the JDK satisfying the requested
+        parameters. Its value is the JDK home directory.
     """
     home = java_home(vendor=vendor, version=version, **kwargs)
     with _env_var_set("JAVA_HOME", str(home)):
