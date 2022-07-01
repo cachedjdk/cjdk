@@ -53,11 +53,11 @@ def configure(**kwargs):
         ),
     )
 
-    if conf.index_ttl is None:
-        conf.index_ttl = 86400
-
     if not isinstance(conf.cache_dir, Path):
         conf.cache_dir = Path(conf.cache_dir)
+
+    if conf.index_ttl is None:
+        conf.index_ttl = 86400
 
     if kwargs:
         raise ValueError(f"Unrecognized kwargs: {tuple(kwargs.keys())}")

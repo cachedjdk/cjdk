@@ -34,6 +34,11 @@ def test_configure():
     conf = f(cache_dir="abc")
     assert conf.cache_dir == Path("abc")
 
+    conf = f(index_ttl=0)
+    assert conf.index_ttl == 0
+    conf = f(index_ttl=None)
+    assert conf.index_ttl == 86400
+
 
 def test_read_vendor_version():
     f = _conf._parse_vendor_version
