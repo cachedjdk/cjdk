@@ -51,12 +51,15 @@ def configure(**kwargs):
         version=kwargs.pop("version", "") or "",
         cache_dir=kwargs.pop("cache_dir", None) or default_cachedir(),
         index_url=kwargs.pop("index_url", None) or default_index_url(),
-        index_ttl=kwargs.pop("index_ttl", 86400),
+        index_ttl=kwargs.pop("index_ttl", None),
         progress=kwargs.pop("progress", True),
         _allow_insecure_for_testing=kwargs.pop(
             "_allow_insecure_for_testing", False
         ),
     )
+
+    if conf.index_ttl is None:
+        conf.index_ttl = 86400
 
     if not isinstance(conf.cache_dir, Path):
         conf.cache_dir = Path(conf.cache_dir)

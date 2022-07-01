@@ -27,12 +27,23 @@ __all__ = [
     "--cache-dir", metavar="DIR", help="Override root cache directory."
 )
 @click.option(
+    "--index-url", metavar="URL", help="Use alternative JDK index URL."
+)
+@click.option(
+    "--index-ttl",
+    type=int,
+    metavar="SECONDS",
+    help="Time to live for cached JDK index.",
+)
+@click.option("--os", metavar="NAME", help="Operating system for JDK.")
+@click.option("--arch", metavar="NAME", help="Architecture for JDK.")
+@click.option(
     "--progress/--no-progress",
     default=True,
     help="Show or do not show progress bars.",
 )
 @click.version_option(version=__version__)
-def main(ctx, jdk, cache_dir, progress):
+def main(ctx, jdk, cache_dir, index_url, index_ttl, os, arch, progress):
     """
     Download, cache, and run JDK or JRE distributions.
 
@@ -40,7 +51,17 @@ def main(ctx, jdk, cache_dir, progress):
     The common options shown here must be given before COMMAND.
     """
     ctx.ensure_object(dict)
-    ctx.obj.update(dict(jdk=jdk, cache_dir=cache_dir, progress=progress))
+    ctx.obj.update(
+        dict(
+            jdk=jdk,
+            cache_dir=cache_dir,
+            index_url=index_url,
+            index_ttl=index_ttl,
+            os=os,
+            arch=arch,
+            progress=progress,
+        )
+    )
 
 
 @click.command(
