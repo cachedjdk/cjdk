@@ -31,8 +31,8 @@ downloaded if this is the first time it is requested):
 cjdk --jdk=temurin-jre:11 exec java -jar checkstyle-10.3-all.jar -c style.xml MyApp.java
 ```
 
-See the [documentation](https://marktsuchida.github.io/cjdk) for detailed
-usage.
+See the [documentation](https://marktsuchida.github.io/cjdk/latest) for
+detailed usage.
 
 **cjdk** was inspired by [Coursier](https://get-coursier.io/)'s
 [`java`](https://get-coursier.io/docs/cli-java) command, and uses Coursier's
@@ -47,7 +47,7 @@ does not require a Java runtime to bootstrap.
 pip install cjdk
 ```
 
-## [Documentation](https://marktsuchida.github.io/cjdk)
+## [Documentation](https://marktsuchida.github.io/cjdk/latest)
 
 ## Licensing
 
