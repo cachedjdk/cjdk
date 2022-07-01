@@ -11,6 +11,11 @@ import mock_server
 from cjdk import _api, _cache, _index, _jdk
 
 
+def test_install_jdk():
+    # The code path is a subset of java_home(), so no need for separate test.
+    pass
+
+
 def test_java_home(tmp_path):
     originals = tmp_path / "orig"
     originals.mkdir()

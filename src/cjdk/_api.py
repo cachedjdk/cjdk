@@ -8,14 +8,15 @@ from contextlib import contextmanager
 from . import _conf, _jdk
 
 __all__ = [
+    "install_jdk",
     "java_env",
     "java_home",
 ]
 
 
-def java_home(*, vendor=None, version=None, **kwargs):
+def install_jdk(*, vendor=None, version=None, **kwargs):
     """
-    Return the JDK home directory for the given JDK, installing if necessary.
+    Download and install the given JDK if it is not already cached.
 
     Parameters
     ----------
@@ -44,6 +45,20 @@ def java_home(*, vendor=None, version=None, **kwargs):
 
     Returns
     -------
+    None
+    """
+    conf = _conf.configure(vendor=vendor, version=version, **kwargs)
+    _jdk.install_jdk(conf)
+
+
+def java_home(*, vendor=None, version=None, **kwargs):
+    """
+    Return the JDK home directory for the given JDK, installing if necessary.
+
+    Parameters are the same as for install_jdk().
+
+    Returns
+    -------
     pathlib.Path
         The JDK home directory satisfying the requested parameters.
     """
@@ -58,33 +73,13 @@ def java_env(*, vendor=None, version=None, add_bin=True, **kwargs):
     Context manager to set environment variables for the given JDK, installing
     if necessary.
 
+    Parameters are the same as for install_jdk(), with the following addition.
+
     Parameters
     ----------
-    vendor : str, optional
-        JDK vendor name, such as "adoptium".
-    version : str, optional
-        JDK version expression, such as "17+".
     add_bin : bool, default: True
         Whether to prepend the Java "bin" directory to `PATH`, in addition to
         setting `JAVA_HOME`. If false, `PATH` is not modified.
-
-    Other Parameters
-    ----------------
-    jdk : str, optional
-        JDK vendor and version, such as "adoptium:17+". Cannot be specified
-        together with `vendor` or `version`.
-    cache_dir : pathlib.Path or str, optional
-        Override the root cache directory.
-    index_url : str, optional
-        Alternative URL for the JDK index.
-    index_ttl : int or float, optional
-        Time to live (in seconds) for the cached index.
-    os : str, optional
-        Operating system for the JDK (default: current operating system).
-    arch : str, optional
-        CPU architecture for the JDK (default: current architecture).
-    progress : bool, default: True
-        Whether to show progress bars.
 
     Returns
     -------

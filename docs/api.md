@@ -14,6 +14,11 @@ SPDX-License-Identifier: MIT
 .. autofunction:: cjdk.java_env
 ```
 
+```{eval-rst}
+.. autofunction:: cjdk.install_jdk
+```
+
 More details about the choices and defaults for [`vendor`](./vendors.md),
-[`version`](./versions.md), [`cache_dir`](./cachedir.md), and
-[`index_url`](./jdk-index.md) are available on separate pages.
+[`version`](./versions.md), [`cache_dir`](./cachedir.md),
+[`index_url`](./jdk-index.md), and [`index_ttl`](./jdk-index.md) are available
+on separate pages.
