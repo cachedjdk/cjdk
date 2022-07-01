@@ -86,6 +86,23 @@ def test_xdg_cachedir(monkeypatch):
     assert f(create=False) == Path.home() / ".cache" / "cjdk"
 
 
+def test_default_index_url(monkeypatch):
+    f = _conf._default_index_url
+    monkeypatch.setenv("CJDK_INDEX_URL", "https://example.com/index.json")
+    assert f() == "https://example.com/index.json"
+    monkeypatch.delenv("CJDK_INDEX_URL")
+    assert f().startswith("https://raw.githubusercontent.com/")
+    assert f().endswith(".json")
+
+
+def test_default_index_ttl(monkeypatch):
+    f = _conf._default_index_ttl
+    monkeypatch.setenv("CJDK_INDEX_TTL", "0")
+    assert f() == 0
+    monkeypatch.delenv("CJDK_INDEX_TTL")
+    assert f() == 24 * 3600
+
+
 def test_canonicalize_os():
     f = _conf._canonicalize_os
     f(None)  # Current OS
