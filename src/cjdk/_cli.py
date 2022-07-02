@@ -64,13 +64,11 @@ def main(ctx, jdk, cache_dir, index_url, index_ttl, os, arch, progress):
     )
 
 
-@click.command(short_help="Install the requested JDK.")
+@click.command(short_help="Ensure the requested JDK is cached.")
 @click.pass_context
-def install(ctx):
+def cache_jdk(ctx):
     """
-    Install the requested JDK, but do not do anything with it.
-
-    The JDK is downloaded if not already cached.
+    Download and extract the requested JDK if it is not already cached.
 
     Usually there is no need to invoke this command on its own, but it may be
     useful if you want any potentil JDK download to happen at a controlled
@@ -79,7 +77,7 @@ def install(ctx):
     See `cjdk --help` for the common options used to specify the JDK and how it
     is obtained.
     """
-    _api.install_jdk(**ctx.obj)
+    _api.cache_jdk(**ctx.obj)
 
 
 @click.command(
@@ -124,6 +122,105 @@ def exec(ctx, prog, args):
             os.execvp(prog, (prog,) + tuple(args))
 
 
+@click.command(short_help="Cache an arbitrary file.")
+@click.pass_context
+@click.argument("url", nargs=1)
+@click.argument("filename", nargs=1)
+@click.option(
+    "--name", metavar="NAME", help="Name to display in progress message."
+)
+@click.option(
+    "--ttl",
+    type=int,
+    metavar="SECONDS",
+    help="Time to live for the cached file.",
+)
+@click.option(
+    "--sha1",
+    metavar="HASH",
+    help="Check the downloaded file against the given SHA-1 hash.",
+)
+@click.option(
+    "--sha256",
+    metavar="HASH",
+    help="Check the downloaded file against the given SHA-256 hash.",
+)
+@click.option(
+    "--sha512",
+    metavar="HASH",
+    help="Check the downloaded file against the given SHA-512 hash.",
+)
+def cache_file(ctx, url, filename, name, ttl, sha1, sha256, sha512):
+    """
+    Download and store an arbitrary file if it is not already cached.
+
+    The file at URL (whose scheme must be https) is stored in the cache with
+    the given FILENAME, and the full path to it is printed to standard output.
+
+    See `cjdk --help` for the common options (JDK-specific options are
+    ignored).
+    """
+    print(
+        _api.cache_file(
+            name if name else "file",
+            url,
+            filename,
+            ttl=ttl,
+            sha1=sha1,
+            sha256=sha256,
+            sha512=sha512,
+            **ctx.obj,
+        )
+    )
+
+
+@click.command(short_help="Cache an arbitrary package.")
+@click.pass_context
+@click.argument("url", nargs=1)
+@click.option(
+    "--name", metavar="NAME", help="Name to display in progress message."
+)
+@click.option(
+    "--sha1",
+    metavar="HASH",
+    help="Check the downloaded file against the given SHA-1 hash.",
+)
+@click.option(
+    "--sha256",
+    metavar="HASH",
+    help="Check the downloaded file against the given SHA-256 hash.",
+)
+@click.option(
+    "--sha512",
+    metavar="HASH",
+    help="Check the downloaded file against the given SHA-512 hash.",
+)
+def cache_package(ctx, url, name, sha1, sha256, sha512):
+    """
+    Download, extract, and store an arbitrary .zip or .tar.gz package if it is
+    not already cached.
+
+    The file at URL (whose scheme must be tgz+https or zip+https) is extracted
+    into a directory in the cache, and the full path to the directory is
+    printed to standard output.
+
+    See `cjdk --help` for the common options (JDK-specific options are
+    ignored).
+    """
+    print(
+        _api.cache_package(
+            name if name else "package",
+            url,
+            sha1=sha1,
+            sha256=sha256,
+            sha512=sha512,
+            **ctx.obj,
+        )
+    )
+
+
 main.add_command(java_home)
 main.add_command(exec)
-main.add_command(install)
+main.add_command(cache_jdk)
+main.add_command(cache_file)
+main.add_command(cache_package)

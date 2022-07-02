@@ -38,3 +38,4 @@ repos:
     rev: v0.9.6
     hooks:
       - id: pymarkdown
+        exclude: '^docs/.*$'

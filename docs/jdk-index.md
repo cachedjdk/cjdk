@@ -1,10 +1,10 @@
-# JDK index
-
 <!--
 This file is part of cjdk.
 Copyright 2022, Board of Regents of the University of Wisconsin System
 SPDX-License-Identifier: MIT
 --->
+
+# JDK index
 
 **cjdk** currently depends on the [JDK
 index](https://github.com/coursier/jvm-index) assembled (in an automated

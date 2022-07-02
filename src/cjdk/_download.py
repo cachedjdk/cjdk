@@ -6,45 +6,78 @@ import tarfile
 import tempfile
 import zipfile
 from pathlib import Path
+from urllib.parse import urlparse
 
 import requests
 from tqdm.auto import tqdm
 
+from . import _compat
+
 __all__ = [
-    "download_jdk",
+    "download_and_extract",
+    "download_file",
 ]
 
 
-def download_jdk(
-    destdir, url, *, progress=True, _allow_insecure_for_testing=False
+def download_and_extract(
+    destdir,
+    url,
+    *,
+    checkfunc=None,
+    progress=True,
+    _allow_insecure_for_testing=False,
 ):
     """
-    Download the JDK at url and extract to destdir.
+    Download zip or tgz archive and extract to destdir.
 
-    Arguments:
-    destdir -- a pathlib.Path
-    url -- a zip+https or tgz+https URL
-    progress -- bool
+    checkfunc is called on the archive temporary file.
     """
-    scheme, rest = url.split(":", 1)
+    scheme = urlparse(url).scheme
     try:
         ext, http = scheme.split("+")
     except ValueError:
-        raise NotImplementedError(f"Cannot handle {scheme}")
+        raise NotImplementedError(f"Cannot handle {scheme} URL")
     if http != "https" and not _allow_insecure_for_testing:
-        raise NotImplementedError(f"Cannot handle {scheme} (must be HTTPS)")
-    if ext not in ("zip", "tgz"):
-        raise NotImplementedError(f"Cannot handle {scheme}")
-    url = f"{http}:{rest}"
+        raise NotImplementedError(f"Cannot handle {http} (must be https)")
+    try:
+        extract = {"zip": _extract_zip, "tgz": _extract_tgz}[ext]
+    except KeyError:
+        raise NotImplementedError(f"Cannot handle compression type {ext}")
+
+    url = http + _compat.str_removeprefix(url, scheme)
     with tempfile.TemporaryDirectory(prefix="cjdk-") as tempd:
         file = Path(tempd) / f"archive.{ext}"
-        _download_large_file(file, url, progress)
-        extract = {"zip": _extract_zip, "tgz": _extract_tgz}[ext]
+        download_file(
+            file,
+            url,
+            checkfunc=checkfunc,
+            progress=progress,
+            _allow_insecure_for_testing=_allow_insecure_for_testing,
+        )
         extract(destdir, file, progress)
 
 
-def _download_large_file(destfile, srcurl, progress=True):
-    response = requests.get(srcurl, stream=True)
+def download_file(
+    dest,
+    url,
+    *,
+    checkfunc=None,
+    progress=False,
+    _allow_insecure_for_testing=False,
+):
+    """
+    Download any file at URL and place at dest.
+
+    checkfunc is called on dest.
+    """
+    if not _allow_insecure_for_testing:
+        scheme = urlparse(url).scheme
+        if scheme != "https":
+            raise NotImplementedError(
+                f"Cannot handle {scheme} (must be https)"
+            )
+
+    response = requests.get(url, stream=True)
     response.raise_for_status()
     size = int(response.headers.get("content-length", None))
     with tqdm(
@@ -54,10 +87,13 @@ def _download_large_file(destfile, srcurl, progress=True):
         unit="B",
         unit_scale=True,
     ) as tq:
-        with open(destfile, "wb") as outfile:
+        with open(dest, "wb") as outfile:
             for chunk in response.iter_content(chunk_size=16384):
                 outfile.write(chunk)
                 tq.update(len(chunk))
+
+    if checkfunc:
+        checkfunc(dest)
 
 
 def _extract_zip(destdir, srcfile, progress=True):

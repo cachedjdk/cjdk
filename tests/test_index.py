@@ -131,32 +131,6 @@ def test_cached_index(tmp_path):
         assert data == {"hello": "world"}
 
 
-def test_fetch_index(tmp_path):
-    with mock_server.start(
-        endpoint="/index.json", data={"hello": "world"}
-    ) as server:
-        url = server.url("/index.json")
-        path = tmp_path / "test.json"
-        _index._fetch_index(
-            path,
-            configure(index_url=url, _allow_insecure_for_testing=True),
-        )
-        assert path.is_file()
-        data = _index._read_index(path)
-        assert "hello" in data
-        assert data["hello"] == "world"
-
-    with mock_server.start() as server:
-        with pytest.raises(Exception):
-            _index._fetch_index(
-                path,
-                configure(
-                    index_url=server.url("/error"),
-                    _allow_insecure_for_testing=True,
-                ),
-            )
-
-
 def test_read_index(tmp_path):
     data = {
         "a": ["b", "c"],
@@ -222,12 +196,3 @@ def test_is_version_compatible_with_spec():
     assert f("11.1.2.3", "11.1+")
     assert not f("11.1.2.3", "11.2+")
     assert not f("11.1.2.3", "12+")
-
-
-def test_str_removeprefix():
-    f = _index._str_removeprefix
-    assert f("", "") == ""
-    assert f("", "x") == ""
-    assert f("x", "x") == ""
-    assert f("xy", "x") == "y"
-    assert f("xy", "z") == "xy"

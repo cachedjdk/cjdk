@@ -11,3 +11,8 @@ sphinx:
     - "sphinx.ext.autodoc"
     - "sphinx.ext.napoleon"
     - "sphinxcontrib.programoutput"
+
+execute:
+  execute_notebooks: cache
+  run_in_temp: true
+  timeout: 180

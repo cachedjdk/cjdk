@@ -33,7 +33,7 @@ def start(
     download_endpoint="/download",
     download_size=0,
     file_endpoint="/file.txt",
-    file_data="hello",
+    file_data=b"hello",
 ):
     server = _start(
         endpoint,
@@ -43,8 +43,10 @@ def start(
         file_endpoint,
         file_data,
     )
-    yield server
-    server._shutdown()
+    try:
+        yield server
+    finally:
+        server._shutdown()
 
 
 def _start(

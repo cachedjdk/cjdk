@@ -1,10 +1,10 @@
-# Cache directory
-
 <!--
 This file is part of cjdk.
 Copyright 2022, Board of Regents of the University of Wisconsin System
 SPDX-License-Identifier: MIT
 --->
+
+# Cache directory
 
 By default, **cjdk** uses the platform-dependent user cache directory to store
 downloaded JDKs and other data.

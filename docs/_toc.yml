@@ -6,6 +6,12 @@ format: jb-book
 root: index
 chapters:
   - file: install
+  - file: examples
+    sections:
+    - file: example-hello-world
+    - file: example-graal-hello
+    - file: example-run-jar
+    - file: example-run-jgo
   - file: cachedir
   - file: jdk-index
   - file: vendors

@@ -7,11 +7,12 @@ import os
 import zipfile
 
 import mock_server
+import pytest
 
 from cjdk import _api, _cache, _index, _jdk
 
 
-def test_install_jdk():
+def test_cache_jdk():
     # The code path is a subset of java_home(), so no need for separate test.
     pass
 
@@ -107,6 +108,37 @@ def test_java_env(tmp_path):
             )
         assert os.environ.get("JAVA_HOME", None) == old_java_home
         assert os.environ.get("PATH", None) == old_path
+
+
+def test_make_hash_checker(tmp_path):
+    sha1_empty_string = "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+    sha256_empty_string = (
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    )
+    sha512_empty_string = "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+
+    empty_file = tmp_path / "empty"
+    empty_file.touch()
+
+    check = _api._make_hash_checker({})
+    check(empty_file)
+
+    check = _api._make_hash_checker(
+        dict(
+            sha1=sha1_empty_string,
+            sha256=sha256_empty_string,
+            sha512=sha512_empty_string,
+        )
+    )
+    check(empty_file)
+
+    check = _api._make_hash_checker(dict(sha1=sha1_empty_string))
+
+    not_empty_file = tmp_path / "not_empty"
+    with open(not_empty_file, "w") as fp:
+        fp.write("hello")
+    with pytest.raises(ValueError):
+        check(not_empty_file)
 
 
 def test_env_var_set():

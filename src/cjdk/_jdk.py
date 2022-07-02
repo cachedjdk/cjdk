@@ -4,7 +4,7 @@
 
 from pathlib import Path
 
-from . import _cache, _download, _index
+from . import _index, _install
 from ._conf import Configuration
 
 __all__ = [
@@ -22,28 +22,10 @@ def install_jdk(conf: Configuration):
     """
     index = _index.jdk_index(conf)
     conf.version = _index.resolve_jdk_version(index, conf)
+    name = f"JDK {conf.vendor}:{conf.version}"
     url = _index.jdk_url(index, conf)
 
-    def fetch(destdir):
-        if conf.progress:
-            print(f"cjdk: Installing JDK: {conf.vendor}:{conf.version}")
-            print(f"cjdk: Destination: {conf.cache_dir}")
-        _download.download_jdk(
-            destdir,
-            url,
-            progress=conf.progress,
-            _allow_insecure_for_testing=conf._allow_insecure_for_testing,
-        )
-
-    path = _cache.permanent_directory(
-        _JDK_KEY_PREFIX,
-        url,
-        fetch,
-        cache_dir=conf.cache_dir,
-        timeout_for_fetch_elsewhere=300,
-    )
-
-    return path
+    return _install.install_dir(_JDK_KEY_PREFIX, name, url, conf)
 
 
 def find_home(path, _recursion_depth=2):
