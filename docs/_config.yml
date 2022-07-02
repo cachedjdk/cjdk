@@ -6,6 +6,16 @@ title: cjdk Documentation
 author: Mark A. Tsuchida
 copyright: "2022 Board of Regents of the University of Wisconsin System"
 
+repository:
+  url: https://github.com/marktsuchida/cjdk
+  path_to_book: docs
+  branch: main
+
+html:
+  use_repository_button: true
+  use_issues_button: true
+  use_edit_page_button: true
+
 sphinx:
   extra_extensions:
     - "sphinx.ext.autodoc"
