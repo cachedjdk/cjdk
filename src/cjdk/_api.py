@@ -121,11 +121,11 @@ def cache_file(name, url, filename, **kwargs):
     ttl : int
         Time to live (in seconds) for the cached file resource.
     sha1 : str
-        SHA1 hash that the downloaded file must match.
+        SHA-1 hash that the downloaded file must match.
     sha256 : str
-        SHA256 hash that the downloaded file must match.
+        SHA-256 hash that the downloaded file must match.
     sha512 : str
-        SHA512 hash that the downloaded file must match.
+        SHA-512 hash that the downloaded file must match.
 
     Returns
     -------
@@ -135,8 +135,8 @@ def cache_file(name, url, filename, **kwargs):
 
     Notes
     -----
-    The check for SHA1/SHA256/SHA512 hashes is only performed after a download;
-    it is not performed if the file already exists in the cache.
+    The check for SHA-1/SHA-256/SHA-512 hashes is only performed after a
+    download; it is not performed if the file already exists in the cache.
     """
     ttl = kwargs.pop("ttl", None)
     if ttl is None:
@@ -171,11 +171,11 @@ def cache_package(name, url, **kwargs):
         The URL of the file resource. The scheme must be tgz+https or
         zip+https.
     sha1 : str
-        SHA1 hash that the downloaded file must match.
+        SHA-1 hash that the downloaded file must match.
     sha256 : str
-        SHA256 hash that the downloaded file must match.
+        SHA-256 hash that the downloaded file must match.
     sha512 : str
-        SHA512 hash that the downloaded file must match.
+        SHA-512 hash that the downloaded file must match.
 
     Returns
     -------
@@ -184,7 +184,7 @@ def cache_package(name, url, **kwargs):
 
     Notes
     -----
-    The check for SHA1/SHA256/SHA512 hashes is only performed (on the
+    The check for SHA-1/SHA-256/SHA-512 hashes is only performed (on the
     unextracted archive) after a download; it is not performed if the directory
     already exists in the cache.
     """

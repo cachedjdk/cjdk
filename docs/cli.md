@@ -19,7 +19,9 @@ More details about the choices and defaults for [`VENDOR`](./vendors.md),
 [`VERSION`](./versions.md), and [`--cache_dir`](./cachedir.md) are available on
 separate pages.
 
-## `exec`
+## Working with cached JDKs
+
+### `exec`
 
 ```{command-output} cjdk exec --help
 ```
@@ -30,7 +32,7 @@ For example, run the `java` command from the Temurin JRE 17.0.3 with the
 ```{command-output} cjdk --jdk temurin-jre:17.0.3 exec java -version
 ```
 
-## `java-home`
+### `java-home`
 
 ```{command-output} cjdk java-home --help
 ```
@@ -46,7 +48,19 @@ $ cjdk --jdk temurin-jre:17.0.3 java-home
 (The output will depend on your operating system and configuration; the example
 shown was on macOS.)
 
-## `cache-jdk`
+### `cache-jdk`
 
 ```{command-output} cjdk cache-jdk --help
+```
+
+## Caching arbitrary files and packages
+
+### `cache-file`
+
+```{command-output} cjdk cache-file --help
+```
+
+### `cache-package`
+
+```{command-output} cjdk cache-package --help
 ```
