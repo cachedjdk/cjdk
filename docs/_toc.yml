@@ -20,3 +20,4 @@ chapters:
   - file: cli
   - file: environ
   - file: development
+  - file: changelog

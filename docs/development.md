@@ -68,12 +68,14 @@ To build the documentation as done by CI:
 nox -s docs
 ```
 
+(versioning-scheme)=
+
 ## Versioning
 
-**cjdk** uses [SemVer](https://semver.org/), with the API for versioning
-purposes comprising the [Python API](./api.md), [command-line
-interface](./cli.md), and [environment variables](./environ.md) for
-configuration.
+**cjdk** uses [SemVer 2](https://semver.org/#semantic-versioning-200), with the
+scope of API for versioning purposes comprising the [Python API](./api.md),
+[command-line interface](./cli.md), and [environment variables](./environ.md)
+for configuration.
 
 As specified by SemVer, anything can change during the 0.x series, although the
 plan is to keep disruptive changes to a minimum.
