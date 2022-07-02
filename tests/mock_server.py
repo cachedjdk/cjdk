@@ -33,7 +33,7 @@ def start(
     download_endpoint="/download",
     download_size=0,
     file_endpoint="/file.txt",
-    file_data="hello",
+    file_data=b"hello",
 ):
     server = _start(
         endpoint,

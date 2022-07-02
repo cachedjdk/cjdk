@@ -2,15 +2,12 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
+import copy
 import json
 import re
 import warnings
-from pathlib import Path
-from urllib.parse import urlparse
 
-import requests
-
-from . import _cache, _compat
+from . import _compat, _install
 from ._conf import Configuration
 
 __all__ = [
@@ -88,42 +85,27 @@ def jdk_url(index, conf: Configuration):
     return index[conf.os][conf.arch][f"jdk@{conf.vendor}"][matched]
 
 
-def _cached_index(conf):
-    def fetch(dest):
-        _fetch_index(dest, conf)
+def _cached_index(conf: Configuration):
+    def check_index(path):
+        # Ensure valid JSON.
+        _read_index(path)
 
-    return _cache.atomic_file(
+    conf_no_progress = copy.deepcopy(conf)
+    conf_no_progress.progress = False
+
+    return _install.install_file(
         _INDEX_KEY_PREFIX,
+        "index",
         conf.index_url,
         _INDEX_FILENAME,
-        fetch,
+        conf_no_progress,
         ttl=conf.index_ttl,
-        cache_dir=conf.cache_dir,
+        checkfunc=check_index,
     )
 
 
-def _fetch_index(dest: Path, conf: Configuration):
-    if not conf._allow_insecure_for_testing:
-        scheme = urlparse(conf.index_url).scheme
-        if scheme != "https":
-            raise ValueError("Index URL must be an HTTPS URL")
-
-    response = requests.get(conf.index_url)
-    response.raise_for_status()
-    # Something is probably wrong if the index is not 7-bit clean. Also by
-    # making this assumption there is less to worry about when interpreting
-    # the index (and the URLs in it).
-    if not response.text.isascii():
-        raise ValueError(
-            "Index unexpectedly contains non-ASCII characters ({conf.index_url})"
-        )
-    index = response.json()
-    with open(dest, "w", encoding="ascii", newline="\n") as outfile:
-        json.dump(index, outfile, indent=2, sort_keys=True)
-
-
 def _read_index(path):
-    with open(path, encoding="ascii", newline="\n") as infile:
+    with open(path, encoding="ascii") as infile:
         return json.load(infile)
 
 
