@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Overview &#8212; cjdk Documentation</title>
+    <title>Changelog &#8212; cjdk Documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -54,7 +54,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installing" href="install.html" />
+    <link rel="prev" title="Development" href="development.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -89,7 +89,7 @@ const thebe_selector_output = ".output, .cell_output"
 <div class="bd-sidebar noprint" id="site-navigation">
     <div class="bd-sidebar__content">
         <div class="bd-sidebar__top"><div class="navbar-brand-box">
-    <a class="navbar-brand text-wrap" href="#">
+    <a class="navbar-brand text-wrap" href="index.html">
       
       
       
@@ -103,13 +103,13 @@ const thebe_selector_output = ".output, .cell_output"
     <div class="bd-toc-item active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
-            <li class="toctree-l1 current active">
-                <a class="reference internal" href="#">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
                     Overview
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <ul class="current nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="install.html">
    Installing
@@ -187,8 +187,8 @@ const thebe_selector_output = ".output, .cell_output"
    Development
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="changelog.html">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    Changelog
   </a>
  </li>
@@ -282,7 +282,7 @@ title="Source repository"
       </li>
       
       <li>
-        <a href="https://github.com/marktsuchida/cjdk/issues/new?title=Issue%20on%20page%20%2Findex.html&body=Your%20issue%20content%20here."
+        <a href="https://github.com/marktsuchida/cjdk/issues/new?title=Issue%20on%20page%20%2Fchangelog.html&body=Your%20issue%20content%20here."
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -299,7 +299,7 @@ title="Open an issue"
       </li>
       
       <li>
-        <a href="https://github.com/marktsuchida/cjdk/edit/main/docs/index.md"
+        <a href="https://github.com/marktsuchida/cjdk/edit/main/docs/changelog.md"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -327,7 +327,7 @@ title="Edit this page"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="_sources/index.md"
+        <a href="_sources/changelog.md"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -387,8 +387,40 @@ title="Print to PDF"
     <nav id="bd-toc-nav" aria-label="Page">
         <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#acknowledgments">
-   Acknowledgments
+  <a class="reference internal nav-link" href="#unreleased">
+   Unreleased
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id1">
+   0.2.0 - 2022-07-02
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#added">
+     Added
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#changed">
+     Changed
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#fixed">
+     Fixed
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id2">
+   0.1.1 - 2022-06-23
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id3">
+   0.1.0 - 2022-06-23
   </a>
  </li>
 </ul>
@@ -400,7 +432,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Overview</h1>
+                <h1>Changelog</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -411,8 +443,40 @@ title="Print to PDF"
                         <nav aria-label="Page">
                             <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#acknowledgments">
-   Acknowledgments
+  <a class="reference internal nav-link" href="#unreleased">
+   Unreleased
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id1">
+   0.2.0 - 2022-07-02
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#added">
+     Added
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#changed">
+     Changed
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#fixed">
+     Fixed
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id2">
+   0.1.1 - 2022-06-23
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id3">
+   0.1.0 - 2022-06-23
   </a>
  </li>
 </ul>
@@ -430,37 +494,49 @@ This file is part of cjdk.
 Copyright 2022, Board of Regents of the University of Wisconsin System
 SPDX-License-Identifier: MIT
 --->
-<section class="tex2jax_ignore mathjax_ignore" id="overview">
-<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">#</a></h1>
-<p><strong>cjdk</strong> (for “cached JDK”) is a Python package and command-line tool to
-download and run JDK (Java Development Kit) or JRE (Java Runtime Environment)
-distributions.</p>
-<p>Previously used JDKs are kept in the user’s <a class="reference internal" href="cachedir.html"><span class="doc std std-doc">cache directory</span></a>,
-so that future invocations do not require a download.</p>
-<p>Possible use cases include:</p>
-<ul class="simple">
-<li><p>Installing exact JDK versions for reproducible testing</p></li>
-<li><p>Working with multiple versions of JDKs</p></li>
-<li><p>Deploying tools that require Java</p></li>
-</ul>
-<p>Using the command-line interface of <strong>cjdk</strong>, you can run Java programs using a
-one-liner, without having to worry about whether the user has installed a new
-enough Java runtime and set <code class="docutils literal notranslate"><span class="pre">JAVA_HOME</span></code> and <code class="docutils literal notranslate"><span class="pre">PATH</span></code> to appropriate values.</p>
-<p>For example, the following command will run
-<a class="reference external" href="https://checkstyle.org/">CheckStyle</a> using Temurin JRE 17 (which will be
-downloaded if this is the first time it is requested):</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cjdk --jdk<span class="o">=</span>temurin-jre:17 <span class="nb">exec</span> java -jar checkstyle-10.3-all.jar -c style.xml MyApp.java
-</pre></div>
-</div>
-<p><strong>cjdk</strong> is distrubuted under the MIT license.</p>
-<section id="acknowledgments">
-<h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Permalink to this headline">#</a></h2>
-<p><strong>cjdk</strong> was inspired by <a class="reference external" href="https://get-coursier.io/">Coursier</a>’s
-<a class="reference external" href="https://get-coursier.io/docs/cli-java"><code class="docutils literal notranslate"><span class="pre">java</span></code></a> command, and uses Coursier’s
-<a class="reference external" href="https://github.com/coursier/jvm-index">JDK index</a>.</p>
+<section class="tex2jax_ignore mathjax_ignore" id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">#</a></h1>
+<p>See also the section on <a class="reference internal" href="development.html#versioning-scheme"><span class="std std-ref">versioning</span></a>.</p>
+<section id="unreleased">
+<h2><a class="reference external" href="https://github.com/marktsuchida/cjdk/compare/v0.2.0...HEAD">Unreleased</a><a class="headerlink" href="#unreleased" title="Permalink to this headline">#</a></h2>
 </section>
-<div class="toctree-wrapper compound">
-</div>
+<section id="id1">
+<h2><a class="reference external" href="https://github.com/marktsuchida/cjdk/compare/v0.1.1...v0.2.0">0.2.0</a> - 2022-07-02<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h2>
+<section id="added">
+<h3>Added<a class="headerlink" href="#added" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Python API functions <code class="docutils literal notranslate"><span class="pre">cache_jdk()</span></code>, <code class="docutils literal notranslate"><span class="pre">cache_file()</span></code>, and <code class="docutils literal notranslate"><span class="pre">cache_package()</span></code>.</p></li>
+<li><p>Command line commands <code class="docutils literal notranslate"><span class="pre">cache-jdk</span></code>, <code class="docutils literal notranslate"><span class="pre">cache-file</span></code>, and <code class="docutils literal notranslate"><span class="pre">cache-package</span></code>.</p></li>
+<li><p>Command line options <code class="docutils literal notranslate"><span class="pre">--index-url</span></code>, <code class="docutils literal notranslate"><span class="pre">--index-ttl</span></code>, <code class="docutils literal notranslate"><span class="pre">--os</span></code>, and <code class="docutils literal notranslate"><span class="pre">--arch</span></code>.</p></li>
+<li><p>Environment variables <code class="docutils literal notranslate"><span class="pre">CJDK_INDEX_URL</span></code>, <code class="docutils literal notranslate"><span class="pre">CJDK_INDEX_TTL</span></code>, <code class="docutils literal notranslate"><span class="pre">CJDK_OS</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">CJDK_ARCH</span></code>.</p></li>
+<li><p>Documentation using Jupyter Book, published to GitHub Pages.</p></li>
+</ul>
+</section>
+<section id="changed">
+<h3>Changed<a class="headerlink" href="#changed" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Rename environment variable <code class="docutils literal notranslate"><span class="pre">CJDK_DEFAULT_VENDOR</span></code> to <code class="docutils literal notranslate"><span class="pre">CJDK_VENDOR</span></code>.</p></li>
+</ul>
+</section>
+<section id="fixed">
+<h3>Fixed<a class="headerlink" href="#fixed" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Always print progress messages to standard error.</p></li>
+<li><p>Correctly restore environment when exiting the <code class="docutils literal notranslate"><span class="pre">java_env()</span></code> context manager,
+even when there was an error.</p></li>
+<li><p>Always check HTTP status code for downloads.</p></li>
+</ul>
+</section>
+</section>
+<section id="id2">
+<h2><a class="reference external" href="https://github.com/marktsuchida/cjdk/compare/v0.1.0...v0.1.1">0.1.1</a> - 2022-06-23<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h2>
+<p>First release.</p>
+</section>
+<section id="id3">
+<h2><a class="reference external" href="https://github.com/marktsuchida/cjdk/tree/v0.1.0">0.1.0</a> - 2022-06-23<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h2>
+<p>Tag created but not actually released.</p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -490,12 +566,12 @@ downloaded if this is the first time it is requested):</p>
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='right-next' id="next-link" href="install.html" title="next page">
-    <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Installing</p>
-    </div>
-    <i class="fas fa-angle-right"></i>
+    <a class='left-prev' id="prev-link" href="development.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Development</p>
+        </div>
     </a>
 </div>
             </footer>
