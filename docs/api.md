@@ -1,10 +1,10 @@
-# Python API
-
 <!--
 This file is part of cjdk.
 Copyright 2022, Board of Regents of the University of Wisconsin System
 SPDX-License-Identifier: MIT
 --->
+
+# Python API
 
 ## Working with cached JDKs
 

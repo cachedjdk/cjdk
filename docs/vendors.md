@@ -1,10 +1,10 @@
-# JDK vendors
-
 <!--
 This file is part of cjdk.
 Copyright 2022, Board of Regents of the University of Wisconsin System
 SPDX-License-Identifier: MIT
 --->
+
+# JDK vendors
 
 **cjdk** allows you to choose among JDKs and JREs released from different
 sources. Names such as `adoptium`, `zulu-jre`, or `graalvm-java17` are used to
