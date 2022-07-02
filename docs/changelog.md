@@ -10,7 +10,11 @@ See also the section on [versioning](versioning-scheme).
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/marktsuchida/cjdk/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/marktsuchida/cjdk/compare/v0.2.0...HEAD
+
+## [0.2.0] - 2022-07-02
+
+[0.2.0]: https://github.com/marktsuchida/cjdk/compare/v0.1.1...v0.2.0
 
 ### Added
 
