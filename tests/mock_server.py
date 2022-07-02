@@ -43,8 +43,10 @@ def start(
         file_endpoint,
         file_data,
     )
-    yield server
-    server._shutdown()
+    try:
+        yield server
+    finally:
+        server._shutdown()
 
 
 def _start(

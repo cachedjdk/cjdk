@@ -223,8 +223,10 @@ def _make_hash_checker(hashes):
 def _env_var_set(name, value):
     old_value = os.environ.get(name, None)
     os.environ[name] = value
-    yield
-    if old_value:
-        os.environ[name] = old_value
-    else:
-        del os.environ[name]
+    try:
+        yield
+    finally:
+        if old_value:
+            os.environ[name] = old_value
+        else:
+            del os.environ[name]

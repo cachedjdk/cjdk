@@ -2,10 +2,10 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-import contextlib
 import shutil
 import time
 import urllib
+from contextlib import contextmanager
 from pathlib import Path
 
 from tqdm.auto import tqdm
@@ -162,7 +162,7 @@ def _file_exists_and_is_fresh(file, ttl):
     return now + 1.0 < expiration
 
 
-@contextlib.contextmanager
+@contextmanager
 def _create_key_tmpdir(cache_dir, key):
     tmpdir = _key_tmpdir(cache_dir, key)
     tmpdir.parent.mkdir(parents=True, exist_ok=True)
