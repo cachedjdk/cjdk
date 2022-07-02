@@ -50,6 +50,8 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Command line interface" href="cli.html" />
@@ -113,6 +115,38 @@ const thebe_selector_output = ".output, .cell_output"
   <a class="reference internal" href="install.html">
    Installing
   </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="examples.html">
+   Examples
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-hello-world.html">
+     Running Java “Hello, World” from Python
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-graal-hello.html">
+     Building and running a GraalVM native image
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-run-jar.html">
+     Running an application distributed as an all-in-one Jar
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-run-jgo.html">
+     Running Java applications with jgo
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="cachedir.html">
@@ -264,12 +298,41 @@ title="Print to PDF"
     </ul>
   </div>
 </div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
 
     </div>
 </div>
 
 <!-- Table of contents -->
 <div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#working-with-cached-jdks">
+   Working with cached JDKs
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#caching-arbitrary-files-and-packages">
+   Caching arbitrary files and packages
+  </a>
+ </li>
+</ul>
+
+    </nav>
 </div>
     </div>
     <div class="article row">
@@ -281,6 +344,24 @@ title="Print to PDF"
                 <div id="print-main-content">
                     <div id="jb-print-toc">
                         
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#working-with-cached-jdks">
+   Working with cached JDKs
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#caching-arbitrary-files-and-packages">
+   Caching arbitrary files and packages
+  </a>
+ </li>
+</ul>
+
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -288,18 +369,20 @@ title="Print to PDF"
                 
               <div>
                 
-  <section class="tex2jax_ignore mathjax_ignore" id="python-api">
-<h1>Python API<a class="headerlink" href="#python-api" title="Permalink to this headline">#</a></h1>
-<!--
+  <!--
 This file is part of cjdk.
 Copyright 2022, Board of Regents of the University of Wisconsin System
 SPDX-License-Identifier: MIT
 --->
+<section class="tex2jax_ignore mathjax_ignore" id="python-api">
+<h1>Python API<a class="headerlink" href="#python-api" title="Permalink to this headline">#</a></h1>
+<section id="working-with-cached-jdks">
+<h2>Working with cached JDKs<a class="headerlink" href="#working-with-cached-jdks" title="Permalink to this headline">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="cjdk.java_home">
 <span class="sig-prename descclassname"><span class="pre">cjdk.</span></span><span class="sig-name descname"><span class="pre">java_home</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vendor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cjdk.java_home" title="Permalink to this definition">#</a></dt>
 <dd><p>Return the JDK home directory for the given JDK, installing if necessary.</p>
-<p>Parameters are the same as for install_jdk().</p>
+<p>Parameters are the same as for cache_jdk().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The JDK home directory satisfying the requested parameters.</p>
@@ -315,7 +398,7 @@ SPDX-License-Identifier: MIT
 <span class="sig-prename descclassname"><span class="pre">cjdk.</span></span><span class="sig-name descname"><span class="pre">java_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vendor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_bin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cjdk.java_env" title="Permalink to this definition">#</a></dt>
 <dd><p>Context manager to set environment variables for the given JDK, installing
 if necessary.</p>
-<p>Parameters are the same as for install_jdk(), with the following addition.</p>
+<p>Parameters are the same as for cache_jdk(), with the following addition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>add_bin</strong> (<em>bool</em><em>, </em><em>default: True</em>) – Whether to prepend the Java “bin” directory to <cite>PATH</cite>, in addition to
@@ -333,9 +416,9 @@ parameters. Its value is the JDK home directory.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="cjdk.install_jdk">
-<span class="sig-prename descclassname"><span class="pre">cjdk.</span></span><span class="sig-name descname"><span class="pre">install_jdk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vendor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cjdk.install_jdk" title="Permalink to this definition">#</a></dt>
-<dd><p>Download and install the given JDK if it is not already cached.</p>
+<dt class="sig sig-object py" id="cjdk.cache_jdk">
+<span class="sig-prename descclassname"><span class="pre">cjdk.</span></span><span class="sig-name descname"><span class="pre">cache_jdk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vendor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cjdk.cache_jdk" title="Permalink to this definition">#</a></dt>
+<dd><p>Download and extract the given JDK if it is not already cached.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -361,6 +444,75 @@ together with <cite>vendor</cite> or <cite>version</cite>.</p></li>
 <a class="reference internal" href="versions.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">version</span></code></span></a>, <a class="reference internal" href="cachedir.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">cache_dir</span></code></span></a>,
 <a class="reference internal" href="jdk-index.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">index_url</span></code></span></a>, and <a class="reference internal" href="jdk-index.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">index_ttl</span></code></span></a> are available
 on separate pages.</p>
+</section>
+<section id="caching-arbitrary-files-and-packages">
+<h2>Caching arbitrary files and packages<a class="headerlink" href="#caching-arbitrary-files-and-packages" title="Permalink to this headline">#</a></h2>
+<p>The following functions allow <strong>cjdk</strong>’s file download and extract logic to
+cache arbitrary resources from the Internet. They can be used, for example, to
+install an application JAR.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cjdk.cache_file">
+<span class="sig-prename descclassname"><span class="pre">cjdk.</span></span><span class="sig-name descname"><span class="pre">cache_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cjdk.cache_file" title="Permalink to this definition">#</a></dt>
+<dd><p>Install any file resource into the cache, downloading if necessary.</p>
+<p>Parameters are the same as for cache_jdk() (JDK-specific parameters are
+ignored), with the following additions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name to display in case of showing progress.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The URL of the file resource. The scheme must be https.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – The filename under which the file will be stored.</p></li>
+<li><p><strong>ttl</strong> (<em>int</em>) – Time to live (in seconds) for the cached file resource.</p></li>
+<li><p><strong>sha1</strong> (<em>str</em>) – SHA-1 hash that the downloaded file must match.</p></li>
+<li><p><strong>sha256</strong> (<em>str</em>) – SHA-256 hash that the downloaded file must match.</p></li>
+<li><p><strong>sha512</strong> (<em>str</em>) – SHA-512 hash that the downloaded file must match.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Path to the cached file resource, whose final component is the given
+filename.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pathlib.Path</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The check for SHA-1/SHA-256/SHA-512 hashes is only performed after a
+download; it is not performed if the file already exists in the cache.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cjdk.cache_package">
+<span class="sig-prename descclassname"><span class="pre">cjdk.</span></span><span class="sig-name descname"><span class="pre">cache_package</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cjdk.cache_package" title="Permalink to this definition">#</a></dt>
+<dd><p>Install any package into the cache, downloading and extracting if
+necessary.</p>
+<p>Parameters are the same as for cache_jdk() (JDK-specific parameters are
+ignored), with the following additions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name to display in case of showing progress.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The URL of the file resource. The scheme must be tgz+https or
+zip+https.</p></li>
+<li><p><strong>sha1</strong> (<em>str</em>) – SHA-1 hash that the downloaded file must match.</p></li>
+<li><p><strong>sha256</strong> (<em>str</em>) – SHA-256 hash that the downloaded file must match.</p></li>
+<li><p><strong>sha512</strong> (<em>str</em>) – SHA-512 hash that the downloaded file must match.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Path to the cached directory into which the package was extracted.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pathlib.Path</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The check for SHA-1/SHA-256/SHA-512 hashes is only performed (on the
+unextracted archive) after a download; it is not performed if the directory
+already exists in the cache.</p>
+</dd></dl>
+
+</section>
 </section>
 
     <script type="text/x-thebe-config">

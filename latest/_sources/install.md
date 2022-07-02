@@ -1,10 +1,10 @@
-# Installing
-
 <!--
 This file is part of cjdk.
 Copyright 2022, Board of Regents of the University of Wisconsin System
 SPDX-License-Identifier: MIT
 --->
+
+# Installing
 
 **cjdk** is a pure Python package and does not require a pre-installed JDK or
 JRE.

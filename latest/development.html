@@ -50,6 +50,8 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Environment variables" href="environ.html" />
@@ -112,6 +114,38 @@ const thebe_selector_output = ".output, .cell_output"
   <a class="reference internal" href="install.html">
    Installing
   </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="examples.html">
+   Examples
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-hello-world.html">
+     Running Java “Hello, World” from Python
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-graal-hello.html">
+     Building and running a GraalVM native image
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-run-jar.html">
+     Running an application distributed as an all-in-one Jar
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-run-jgo.html">
+     Running Java applications with jgo
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="cachedir.html">
@@ -324,28 +358,56 @@ title="Print to PDF"
                 
               <div>
                 
-  <section class="tex2jax_ignore mathjax_ignore" id="development">
-<h1>Development<a class="headerlink" href="#development" title="Permalink to this headline">#</a></h1>
-<!--
+  <!--
 This file is part of cjdk.
 Copyright 2022, Board of Regents of the University of Wisconsin System
 SPDX-License-Identifier: MIT
 --->
-<p>Clone the Git repository and make sure to enable the Git hooks by running
-<code class="docutils literal notranslate"><span class="pre">pre-commit</span> <span class="pre">install</span></code>. You can install <a class="reference external" href="https://pre-commit.com/">pre-commit</a>
-using <code class="docutils literal notranslate"><span class="pre">pip</span></code>, <code class="docutils literal notranslate"><span class="pre">brew</span></code>, and other means (I recommend the <code class="docutils literal notranslate"><span class="pre">pip</span></code> of a virtual
-environment, especially on Windows).</p>
+<section class="tex2jax_ignore mathjax_ignore" id="development">
+<h1>Development<a class="headerlink" href="#development" title="Permalink to this headline">#</a></h1>
+<p>Clone the Git repository:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/marktsuchida/cjdk.git
+<span class="nb">cd</span> cjdk
+</pre></div>
+</div>
+<p>As usual, it is best to do all development in a virtual environment:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python -m venv venv
+<span class="nb">echo</span> <span class="s1">&#39;*&#39;</span> &gt;venv/.gitignore  <span class="c1"># Make Git ignore your venv directory</span>
+<span class="nb">source</span> venv/bin/activate   <span class="c1"># Use venv/Scripts/activate on Windows</span>
+python -m pip install --upgrade pip setuptools
+</pre></div>
+</div>
+<p>Make sure to enable the <a class="reference external" href="https://pre-commit.com/">pre-commit</a> Git hooks:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip install pre-commit
+pre-commit install
+</pre></div>
+</div>
 <p>To run the tests using an editable install:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip install -e .<span class="o">[</span>testing<span class="o">]</span>
 pytest
 </pre></div>
 </div>
-<p>To run the tests as they are run by CI, use Nox:</p>
+<p>To run the tests as they are run by CI, use <a class="reference external" href="https://nox.thea.codes/">Nox</a>:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip install nox
 nox
 </pre></div>
 </div>
-<p>To build the documentation, use</p>
+<p>To build the documentation with <a class="reference external" href="https://jupyterbook.org/">Jupyter Book</a>:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip install -r docs/requirements.txt
+jb build docs
+<span class="c1"># Now view docs/_build/html/index.html</span>
+</pre></div>
+</div>
+<p>Some of the documentation pages are Jupyter notebooks
+<a class="reference external" href="https://jupyterbook.org/en/stable/file-types/myst-notebooks.html">stored</a> in
+MyST Markdown format using <a class="reference external" href="https://jupytext.readthedocs.io/">Jupytext</a>. To
+edit these in Jupyter Lab, right-click the file and select “Open With &gt;
+Notebook” (if it asks you to select a kernel, you probably tried to open a
+Markdown file that is not a notebook).</p>
+<p>New notebook pages can be added by first creating the notebook (<code class="docutils literal notranslate"><span class="pre">.ipynb</span></code>) in
+Jupyter Lab, then running <code class="docutils literal notranslate"><span class="pre">jupytext</span> <span class="pre">mypage.ipynb</span> <span class="pre">--to</span> <span class="pre">myst</span></code>. Delete the
+<code class="docutils literal notranslate"><span class="pre">.ipynb</span></code> file so that the MyST (<code class="docutils literal notranslate"><span class="pre">.md</span></code>) file is the single source of truth.</p>
+<p>To build the documentation as done by CI:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>nox -s docs
 </pre></div>
 </div>

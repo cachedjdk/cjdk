@@ -50,10 +50,12 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="JDK index" href="jdk-index.html" />
-    <link rel="prev" title="Installing" href="install.html" />
+    <link rel="prev" title="Running Java applications with jgo" href="example-run-jgo.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -113,6 +115,38 @@ const thebe_selector_output = ".output, .cell_output"
   <a class="reference internal" href="install.html">
    Installing
   </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="examples.html">
+   Examples
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-hello-world.html">
+     Running Java “Hello, World” from Python
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-graal-hello.html">
+     Building and running a GraalVM native image
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-run-jar.html">
+     Running an application distributed as an all-in-one Jar
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-run-jgo.html">
+     Running Java applications with jgo
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
@@ -288,13 +322,13 @@ title="Print to PDF"
                 
               <div>
                 
-  <section class="tex2jax_ignore mathjax_ignore" id="cache-directory">
-<h1>Cache directory<a class="headerlink" href="#cache-directory" title="Permalink to this headline">#</a></h1>
-<!--
+  <!--
 This file is part of cjdk.
 Copyright 2022, Board of Regents of the University of Wisconsin System
 SPDX-License-Identifier: MIT
 --->
+<section class="tex2jax_ignore mathjax_ignore" id="cache-directory">
+<h1>Cache directory<a class="headerlink" href="#cache-directory" title="Permalink to this headline">#</a></h1>
 <p>By default, <strong>cjdk</strong> uses the platform-dependent user cache directory to store
 downloaded JDKs and other data.
 The defaults are:</p>
@@ -337,11 +371,11 @@ and the JDKs installed by it are not in use.</p>
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="install.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="example-run-jgo.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Installing</p>
+            <p class="prev-next-title">Running Java applications with jgo</p>
         </div>
     </a>
     <a class='right-next' id="next-link" href="jdk-index.html" title="next page">

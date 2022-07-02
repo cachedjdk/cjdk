@@ -1,10 +1,10 @@
-# JDK versions
-
 <!--
 This file is part of cjdk.
 Copyright 2022, Board of Regents of the University of Wisconsin System
 SPDX-License-Identifier: MIT
 --->
+
+# JDK versions
 
 JDK versions are selected using version expressions attached to
 [vendor](./vendors.md) names: for example, `temurin:17` or

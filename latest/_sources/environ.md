@@ -1,10 +1,10 @@
-# Environment variables
-
 <!--
 This file is part of cjdk.
 Copyright 2022, Board of Regents of the University of Wisconsin System
 SPDX-License-Identifier: MIT
 --->
+
+# Environment variables
 
 The following environment variables modify the default behavior of both the
 Python API and the command-line interface.
