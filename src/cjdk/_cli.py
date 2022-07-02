@@ -64,13 +64,11 @@ def main(ctx, jdk, cache_dir, index_url, index_ttl, os, arch, progress):
     )
 
 
-@click.command(short_help="Install the requested JDK.")
+@click.command(short_help="Ensure the requested JDK is cached.")
 @click.pass_context
-def install(ctx):
+def cache_jdk(ctx):
     """
-    Install the requested JDK, but do not do anything with it.
-
-    The JDK is downloaded if not already cached.
+    Download and extract the requested JDK if it is not already cached.
 
     Usually there is no need to invoke this command on its own, but it may be
     useful if you want any potentil JDK download to happen at a controlled
@@ -79,7 +77,7 @@ def install(ctx):
     See `cjdk --help` for the common options used to specify the JDK and how it
     is obtained.
     """
-    _api.install_jdk(**ctx.obj)
+    _api.cache_jdk(**ctx.obj)
 
 
 @click.command(
@@ -126,4 +124,4 @@ def exec(ctx, prog, args):
 
 main.add_command(java_home)
 main.add_command(exec)
-main.add_command(install)
+main.add_command(cache_jdk)

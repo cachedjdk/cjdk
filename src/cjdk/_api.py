@@ -9,7 +9,7 @@ from contextlib import contextmanager
 from . import _conf, _install, _jdk
 
 __all__ = [
-    "install_jdk",
+    "cache_jdk",
     "java_env",
     "java_home",
     "cache_file",
@@ -17,9 +17,9 @@ __all__ = [
 ]
 
 
-def install_jdk(*, vendor=None, version=None, **kwargs):
+def cache_jdk(*, vendor=None, version=None, **kwargs):
     """
-    Download and install the given JDK if it is not already cached.
+    Download and extract the given JDK if it is not already cached.
 
     Parameters
     ----------
@@ -58,7 +58,7 @@ def java_home(*, vendor=None, version=None, **kwargs):
     """
     Return the JDK home directory for the given JDK, installing if necessary.
 
-    Parameters are the same as for install_jdk().
+    Parameters are the same as for cache_jdk().
 
     Returns
     -------
@@ -76,7 +76,7 @@ def java_env(*, vendor=None, version=None, add_bin=True, **kwargs):
     Context manager to set environment variables for the given JDK, installing
     if necessary.
 
-    Parameters are the same as for install_jdk(), with the following addition.
+    Parameters are the same as for cache_jdk(), with the following addition.
 
     Parameters
     ----------
@@ -107,7 +107,7 @@ def cache_file(name, url, filename, **kwargs):
     """
     Install any file resource into the cache, downloading if necessary.
 
-    Parameters are the same as for install_jdk() (JDK-specific parameters are
+    Parameters are the same as for cache_jdk() (JDK-specific parameters are
     ignored), with the following additions.
 
     Parameters
@@ -160,7 +160,7 @@ def cache_package(name, url, **kwargs):
     Install any package into the cache, downloading and extracting if
     necessary.
 
-    Parameters are the same as for install_jdk() (JDK-specific parameters are
+    Parameters are the same as for cache_jdk() (JDK-specific parameters are
     ignored), with the following additions.
 
     Parameters

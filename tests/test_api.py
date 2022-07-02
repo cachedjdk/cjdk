@@ -12,7 +12,7 @@ import pytest
 from cjdk import _api, _cache, _index, _jdk
 
 
-def test_install_jdk():
+def test_cache_jdk():
     # The code path is a subset of java_home(), so no need for separate test.
     pass
 

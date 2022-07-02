@@ -17,7 +17,7 @@ SPDX-License-Identifier: MIT
 ```
 
 ```{eval-rst}
-.. autofunction:: cjdk.install_jdk
+.. autofunction:: cjdk.cache_jdk
 ```
 
 More details about the choices and defaults for [`vendor`](./vendors.md),

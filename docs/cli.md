@@ -46,7 +46,7 @@ $ cjdk --jdk temurin-jre:17.0.3 java-home
 (The output will depend on your operating system and configuration; the example
 shown was on macOS.)
 
-## `install`
+## `cache-jdk`
 
-```{command-output} cjdk install --help
+```{command-output} cjdk cache-jdk --help
 ```
