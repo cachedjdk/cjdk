@@ -6,10 +6,28 @@ Copyright 2022, Board of Regents of the University of Wisconsin System
 SPDX-License-Identifier: MIT
 --->
 
-Clone the Git repository and make sure to enable the Git hooks by running
-`pre-commit install`. You can install [pre-commit](https://pre-commit.com/)
-using `pip`, `brew`, and other means (I recommend the `pip` of a virtual
-environment, especially on Windows).
+Clone the Git repository:
+
+```sh
+git clone https://github.com/marktsuchida/cjdk.git
+cd cjdk
+```
+
+As usual, it is best to do all development in a virtual environment:
+
+```sh
+python -m venv venv
+echo '*' >venv/.gitignore  # Make Git ignore your venv directory
+source venv/bin/activate   # Use venv/Scripts/activate on Windows
+python -m pip install --upgrade pip setuptools
+```
+
+Make sure to enable the [pre-commit](https://pre-commit.com/) Git hooks:
+
+```sh
+pip install pre-commit
+pre-commit install
+```
 
 To run the tests using an editable install:
 
@@ -18,14 +36,33 @@ pip install -e .[testing]
 pytest
 ```
 
-To run the tests as they are run by CI, use Nox:
+To run the tests as they are run by CI, use [Nox](https://nox.thea.codes/):
 
 ```sh
 pip install nox
 nox
 ```
 
-To build the documentation, use
+To build the documentation with [Jupyter Book](https://jupyterbook.org/):
+
+```sh
+pip install -r docs/requirements.txt
+jb build docs
+# Now view docs/_build/html/index.html
+```
+
+Some of the documentation pages are Jupyter notebooks
+[stored](https://jupyterbook.org/en/stable/file-types/myst-notebooks.html) in
+MyST Markdown format using [Jupytext](https://jupytext.readthedocs.io/). To
+edit these in Jupyter Lab, right-click the file and select "Open With >
+Notebook" (if it asks you to select a kernel, you probably tried to open a
+Markdown file that is not a notebook).
+
+New notebook pages can be added by first creating the notebook (`.ipynb`) in
+Jupyter Lab, then running `jupytext mypage.ipynb --to myst`. Delete the
+`.ipynb` file so that the MyST (`.md`) file is the single source of truth.
+
+To build the documentation as done by CI:
 
 ```sh
 nox -s docs
