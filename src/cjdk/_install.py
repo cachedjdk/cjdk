@@ -2,6 +2,8 @@
 # Copyright 2022, Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
+import sys
+
 from . import _cache, _download
 
 __all__ = [
@@ -12,9 +14,7 @@ __all__ = [
 
 def install_file(prefix, name, url, filename, conf, *, ttl, checkfunc=None):
     def fetch(dest):
-        if conf.progress:
-            print(f"cjdk: Installing: {name}")
-            print(f"cjdk: Destination: {conf.cache_dir}")
+        _print_progress_header(conf, name)
         _download.download_file(
             dest,
             url,
@@ -35,9 +35,7 @@ def install_file(prefix, name, url, filename, conf, *, ttl, checkfunc=None):
 
 def install_dir(prefix, name, url, conf, *, checkfunc=None):
     def fetch(destdir):
-        if conf.progress:
-            print(f"cjdk: Installing: {name}")
-            print(f"cjdk: Destination: {conf.cache_dir}")
+        _print_progress_header(conf, name)
         _download.download_and_extract(
             destdir,
             url,
@@ -53,3 +51,11 @@ def install_dir(prefix, name, url, conf, *, checkfunc=None):
         cache_dir=conf.cache_dir,
         timeout_for_fetch_elsewhere=300,
     )
+
+
+def _print_progress_header(conf, name):
+    if conf.progress:
+        print(
+            f"cjdk: Installing {name} to {conf.cache_dir}",
+            file=sys.stderr,
+        )
