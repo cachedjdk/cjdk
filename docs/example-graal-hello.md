@@ -22,8 +22,10 @@ SPDX-License-Identifier: MIT
 This example shows how to compile Java source code into a native image
 (executable that does not require the JVM) using GraalVM.
 
-Note that an appropriate C++ toolchain must be installed for this to work; see
-the GraalVM documentation for details.
+Note that some platform-specific prerequisites must be installed for this to
+work; see the GraalVM
+[documentation](https://www.graalvm.org/22.1/reference-manual/native-image/#prerequisites)
+for details.
 
 ```{code-cell} ipython3
 import cjdk
