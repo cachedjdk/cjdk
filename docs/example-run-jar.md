@@ -22,7 +22,7 @@ SPDX-License-Identifier: MIT
 This example shows how to use the `cjdk.cache_file()` function to download an
 application Jar and run it with the desired JDK.
 
-We will use the [CheckStyle](https://checkstyle.org/) program (a Java linter)
+We will use the [Checkstyle](https://checkstyle.org/) program (a Java linter)
 as an example.
 
 ```{code-cell} ipython3
@@ -54,11 +54,11 @@ the **cjdk** cache directory.
 
 ```{code-cell} ipython3
 checkstyle_path = cjdk.cache_file(
-    "CheckStyle", checkstyle_url, "checkstyle-all.jar"
+    "Checkstyle", checkstyle_url, "checkstyle-all.jar"
 )
 ```
 
-Now we will run CheckStyle, with a JDK that is downloaded if needed.
+Now we will run Checkstyle, with a JDK that is downloaded if needed.
 
 ```{code-cell} ipython3
 with cjdk.java_env(vendor="temurin-jre", version="17.0.3"):
@@ -72,6 +72,6 @@ with cjdk.java_env(vendor="temurin-jre", version="17.0.3"):
     )
 ```
 
-CheckStyle has pointed out that our example code is missing documentation
+Checkstyle has pointed out that our example code is missing documentation
 comments and does not conform to the indentation rules defined in
-`google_checks.xml` (which is included in the CheckStyle Jar).
+`google_checks.xml` (which is included in the Checkstyle Jar).
