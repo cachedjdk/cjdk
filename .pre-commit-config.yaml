@@ -47,3 +47,7 @@ repos:
           - mdformat-myst
         args: ["--wrap=79"]
         exclude: '^(?!docs/.*)$'
+  - repo: https://github.com/fsfe/reuse-tool
+    rev: v1.0.0
+    hooks:
+      - id: reuse
