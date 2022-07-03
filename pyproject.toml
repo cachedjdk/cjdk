@@ -12,7 +12,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cjdk"
 dynamic = ["version"]
-description = "Download JDK or JRE distributions on the fly"
+description = "Auto-download JDK or JRE and run Java apps from Python or CLI"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {file = "LICENSE.txt"}
