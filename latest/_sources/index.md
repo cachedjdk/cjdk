@@ -1,6 +1,6 @@
 <!--
 This file is part of cjdk.
-Copyright 2022, Board of Regents of the University of Wisconsin System
+Copyright 2022 Board of Regents of the University of Wisconsin System
 SPDX-License-Identifier: MIT
 --->
 
@@ -24,7 +24,7 @@ one-liner, without having to worry about whether the user has installed a new
 enough Java runtime and set `JAVA_HOME` and `PATH` to appropriate values.
 
 For example, the following command will run
-[CheckStyle](https://checkstyle.org/) using Temurin JRE 17 (which will be
+[Checkstyle](https://checkstyle.org/) using Temurin JRE 17 (which will be
 downloaded if this is the first time it is requested):
 
 ```sh
