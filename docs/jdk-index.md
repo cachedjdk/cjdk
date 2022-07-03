@@ -6,8 +6,8 @@ SPDX-License-Identifier: MIT
 
 # JDK index
 
-**cjdk** currently depends on the [JDK
-index](https://github.com/coursier/jvm-index) assembled (in an automated
+**cjdk** currently depends on the
+[JDK index](https://github.com/coursier/jvm-index) assembled (in an automated
 fashion) by the [Coursier](https://get-coursier.io/) project.
 
 The index is used to map JDK vendors and versions to download URLs.

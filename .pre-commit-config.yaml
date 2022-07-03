@@ -34,8 +34,16 @@ repos:
         # E203 whitespace before ':'
         # E501 line too long
         args: ["--extend-ignore", "E203,E501"]
-  - repo: https://github.com/jackdewinter/pymarkdown
-    rev: v0.9.6
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.14
     hooks:
-      - id: pymarkdown
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-gfm
+        args: ["--wrap=79"]
         exclude: '^docs/.*$'
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-myst
+        args: ["--wrap=79"]
+        exclude: '^(?!docs/.*)$'
