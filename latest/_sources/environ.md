@@ -7,8 +7,8 @@ SPDX-License-Identifier: MIT
 # Environment variables
 
 The following environment variables modify the default behavior of both the
-Python API and the command-line interface.
-They are intended for setting user preferences.
+Python API and the command-line interface. They are intended for setting user
+preferences.
 
 ## `CJDK_ARCH`
 
@@ -19,9 +19,9 @@ current CPU architecture as reported by Python's `platform.machine()`).
 
 ## `CJDK_CACHE_DIR`
 
-Set to an absolute path to override the default [cache
-directory](./cachedir.md), used when not overridden by a keyword argument or
-command-line option.
+Set to an absolute path to override the default
+[cache directory](./cachedir.md), used when not overridden by a keyword
+argument or command-line option.
 
 (environ-cjdk-index-ttl)=
 

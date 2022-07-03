@@ -10,11 +10,7 @@ See also the section on [versioning](versioning-scheme).
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/marktsuchida/cjdk/compare/v0.2.0...HEAD
-
 ## [0.2.0] - 2022-07-02
-
-[0.2.0]: https://github.com/marktsuchida/cjdk/compare/v0.1.1...v0.2.0
 
 ### Added
 
@@ -38,12 +34,13 @@ See also the section on [versioning](versioning-scheme).
 
 ## [0.1.1] - 2022-06-23
 
-[0.1.1]: https://github.com/marktsuchida/cjdk/compare/v0.1.0...v0.1.1
-
 First release.
 
 ## [0.1.0] - 2022-06-23
 
-[0.1.0]: https://github.com/marktsuchida/cjdk/tree/v0.1.0
-
 Tag created but not actually released.
+
+[0.1.0]: https://github.com/marktsuchida/cjdk/tree/v0.1.0
+[0.1.1]: https://github.com/marktsuchida/cjdk/compare/v0.1.0...v0.1.1
+[0.2.0]: https://github.com/marktsuchida/cjdk/compare/v0.1.1...v0.2.0
+[unreleased]: https://github.com/marktsuchida/cjdk/compare/v0.2.0...HEAD

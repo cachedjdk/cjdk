@@ -7,8 +7,7 @@ SPDX-License-Identifier: MIT
 # Cache directory
 
 By default, **cjdk** uses the platform-dependent user cache directory to store
-downloaded JDKs and other data.
-The defaults are:
+downloaded JDKs and other data. The defaults are:
 
 - On Windows, `%LOCALAPPDATA%\cjdk\cache`, which is usually
   `%USERPROFILE%\AppData\Local\cjdk\cache`,
