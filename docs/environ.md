@@ -7,8 +7,9 @@ SPDX-License-Identifier: MIT
 # Environment variables
 
 The following environment variables modify the default behavior of both the
-Python API and the command-line interface. They are intended for setting user
-preferences.
+Python API and the command-line interface. Since they affect any program that
+uses **cjdk** as a library, they are intended for setting user preferences or
+for testing applications.
 
 ## `CJDK_ARCH`
 
