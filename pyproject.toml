@@ -29,8 +29,8 @@ classifiers = [
 
 dependencies = [
     "click >= 8.0",
+    "progressbar2 >= 4.0",
     "requests >= 2.24",
-    "tqdm >= 4.0",
 ]
 
 [project.optional-dependencies]
