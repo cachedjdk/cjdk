@@ -8,7 +8,7 @@ SPDX-License-Identifier: MIT
 
 See also the section on [versioning](versioning-scheme).
 
-## [Unreleased]
+## [Unreleased] (0.3.0)
 
 ### Added
 

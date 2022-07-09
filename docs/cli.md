@@ -15,6 +15,11 @@ option.
 ```{command-output} cjdk --help
 ```
 
+```{eval-rst}
+.. versionadded:: 0.2.0
+    ``--index-url``, ``--index-ttl``, ``--os``, and ``--arch``
+```
+
 More details about the choices and defaults for [`VENDOR`](./vendors.md),
 [`VERSION`](./versions.md), and [`--cache_dir`](./cachedir.md) are available on
 separate pages.
@@ -53,6 +58,10 @@ shown was on macOS.)
 ```{command-output} cjdk cache-jdk --help
 ```
 
+```{eval-rst}
+.. versionadded:: 0.2.0
+```
+
 ## Caching arbitrary files and packages
 
 ### `cache-file`
@@ -60,7 +69,15 @@ shown was on macOS.)
 ```{command-output} cjdk cache-file --help
 ```
 
+```{eval-rst}
+.. versionadded:: 0.2.0
+```
+
 ### `cache-package`
 
 ```{command-output} cjdk cache-package --help
+```
+
+```{eval-rst}
+.. versionadded:: 0.2.0
 ```
