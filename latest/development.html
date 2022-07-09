@@ -390,6 +390,16 @@ title="Print to PDF"
    Versioning
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#making-api-changes">
+   Making API changes
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#release-procedure">
+   Release procedure
+  </a>
+ </li>
 </ul>
 
     </nav>
@@ -412,6 +422,16 @@ title="Print to PDF"
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#versioning">
    Versioning
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#making-api-changes">
+   Making API changes
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#release-procedure">
+   Release procedure
   </a>
  </li>
 </ul>
@@ -486,6 +506,30 @@ scope of API for versioning purposes comprising the <a class="reference internal
 for configuration.</p>
 <p>As specified by SemVer, anything can change during the 0.x series, although the
 plan is to keep disruptive changes to a minimum.</p>
+</section>
+<section id="making-api-changes">
+<h2>Making API changes<a class="headerlink" href="#making-api-changes" title="Permalink to this headline">#</a></h2>
+<ol class="simple">
+<li><p>Document in docstring. For Python API, follow our flavor of NumPy style.</p></li>
+<li><p>List in the “unreleased” section of <code class="docutils literal notranslate"><span class="pre">docs/changelog.md</span></code>. Change the planned
+next release version if necessary.</p></li>
+<li><p>Document in Jupyter Book (<code class="docutils literal notranslate"><span class="pre">docs/</span></code>). Add <code class="docutils literal notranslate"><span class="pre">versionadded</span></code>, <code class="docutils literal notranslate"><span class="pre">versionchanged</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">deprecated</span></code> directive.</p></li>
+</ol>
+<p>If changing the next release version, ensure that any existing <code class="docutils literal notranslate"><span class="pre">versionadded</span></code>,
+<code class="docutils literal notranslate"><span class="pre">versionchanged</span></code>, or <code class="docutils literal notranslate"><span class="pre">deprecated</span></code> directives are updated.</p>
+</section>
+<section id="release-procedure">
+<h2>Release procedure<a class="headerlink" href="#release-procedure" title="Permalink to this headline">#</a></h2>
+<ol class="simple">
+<li><p>Ensure <code class="docutils literal notranslate"><span class="pre">docs/changelog.md</span></code> lists all changes since the last release, and
+convert the “unreleased” section to the new version.</p></li>
+<li><p>Also ensure that there are no <code class="docutils literal notranslate"><span class="pre">versionadded</span></code>, <code class="docutils literal notranslate"><span class="pre">versionchanged</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">deprecated</span></code> directives with a patch or minor version that is being skipped
+without releasing.</p></li>
+<li><p>Tag the commit to release.</p></li>
+</ol>
+<p>The rest is taken care of automatically.</p>
 </section>
 </section>
 

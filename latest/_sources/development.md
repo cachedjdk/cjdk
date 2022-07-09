@@ -80,3 +80,25 @@ for configuration.
 
 As specified by SemVer, anything can change during the 0.x series, although the
 plan is to keep disruptive changes to a minimum.
+
+## Making API changes
+
+1. Document in docstring. For Python API, follow our flavor of NumPy style.
+1. List in the "unreleased" section of `docs/changelog.md`. Change the planned
+   next release version if necessary.
+1. Document in Jupyter Book (`docs/`). Add `versionadded`, `versionchanged`, or
+   `deprecated` directive.
+
+If changing the next release version, ensure that any existing `versionadded`,
+`versionchanged`, or `deprecated` directives are updated.
+
+## Release procedure
+
+1. Ensure `docs/changelog.md` lists all changes since the last release, and
+   convert the "unreleased" section to the new version.
+1. Also ensure that there are no `versionadded`, `versionchanged`, or
+   `deprecated` directives with a patch or minor version that is being skipped
+   without releasing.
+1. Tag the commit to release.
+
+The rest is taken care of automatically.

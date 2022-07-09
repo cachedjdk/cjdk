@@ -18,6 +18,7 @@ SPDX-License-Identifier: MIT
 
 ```{eval-rst}
 .. autofunction:: cjdk.cache_jdk
+.. versionadded:: 0.2.0
 ```
 
 More details about the choices and defaults for [`vendor`](./vendors.md),
@@ -33,8 +34,10 @@ install an application JAR.
 
 ```{eval-rst}
 .. autofunction:: cjdk.cache_file
+.. versionadded:: 0.2.0
 ```
 
 ```{eval-rst}
 .. autofunction:: cjdk.cache_package
+.. versionadded:: 0.2.0
 ```
