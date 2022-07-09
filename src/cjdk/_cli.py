@@ -74,7 +74,7 @@ def cache_jdk(ctx):
     useful if you want any potentil JDK download to happen at a controlled
     point in time.
 
-    See `cjdk --help` for the common options used to specify the JDK and how it
+    See 'cjdk --help' for the common options used to specify the JDK and how it
     is obtained.
     """
     _api.cache_jdk(**ctx.obj)
@@ -91,7 +91,7 @@ def java_home(ctx):
 
     The JDK is downloaded if not already cached.
 
-    See `cjdk --help` for the common options used to specify the JDK and how it
+    See 'cjdk --help' for the common options used to specify the JDK and how it
     is obtained.
     """
     print(_api.java_home(**ctx.obj))
@@ -110,7 +110,7 @@ def exec(ctx, prog, args):
 
     The JDK is download if not already cached.
 
-    See `cjdk --help` for the common options used to specify the JDK and how it
+    See 'cjdk --help' for the common options used to specify the JDK and how it
     is obtained.
     """
     with _api.java_env(**ctx.obj):
@@ -157,7 +157,7 @@ def cache_file(ctx, url, filename, name, ttl, sha1, sha256, sha512):
     The file at URL (whose scheme must be https) is stored in the cache with
     the given FILENAME, and the full path to it is printed to standard output.
 
-    See `cjdk --help` for the common options (JDK-specific options are
+    See 'cjdk --help' for the common options (JDK-specific options are
     ignored).
     """
     print(
@@ -204,7 +204,7 @@ def cache_package(ctx, url, name, sha1, sha256, sha512):
     into a directory in the cache, and the full path to the directory is
     printed to standard output.
 
-    See `cjdk --help` for the common options (JDK-specific options are
+    See 'cjdk --help' for the common options (JDK-specific options are
     ignored).
     """
     print(
