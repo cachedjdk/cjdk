@@ -529,45 +529,45 @@ GraalVM Native Image: Generating &#39;hello&#39; (executable)...
 ========================================================================================================================
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1/7] Initializing...                                                                                    (6.9s @ 0.19GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1/7] Initializing...                                                                                    (7.7s @ 0.19GB)
  Version info: &#39;GraalVM 22.1.0 Java 17 CE&#39;
  C compiler: gcc (linux, x86_64, 9.4.0)
  Garbage collector: Serial GC
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[2/7] Performing analysis...  [******]                                                                  (25.6s @ 0.67GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[2/7] Performing analysis...  [******]                                                                  (26.1s @ 0.69GB)
    2,852 (74.23%) of  3,842 classes reachable
    3,399 (50.83%) of  6,687 fields reachable
-  12,932 (44.57%) of 29,018 methods reachable
+  12,932 (44.57%) of 29,016 methods reachable
       27 classes,     0 fields, and   345 methods registered for reflection
       57 classes,    58 fields, and    51 methods registered for JNI access
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[3/7] Building universe...                                                                               (1.8s @ 0.88GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[3/7] Building universe...                                                                               (2.1s @ 0.89GB)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[4/7] Parsing methods...      [*]                                                                        (2.0s @ 1.13GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[4/7] Parsing methods...      [**]                                                                       (2.0s @ 1.15GB)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[5/7] Inlining methods...     [****]                                                                     (3.1s @ 0.72GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[5/7] Inlining methods...     [****]                                                                     (3.0s @ 0.71GB)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[6/7] Compiling methods...    [*****]                                                                   (22.5s @ 1.48GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[6/7] Compiling methods...    [*****]                                                                   (22.0s @ 1.23GB)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[7/7] Creating image...                                                                                  (2.2s @ 1.78GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[7/7] Creating image...                                                                                  (2.1s @ 1.52GB)
    4.41MB (35.36%) for code area:    7,591 compilation units
-   6.97MB (55.89%) for image heap:   1,711 classes and 102,360 objects
+   6.97MB (55.89%) for image heap:   1,711 classes and 102,357 objects
    1.09MB ( 8.75%) for other data
   12.47MB in total
 ------------------------------------------------------------------------------------------------------------------------
 Top 10 packages in code area:                               Top 10 object types in image heap:
- 666.60KB java.util                                         1014.06KB byte[] for general heap data
+ 666.57KB java.util                                         1014.06KB byte[] for general heap data
  338.23KB java.lang                                          984.94KB java.lang.String
- 274.64KB java.text                                          944.52KB byte[] for code metadata
+ 274.64KB java.text                                          944.58KB byte[] for code metadata
  235.70KB java.util.regex                                    645.59KB java.lang.Class
  194.32KB com.oracle.svm.jni                                 572.10KB byte[] for java.lang.String
- 193.15KB java.util.concurrent                               474.56KB java.util.HashMap$Node
+ 193.16KB java.util.concurrent                               474.56KB java.util.HashMap$Node
  157.78KB com.oracle.svm.core.reflect                        222.81KB com.oracle.svm.core.hub.DynamicHubCompanion
  147.39KB java.math                                          201.63KB java.lang.String[]
   98.45KB java.util.logging                                  197.61KB java.util.HashMap$Node[]
@@ -575,27 +575,39 @@ Top 10 packages in code area:                               Top 10 object types 
       ... 119 additional packages                                 ... 778 additional object types
                                            (use GraalVM Dashboard to see all)
 ------------------------------------------------------------------------------------------------------------------------
-                        3.8s (5.8% of total time) in 18 GCs | Peak RSS: 2.61GB | CPU load: 1.92
+                        3.6s (5.3% of total time) in 18 GCs | Peak RSS: 2.64GB | CPU load: 1.94
 ------------------------------------------------------------------------------------------------------------------------
 Produced artifacts:
- /tmp/tmp9dsb89oe/hello (executable)
- /tmp/tmp9dsb89oe/hello.build_artifacts.txt
+ /tmp/tmpp0yql6n5/hello (executable)
+ /tmp/tmpp0yql6n5/hello.build_artifacts.txt
 ========================================================================================================================
-Finished generating &#39;hello&#39; in 1m 5s.
+Finished generating &#39;hello&#39; in 1m 6s.
 </pre></div>
 </div>
 </div>
 </div>
-<p>Finally, let’s run the native image.</p>
+<p>Finally, let’s run the native image. Being a native image, it does not need
+<code class="docutils literal notranslate"><span class="pre">java_env()</span></code> to run:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">cjdk</span><span class="o">.</span><span class="n">java_env</span><span class="p">(</span><span class="o">**</span><span class="n">cjdk_config</span><span class="p">):</span>
-    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;./hello&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;./hello&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Hello, World!
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r</span><span class="o">.</span><span class="n">returncode</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0
 </pre></div>
 </div>
 </div>
