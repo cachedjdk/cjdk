@@ -9,9 +9,8 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import requests
-from tqdm.auto import tqdm
 
-from . import _compat
+from . import _compat, _progress
 
 __all__ = [
     "download_and_extract",
@@ -79,18 +78,16 @@ def download_file(
 
     response = requests.get(url, stream=True)
     response.raise_for_status()
-    size = int(response.headers.get("content-length", None))
-    with tqdm(
-        desc="Downloading",
-        total=size,
-        disable=(None if progress else True),
-        unit="B",
-        unit_scale=True,
-    ) as tq:
-        with open(dest, "wb") as outfile:
-            for chunk in response.iter_content(chunk_size=16384):
-                outfile.write(chunk)
-                tq.update(len(chunk))
+    total = response.headers.get("content-length", None)
+    total = int(total) if total else None
+    with open(dest, "wb") as outfile:
+        for chunk in _progress.data_transfer(
+            total,
+            response.iter_content(chunk_size=16384),
+            enabled=progress,
+            text="Download",
+        ):
+            outfile.write(chunk)
 
     if checkfunc:
         checkfunc(dest)
@@ -99,12 +96,8 @@ def download_file(
 def _extract_zip(destdir, srcfile, progress=True):
     with zipfile.ZipFile(srcfile) as zf:
         infolist = zf.infolist()
-        for member in tqdm(
-            infolist,
-            desc="Extracting",
-            total=len(infolist),
-            disable=(None if progress else True),
-            unit="files",
+        for member in _progress.iterate(
+            infolist, enabled=progress, text="Extract"
         ):
             extracted = Path(zf.extract(member, destdir))
 
@@ -116,10 +109,5 @@ def _extract_zip(destdir, srcfile, progress=True):
 
 def _extract_tgz(destdir, srcfile, progress=True):
     with tarfile.open(srcfile, "r:gz", bufsize=65536) as tf:
-        for member in tqdm(
-            tf,
-            desc="Extracting",
-            disable=(None if progress else True),
-            unit="files",
-        ):
+        for member in _progress.iterate(tf, enabled=progress, text="Extract"):
             tf.extract(member, destdir)

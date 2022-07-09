@@ -10,6 +10,14 @@ See also the section on [versioning](versioning-scheme).
 
 ## [Unreleased]
 
+### Added
+
+- Environment variable `CJDK_HIDE_PROGRESS_BARS`.
+
+### Fixed
+
+- Prevent `cjdk exec` from displaying warnings about multiprocessing on macOS.
+
 ## [0.2.0] - 2022-07-02
 
 ### Added

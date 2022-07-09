@@ -17,4 +17,4 @@ def test(session):
 def docs(session):
     session.install(".")
     session.install("-r", "docs/requirements.txt")
-    session.run("jb", "build", "docs/")
+    session.run("jb", "build", "docs/", env={"CJDK_HIDE_PROGRESS_BARS": "1"})

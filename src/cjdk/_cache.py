@@ -8,9 +8,7 @@ import urllib
 from contextlib import contextmanager
 from pathlib import Path
 
-from tqdm.auto import tqdm
-
-from . import _compat
+from . import _compat, _progress
 
 __all__ = [
     "atomic_file",
@@ -211,13 +209,9 @@ def _swap_in_fetched_file(target, tmpfile, timeout, progress=False):
     WINDOWS_ERROR_ACCESS_DENIED = 5
 
     target.parent.mkdir(parents=True, exist_ok=True)
-    with tqdm(
-        desc="Waiting for another process",
-        # Intentionally not showing total; percentage makes no sense here
-        disable=(None if progress else True),
-        unit="s",
-        delay=0.5,
-    ) as tq:
+    with _progress.indefinite(
+        enabled=progress, text="File busy; waiting"
+    ) as update_pbar:
         for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
             try:
                 tmpfile.replace(target)
@@ -228,7 +222,7 @@ def _swap_in_fetched_file(target, tmpfile, timeout, progress=False):
                     and wait_seconds > 0
                 ):
                     time.sleep(wait_seconds)
-                    tq.update(wait_seconds)
+                    update_pbar()
                     continue
                 raise
             else:
@@ -246,12 +240,9 @@ def _add_url_file(keydir, key_url):
 
 
 def _wait_for_dir_to_vanish(directory, timeout, progress=True):
-    with tqdm(
-        desc="Waiting for another download",
-        # Intentionally not showing total; percentage makes no sense here
-        disable=(None if progress else True),
-        unit="s",
-    ) as tq:
+    with _progress.indefinite(
+        enabled=progress, text="Already downloading; waiting"
+    ) as update_pbar:
         for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
             if not directory.is_dir():
                 return
@@ -260,7 +251,7 @@ def _wait_for_dir_to_vanish(directory, timeout, progress=True):
                     f"Timeout while waiting for directory {directory} to disappear"
                 )
             time.sleep(wait_seconds)
-            tq.update(wait_seconds)
+            update_pbar()
 
 
 def _backoff_seconds(initial_interval, max_interval, max_total, factor=1.5):

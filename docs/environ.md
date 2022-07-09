@@ -24,6 +24,16 @@ Set to an absolute path to override the default
 [cache directory](./cachedir.md), used when not overridden by a keyword
 argument or command-line option.
 
+## `CJDK_HIDE_PROGRESS_BARS`
+
+Set to `1`, `YES`, or `TRUE` (case insensitive) to disable all progress bars.
+Note that this only hides progress bars, unlike `--no-progress` or
+`progress=False` which hide all progress messages.
+
+This can be used when the output is being captured by tools that do not
+correctly emulate a terminal (such as Jupyter Book at the time of writing). You
+probably don't need it in Jupyter Lab or regular terminals.
+
 (environ-cjdk-index-ttl)=
 
 ## `CJDK_INDEX_TTL`
