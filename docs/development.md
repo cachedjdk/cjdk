@@ -47,7 +47,7 @@ To build the documentation with [Jupyter Book](https://jupyterbook.org/):
 
 ```sh
 pip install -r docs/requirements.txt
-CJDK_OVERRIDE_PROGRESS_BARS=hide jb build docs
+CJDK_HIDE_PROGRESS_BARS=1 jb build docs
 # Now view docs/_build/html/index.html
 ```
 

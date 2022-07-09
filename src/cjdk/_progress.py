@@ -25,22 +25,15 @@ def indefinite(*, enabled, text):
     enabled -- Whether to show progress bar (bool).
     text -- Label text (str).
 
-    The value of the context manager is the progress bar, which has method
-    update(), which should be called every iteration with no arguments.
+    The value of the context manager is a callable which should be called every
+    iteration with no arguments.
     """
-    enabled, faked = _bar_mode(enabled)
+    enabled = _bar_enabled(enabled)
     barclass = progressbar.ProgressBar if enabled else progressbar.NullBar
     with barclass(
         max_value=progressbar.UnknownLength, prefix=f"{text} "
     ) as pbar:
-        pbar.start()
-
-        class PBar:
-            def update(self):
-                if not faked:
-                    pbar.update()
-
-        yield PBar()
+        yield lambda: pbar.update()
 
 
 def data_transfer(total_bytes, iter, *, enabled, text):
@@ -53,7 +46,7 @@ def data_transfer(total_bytes, iter, *, enabled, text):
     enabled -- Whether to show progress bar (bool).
     text -- Label text (str).
     """
-    enabled, faked = _bar_mode(enabled)
+    enabled = _bar_enabled(enabled)
     barclass = progressbar.DataTransferBar if enabled else progressbar.NullBar
     size = 0
     if total_bytes is None:
@@ -63,8 +56,7 @@ def data_transfer(total_bytes, iter, *, enabled, text):
         for chunk in iter:
             yield chunk
             size += len(chunk)
-            if not faked:
-                pbar.update(size)
+            pbar.update(size)
 
 
 def iterate(iter, *, enabled, text, total=None):
@@ -77,7 +69,7 @@ def iterate(iter, *, enabled, text, total=None):
     text -- Label text (str).
     total -- Known total iteration count (int) or None.
     """
-    enabled, faked = _bar_mode(enabled)
+    enabled = _bar_enabled(enabled)
     barclass = progressbar.ProgressBar if enabled else progressbar.NullBar
     if total is None:
         if hasattr(iter, "__len__"):
@@ -85,22 +77,17 @@ def iterate(iter, *, enabled, text, total=None):
         else:
             total = progressbar.UnknownLength
     bar = barclass(prefix=f"{text} ", max_value=total)
-    if faked:
-        with bar as pbar:
-            pbar.start()
-            yield from iter
-    else:
-        yield from bar(iter)
+    yield from bar(iter)
 
 
-def _bar_mode(enabled):
-    mode = os.environ.get("CJDK_OVERRIDE_PROGRESS_BARS", "no").lower()
-    if mode == "no":
-        return enabled, False
-    elif mode == "hide":
-        return False, False
-    elif mode == "fake":
-        return enabled, True
+def _bar_enabled(enabled):
+    if os.environ.get("CJDK_HIDE_PROGRESS_BARS", "0").lower() in (
+        "1",
+        "true",
+        "yes",
+    ):
+        return False
+    return enabled
 
 
 # Interactive testing
@@ -109,10 +96,10 @@ if __name__ == "__main__":
     enabled = enabled.lower() in ("1", "true")
     COUNT = 30
     if mode == "indefinite":
-        with indefinite(enabled=enabled, text="Test") as pbar:
+        with indefinite(enabled=enabled, text="Test") as update_pbar:
             for i in range(COUNT):
                 time.sleep(0.1)
-                pbar.update()
+                update_pbar()
     elif mode == "iterate":
 
         def slowiter(n):

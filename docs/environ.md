@@ -24,12 +24,11 @@ Set to an absolute path to override the default
 [cache directory](./cachedir.md), used when not overridden by a keyword
 argument or command-line option.
 
-## `CJDK_OVERRIDE_PROGRESS_BARS`
+## `CJDK_HIDE_PROGRESS_BARS`
 
-Set to `hide` to never display progress bars. Set to `fake` to only update
-progress bars a few times. Note that setting this environment variable to
-`hide` only hides progress bars whereas `--no-progress` or `progress=False`
-hide all progress messages.
+Set to `1`, `YES`, or `TRUE` (case insensitive) to disable all progress bars.
+Note that this only hides progress bars, unlike `--no-progress` or
+`progress=False` which hide all progress messages.
 
 This can be used when the output is being captured by tools that do not
 correctly emulate a terminal (such as Jupyter Book at the time of writing). You

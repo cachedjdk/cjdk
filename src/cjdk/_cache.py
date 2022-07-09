@@ -211,7 +211,7 @@ def _swap_in_fetched_file(target, tmpfile, timeout, progress=False):
     target.parent.mkdir(parents=True, exist_ok=True)
     with _progress.indefinite(
         enabled=progress, text="File busy; waiting"
-    ) as pbar:
+    ) as update_pbar:
         for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
             try:
                 tmpfile.replace(target)
@@ -222,7 +222,7 @@ def _swap_in_fetched_file(target, tmpfile, timeout, progress=False):
                     and wait_seconds > 0
                 ):
                     time.sleep(wait_seconds)
-                    pbar.update()
+                    update_pbar()
                     continue
                 raise
             else:
@@ -242,7 +242,7 @@ def _add_url_file(keydir, key_url):
 def _wait_for_dir_to_vanish(directory, timeout, progress=True):
     with _progress.indefinite(
         enabled=progress, text="Already downloading; waiting"
-    ) as pbar:
+    ) as update_pbar:
         for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
             if not directory.is_dir():
                 return
@@ -251,7 +251,7 @@ def _wait_for_dir_to_vanish(directory, timeout, progress=True):
                     f"Timeout while waiting for directory {directory} to disappear"
                 )
             time.sleep(wait_seconds)
-            pbar.update()
+            update_pbar()
 
 
 def _backoff_seconds(initial_interval, max_interval, max_total, factor=1.5):

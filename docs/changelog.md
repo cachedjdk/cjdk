@@ -12,7 +12,7 @@ See also the section on [versioning](versioning-scheme).
 
 ### Added
 
-- Environment variable `CJDK_OVERRIDE_PROGRESS_BAR`.
+- Environment variable `CJDK_HIDE_PROGRESS_BARS`.
 
 ### Fixed
 
