@@ -12,6 +12,7 @@ See also the section on [versioning](versioning-scheme).
 
 ### Added
 
+- Support running the CLI via `python -m cjdk`.
 - Environment variable `CJDK_HIDE_PROGRESS_BARS`.
 
 ### Fixed

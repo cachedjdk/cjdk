@@ -529,42 +529,42 @@ GraalVM Native Image: Generating &#39;hello&#39; (executable)...
 ========================================================================================================================
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1/7] Initializing...                                                                                    (7.7s @ 0.19GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1/7] Initializing...                                                                                    (7.9s @ 0.19GB)
  Version info: &#39;GraalVM 22.1.0 Java 17 CE&#39;
  C compiler: gcc (linux, x86_64, 9.4.0)
  Garbage collector: Serial GC
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[2/7] Performing analysis...  [******]                                                                  (26.1s @ 0.69GB)
-   2,852 (74.23%) of  3,842 classes reachable
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[2/7] Performing analysis...  [******]                                                                  (28.5s @ 0.68GB)
+   2,852 (74.19%) of  3,844 classes reachable
    3,399 (50.83%) of  6,687 fields reachable
-  12,932 (44.57%) of 29,016 methods reachable
+  12,932 (44.57%) of 29,017 methods reachable
       27 classes,     0 fields, and   345 methods registered for reflection
       57 classes,    58 fields, and    51 methods registered for JNI access
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[3/7] Building universe...                                                                               (2.1s @ 0.89GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[3/7] Building universe...                                                                               (2.4s @ 0.87GB)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[4/7] Parsing methods...      [**]                                                                       (2.0s @ 1.15GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[4/7] Parsing methods...      [**]                                                                       (2.3s @ 1.13GB)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[5/7] Inlining methods...     [****]                                                                     (3.0s @ 0.71GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[5/7] Inlining methods...     [****]                                                                     (3.7s @ 0.71GB)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[6/7] Compiling methods...    [*****]                                                                   (22.0s @ 1.23GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[6/7] Compiling methods...    [*****]                                                                   (25.7s @ 1.48GB)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[7/7] Creating image...                                                                                  (2.1s @ 1.52GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[7/7] Creating image...                                                                                  (2.4s @ 1.78GB)
    4.41MB (35.36%) for code area:    7,591 compilation units
-   6.97MB (55.89%) for image heap:   1,711 classes and 102,357 objects
+   6.97MB (55.89%) for image heap:   1,711 classes and 102,361 objects
    1.09MB ( 8.75%) for other data
   12.47MB in total
 ------------------------------------------------------------------------------------------------------------------------
 Top 10 packages in code area:                               Top 10 object types in image heap:
- 666.57KB java.util                                         1014.06KB byte[] for general heap data
+ 666.58KB java.util                                         1014.06KB byte[] for general heap data
  338.23KB java.lang                                          984.94KB java.lang.String
- 274.64KB java.text                                          944.58KB byte[] for code metadata
+ 274.64KB java.text                                          944.52KB byte[] for code metadata
  235.70KB java.util.regex                                    645.59KB java.lang.Class
  194.32KB com.oracle.svm.jni                                 572.10KB byte[] for java.lang.String
  193.16KB java.util.concurrent                               474.56KB java.util.HashMap$Node
@@ -575,13 +575,13 @@ Top 10 packages in code area:                               Top 10 object types 
       ... 119 additional packages                                 ... 778 additional object types
                                            (use GraalVM Dashboard to see all)
 ------------------------------------------------------------------------------------------------------------------------
-                        3.6s (5.3% of total time) in 18 GCs | Peak RSS: 2.64GB | CPU load: 1.94
+                        3.8s (5.1% of total time) in 18 GCs | Peak RSS: 2.63GB | CPU load: 1.92
 ------------------------------------------------------------------------------------------------------------------------
 Produced artifacts:
- /tmp/tmpp0yql6n5/hello (executable)
- /tmp/tmpp0yql6n5/hello.build_artifacts.txt
+ /tmp/tmpnt88ztjc/hello (executable)
+ /tmp/tmpnt88ztjc/hello.build_artifacts.txt
 ========================================================================================================================
-Finished generating &#39;hello&#39; in 1m 6s.
+Finished generating &#39;hello&#39; in 1m 14s.
 </pre></div>
 </div>
 </div>
