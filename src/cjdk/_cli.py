@@ -112,6 +112,8 @@ def exec(ctx, prog, args):
 
     See 'cjdk --help' for the common options used to specify the JDK and how it
     is obtained.
+
+    Pass '--' before PROG to prevent any of ARGS to be interpreted by cjdk.
     """
     with _api.java_env(**ctx.obj):
         # os.exec*() do not work well on Windows

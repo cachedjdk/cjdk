@@ -29,7 +29,7 @@ separate pages.
 For example, run the `java` command from the Temurin JRE 17.0.3 with the
 `-version` option, installing the JRE if necessary:
 
-```{command-output} cjdk --jdk temurin-jre:17.0.3 exec java -version
+```{command-output} cjdk --jdk temurin-jre:17.0.3 exec -- java -version
 ```
 
 ### `java-home`
