@@ -50,8 +50,6 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Development" href="development.html" />
@@ -406,6 +404,15 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cjdk-hide-progress-bars">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     CJDK_HIDE_PROGRESS_BARS
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#cjdk-index-ttl">
    <code class="docutils literal notranslate">
     <span class="pre">
@@ -479,6 +486,15 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cjdk-hide-progress-bars">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     CJDK_HIDE_PROGRESS_BARS
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#cjdk-index-ttl">
    <code class="docutils literal notranslate">
     <span class="pre">
@@ -545,6 +561,15 @@ current CPU architecture as reported by Python’s <code class="docutils literal
 <p>Set to an absolute path to override the default
 <a class="reference internal" href="cachedir.html"><span class="doc std std-doc">cache directory</span></a>, used when not overridden by a keyword
 argument or command-line option.</p>
+</section>
+<section id="cjdk-hide-progress-bars">
+<h2><code class="docutils literal notranslate"><span class="pre">CJDK_HIDE_PROGRESS_BARS</span></code><a class="headerlink" href="#cjdk-hide-progress-bars" title="Permalink to this headline">#</a></h2>
+<p>Set to <code class="docutils literal notranslate"><span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">YES</span></code>, or <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> (case insensitive) to disable all progress bars.
+Note that this only hides progress bars, unlike <code class="docutils literal notranslate"><span class="pre">--no-progress</span></code> or
+<code class="docutils literal notranslate"><span class="pre">progress=False</span></code> which hide all progress messages.</p>
+<p>This can be used when the output is being captured by tools that do not
+correctly emulate a terminal (such as Jupyter Book at the time of writing). You
+probably don’t need it in Jupyter Lab or regular terminals.</p>
 </section>
 <section id="cjdk-index-ttl">
 <span id="environ-cjdk-index-ttl"></span><h2><code class="docutils literal notranslate"><span class="pre">CJDK_INDEX_TTL</span></code><a class="headerlink" href="#cjdk-index-ttl" title="Permalink to this headline">#</a></h2>

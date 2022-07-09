@@ -47,7 +47,7 @@ To build the documentation with [Jupyter Book](https://jupyterbook.org/):
 
 ```sh
 pip install -r docs/requirements.txt
-jb build docs
+CJDK_HIDE_PROGRESS_BARS=1 jb build docs
 # Now view docs/_build/html/index.html
 ```
 
@@ -65,6 +65,7 @@ Jupyter Lab, then running `jupytext mypage.ipynb --to myst`. Delete the
 To build the documentation as done by CI:
 
 ```sh
+rm -rf docs/_build
 nox -s docs
 ```
 

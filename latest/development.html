@@ -50,8 +50,6 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Changelog" href="changelog.html" />
@@ -462,7 +460,7 @@ nox
 </div>
 <p>To build the documentation with <a class="reference external" href="https://jupyterbook.org/">Jupyter Book</a>:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip install -r docs/requirements.txt
-jb build docs
+<span class="nv">CJDK_HIDE_PROGRESS_BARS</span><span class="o">=</span><span class="m">1</span> jb build docs
 <span class="c1"># Now view docs/_build/html/index.html</span>
 </pre></div>
 </div>
@@ -476,7 +474,8 @@ Markdown file that is not a notebook).</p>
 Jupyter Lab, then running <code class="docutils literal notranslate"><span class="pre">jupytext</span> <span class="pre">mypage.ipynb</span> <span class="pre">--to</span> <span class="pre">myst</span></code>. Delete the
 <code class="docutils literal notranslate"><span class="pre">.ipynb</span></code> file so that the MyST (<code class="docutils literal notranslate"><span class="pre">.md</span></code>) file is the single source of truth.</p>
 <p>To build the documentation as done by CI:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>nox -s docs
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>rm -rf docs/_build
+nox -s docs
 </pre></div>
 </div>
 <section id="versioning">

@@ -62,7 +62,9 @@ steps. They can be ignored.)
 
 ```{code-cell} ipython3
 with cjdk.java_env(**cjdk_config):
-    subprocess.run(["gu", "install", "native-image"], check=True)
+    subprocess.run(
+        ["gu", "install", "--no-progress", "native-image"], check=True
+    )
 ```
 
 Now let's compile the source, first with `javac` to byte code, then to a native

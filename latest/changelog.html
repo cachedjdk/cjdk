@@ -50,8 +50,6 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Development" href="development.html" />
@@ -390,20 +388,10 @@ title="Print to PDF"
   <a class="reference internal nav-link" href="#unreleased">
    Unreleased
   </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#id1">
-   0.2.0 - 2022-07-02
-  </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#added">
      Added
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#changed">
-     Changed
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
@@ -414,12 +402,34 @@ title="Print to PDF"
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#id2">
+  <a class="reference internal nav-link" href="#id1">
+   0.2.0 - 2022-07-02
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     Added
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#changed">
+     Changed
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id3">
+     Fixed
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id4">
    0.1.1 - 2022-06-23
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#id3">
+  <a class="reference internal nav-link" href="#id5">
    0.1.0 - 2022-06-23
   </a>
  </li>
@@ -446,20 +456,10 @@ title="Print to PDF"
   <a class="reference internal nav-link" href="#unreleased">
    Unreleased
   </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#id1">
-   0.2.0 - 2022-07-02
-  </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#added">
      Added
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#changed">
-     Changed
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
@@ -470,12 +470,34 @@ title="Print to PDF"
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#id2">
+  <a class="reference internal nav-link" href="#id1">
+   0.2.0 - 2022-07-02
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     Added
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#changed">
+     Changed
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id3">
+     Fixed
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id4">
    0.1.1 - 2022-06-23
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#id3">
+  <a class="reference internal nav-link" href="#id5">
    0.1.0 - 2022-06-23
   </a>
  </li>
@@ -499,11 +521,23 @@ SPDX-License-Identifier: MIT
 <p>See also the section on <a class="reference internal" href="development.html#versioning-scheme"><span class="std std-ref">versioning</span></a>.</p>
 <section id="unreleased">
 <h2><a class="reference external" href="https://github.com/marktsuchida/cjdk/compare/v0.2.0...HEAD">Unreleased</a><a class="headerlink" href="#unreleased" title="Permalink to this headline">#</a></h2>
+<section id="added">
+<h3>Added<a class="headerlink" href="#added" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Environment variable <code class="docutils literal notranslate"><span class="pre">CJDK_HIDE_PROGRESS_BARS</span></code>.</p></li>
+</ul>
+</section>
+<section id="fixed">
+<h3>Fixed<a class="headerlink" href="#fixed" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Prevent <code class="docutils literal notranslate"><span class="pre">cjdk</span> <span class="pre">exec</span></code> from displaying warnings about multiprocessing on macOS.</p></li>
+</ul>
+</section>
 </section>
 <section id="id1">
 <h2><a class="reference external" href="https://github.com/marktsuchida/cjdk/compare/v0.1.1...v0.2.0">0.2.0</a> - 2022-07-02<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h2>
-<section id="added">
-<h3>Added<a class="headerlink" href="#added" title="Permalink to this headline">#</a></h3>
+<section id="id2">
+<h3>Added<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
 <ul class="simple">
 <li><p>Python API functions <code class="docutils literal notranslate"><span class="pre">cache_jdk()</span></code>, <code class="docutils literal notranslate"><span class="pre">cache_file()</span></code>, and <code class="docutils literal notranslate"><span class="pre">cache_package()</span></code>.</p></li>
 <li><p>Command line commands <code class="docutils literal notranslate"><span class="pre">cache-jdk</span></code>, <code class="docutils literal notranslate"><span class="pre">cache-file</span></code>, and <code class="docutils literal notranslate"><span class="pre">cache-package</span></code>.</p></li>
@@ -519,8 +553,8 @@ SPDX-License-Identifier: MIT
 <li><p>Rename environment variable <code class="docutils literal notranslate"><span class="pre">CJDK_DEFAULT_VENDOR</span></code> to <code class="docutils literal notranslate"><span class="pre">CJDK_VENDOR</span></code>.</p></li>
 </ul>
 </section>
-<section id="fixed">
-<h3>Fixed<a class="headerlink" href="#fixed" title="Permalink to this headline">#</a></h3>
+<section id="id3">
+<h3>Fixed<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h3>
 <ul class="simple">
 <li><p>Always print progress messages to standard error.</p></li>
 <li><p>Correctly restore environment when exiting the <code class="docutils literal notranslate"><span class="pre">java_env()</span></code> context manager,
@@ -529,12 +563,12 @@ even when there was an error.</p></li>
 </ul>
 </section>
 </section>
-<section id="id2">
-<h2><a class="reference external" href="https://github.com/marktsuchida/cjdk/compare/v0.1.0...v0.1.1">0.1.1</a> - 2022-06-23<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h2>
+<section id="id4">
+<h2><a class="reference external" href="https://github.com/marktsuchida/cjdk/compare/v0.1.0...v0.1.1">0.1.1</a> - 2022-06-23<a class="headerlink" href="#id4" title="Permalink to this headline">#</a></h2>
 <p>First release.</p>
 </section>
-<section id="id3">
-<h2><a class="reference external" href="https://github.com/marktsuchida/cjdk/tree/v0.1.0">0.1.0</a> - 2022-06-23<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h2>
+<section id="id5">
+<h2><a class="reference external" href="https://github.com/marktsuchida/cjdk/tree/v0.1.0">0.1.0</a> - 2022-06-23<a class="headerlink" href="#id5" title="Permalink to this headline">#</a></h2>
 <p>Tag created but not actually released.</p>
 </section>
 </section>
