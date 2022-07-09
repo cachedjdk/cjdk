@@ -7,7 +7,7 @@ author: Mark A. Tsuchida
 copyright: "2022 Board of Regents of the University of Wisconsin System"
 
 repository:
-  url: https://github.com/marktsuchida/cjdk
+  url: https://github.com/cachedjdk/cjdk
   path_to_book: docs
   branch: main
 

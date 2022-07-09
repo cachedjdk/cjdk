@@ -15,6 +15,10 @@ See also the section on [versioning](versioning-scheme).
 - Support running the CLI via `python -m cjdk`.
 - Environment variable `CJDK_HIDE_PROGRESS_BARS`.
 
+### Changed
+
+- Source code repository moved to https://github.com/cachedjdk/cjdk.
+
 ### Fixed
 
 - Prevent `cjdk exec` from displaying warnings about multiprocessing on macOS.
@@ -49,7 +53,7 @@ First release.
 
 Tag created but not actually released.
 
-[0.1.0]: https://github.com/marktsuchida/cjdk/tree/v0.1.0
-[0.1.1]: https://github.com/marktsuchida/cjdk/compare/v0.1.0...v0.1.1
-[0.2.0]: https://github.com/marktsuchida/cjdk/compare/v0.1.1...v0.2.0
-[unreleased]: https://github.com/marktsuchida/cjdk/compare/v0.2.0...HEAD
+[0.1.0]: https://github.com/cachedjdk/cjdk/tree/v0.1.0
+[0.1.1]: https://github.com/cachedjdk/cjdk/compare/v0.1.0...v0.1.1
+[0.2.0]: https://github.com/cachedjdk/cjdk/compare/v0.1.1...v0.2.0
+[unreleased]: https://github.com/cachedjdk/cjdk/compare/v0.2.0...HEAD

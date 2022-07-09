@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 Clone the Git repository:
 
 ```sh
-git clone https://github.com/marktsuchida/cjdk.git
+git clone https://github.com/cachedjdk/cjdk.git
 cd cjdk
 ```
 

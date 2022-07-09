@@ -41,8 +41,8 @@ testing = [
 ]
 
 [project.urls]
-Documentation = "https://marktsuchida.github.io/cjdk/latest"
-Repository = "https://github.com/marktsuchida/cjdk"
+Documentation = "https://cachedjdk.github.io/cjdk/latest"
+Repository = "https://github.com/cachedjdk/cjdk"
 
 [project.scripts]
 cjdk = "cjdk.__main__:main"
