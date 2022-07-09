@@ -45,7 +45,7 @@ Documentation = "https://marktsuchida.github.io/cjdk/latest"
 Repository = "https://github.com/marktsuchida/cjdk"
 
 [project.scripts]
-cjdk = "cjdk._cli:main"
+cjdk = "cjdk.__main__:main"
 
 [tool.setuptools_scm]
 write_to = "src/cjdk/_version.py"

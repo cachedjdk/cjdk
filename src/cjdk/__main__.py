@@ -226,3 +226,7 @@ main.add_command(exec)
 main.add_command(cache_jdk)
 main.add_command(cache_file)
 main.add_command(cache_package)
+
+
+if __name__ == "__main__":
+    main()
