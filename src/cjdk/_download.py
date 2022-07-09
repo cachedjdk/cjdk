@@ -8,10 +8,9 @@ import zipfile
 from pathlib import Path
 from urllib.parse import urlparse
 
-import progressbar
 import requests
 
-from . import _compat
+from . import _compat, _progress
 
 __all__ = [
     "download_and_extract",
@@ -79,17 +78,16 @@ def download_file(
 
     response = requests.get(url, stream=True)
     response.raise_for_status()
-    total = int(response.headers.get("content-length", None))
-    if not total:
-        total = progressbar.UnknownLength
-    barclass = progressbar.DataTransferBar if progress else progressbar.NullBar
-    size = 0
-    with barclass(max_value=total, prefix="Download ") as pbar:
-        with open(dest, "wb") as outfile:
-            for chunk in response.iter_content(chunk_size=16384):
-                outfile.write(chunk)
-                size += len(chunk)
-                pbar.update(size)
+    total = response.headers.get("content-length", None)
+    total = int(total) if total else None
+    with open(dest, "wb") as outfile:
+        for chunk in _progress.data_transfer(
+            total,
+            response.iter_content(chunk_size=16384),
+            enabled=progress,
+            text="Download",
+        ):
+            outfile.write(chunk)
 
     if checkfunc:
         checkfunc(dest)
@@ -98,8 +96,9 @@ def download_file(
 def _extract_zip(destdir, srcfile, progress=True):
     with zipfile.ZipFile(srcfile) as zf:
         infolist = zf.infolist()
-        barclass = progressbar.ProgressBar if progress else progressbar.NullBar
-        for member in barclass(prefix="Extract ")(infolist):
+        for member in _progress.iterate(
+            infolist, enabled=progress, text="Extract"
+        ):
             extracted = Path(zf.extract(member, destdir))
 
             # Recover executable bits; see https://stackoverflow.com/a/46837272
@@ -110,8 +109,5 @@ def _extract_zip(destdir, srcfile, progress=True):
 
 def _extract_tgz(destdir, srcfile, progress=True):
     with tarfile.open(srcfile, "r:gz", bufsize=65536) as tf:
-        barclass = progressbar.ProgressBar if progress else progressbar.NullBar
-        for member in barclass(
-            prefix="Extract ", max_value=progressbar.UnknownLength
-        )(tf):
+        for member in _progress.iterate(tf, enabled=progress, text="Extract"):
             tf.extract(member, destdir)

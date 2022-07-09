@@ -8,9 +8,7 @@ import urllib
 from contextlib import contextmanager
 from pathlib import Path
 
-import progressbar
-
-from . import _compat
+from . import _compat, _progress
 
 __all__ = [
     "atomic_file",
@@ -211,9 +209,8 @@ def _swap_in_fetched_file(target, tmpfile, timeout, progress=False):
     WINDOWS_ERROR_ACCESS_DENIED = 5
 
     target.parent.mkdir(parents=True, exist_ok=True)
-    barclass = progressbar.ProgressBar if progress else progressbar.NullBar
-    with barclass(
-        max_value=progressbar.UnknownLength, prefix="File busy; waiting "
+    with _progress.indefinite(
+        enabled=progress, text="File busy; waiting"
     ) as pbar:
         for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
             try:
@@ -243,10 +240,8 @@ def _add_url_file(keydir, key_url):
 
 
 def _wait_for_dir_to_vanish(directory, timeout, progress=True):
-    barclass = progressbar.ProgressBar if progress else progressbar.NullBar
-    with barclass(
-        max_value=progressbar.UnknownLength,
-        prefix="Already downloading; waiting ",
+    with _progress.indefinite(
+        enabled=progress, text="Already downloading; waiting"
     ) as pbar:
         for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
             if not directory.is_dir():
