@@ -1,0 +1,791 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Command line interface &#8212; cjdk Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Environment variables" href="environ.html" />
+    <link rel="prev" title="Python API" href="api.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">cjdk Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Overview
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="install.html">
+   Installing
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="examples.html">
+   Examples
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-hello-world.html">
+     Running Java “Hello, World” from Python
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-graal-hello.html">
+     Building and running a GraalVM native image
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-run-jar.html">
+     Running an application distributed as an all-in-one Jar
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="example-run-jgo.html">
+     Running Java applications with jgo
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="cachedir.html">
+   Cache directory
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="jdk-index.html">
+   JDK index
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="vendors.html">
+   JDK vendors
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="versions.html">
+   JDK versions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="api.html">
+   Python API
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Command line interface
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="environ.html">
+   Environment variables
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="development.html">
+   Development
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="changelog.html">
+   Changelog
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/cachedjdk/cjdk"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/cachedjdk/cjdk/issues/new?title=Issue%20on%20page%20%2Fcli.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/cachedjdk/cjdk/edit/main/docs/cli.md"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Edit this page"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="headerbtn__text-container">suggest edit</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/cli.md"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.md</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#common-options">
+   Common options
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#working-with-cached-jdks">
+   Working with cached JDKs
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exec">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       exec
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#java-home">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       java-home
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#cache-jdk">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       cache-jdk
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#caching-arbitrary-files-and-packages">
+   Caching arbitrary files and packages
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#cache-file">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       cache-file
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#cache-package">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       cache-package
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Command line interface</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#common-options">
+   Common options
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#working-with-cached-jdks">
+   Working with cached JDKs
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exec">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       exec
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#java-home">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       java-home
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#cache-jdk">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       cache-jdk
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#caching-arbitrary-files-and-packages">
+   Caching arbitrary files and packages
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#cache-file">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       cache-file
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#cache-package">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       cache-package
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <!--
+This file is part of cjdk.
+Copyright 2022 Board of Regents of the University of Wisconsin System
+SPDX-License-Identifier: MIT
+--->
+<section class="tex2jax_ignore mathjax_ignore" id="command-line-interface">
+<h1>Command line interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">#</a></h1>
+<section id="common-options">
+<h2>Common options<a class="headerlink" href="#common-options" title="Permalink to this headline">#</a></h2>
+<p>The <strong>cjdk</strong> command-line interface is organized into subcommands. A list of
+available subcommands and common options can be displayed using the <code class="docutils literal notranslate"><span class="pre">--help</span></code>
+option.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ cjdk --help
+Usage: cjdk [OPTIONS] COMMAND [ARGS]...
+
+  Download, cache, and run JDK or JRE distributions.
+
+  Use &#39;cjdk COMMAND --help&#39; to see usage of each command. The common options
+  shown here must be given before COMMAND.
+
+Options:
+  -j, --jdk VENDOR:VERSION    Specify JDK vendor and version.
+  --cache-dir DIR             Override root cache directory.
+  --index-url URL             Use alternative JDK index URL.
+  --index-ttl SECONDS         Time to live for cached JDK index.
+  --os NAME                   Operating system for JDK.
+  --arch NAME                 Architecture for JDK.
+  --progress / --no-progress  Show or do not show progress bars.
+  --version                   Show the version and exit.
+  --help                      Show this message and exit.
+
+Commands:
+  cache-file     Cache an arbitrary file.
+  cache-jdk      Ensure the requested JDK is cached.
+  cache-package  Cache an arbitrary package.
+  exec           Run a program using the requested JDK.
+  java-home      Print the Java home directory for the requested JDK.
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.2.0: </span><code class="docutils literal notranslate"><span class="pre">--index-url</span></code>, <code class="docutils literal notranslate"><span class="pre">--index-ttl</span></code>, <code class="docutils literal notranslate"><span class="pre">--os</span></code>, and <code class="docutils literal notranslate"><span class="pre">--arch</span></code></p>
+</div>
+<p>More details about the choices and defaults for <a class="reference internal" href="vendors.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">VENDOR</span></code></span></a>,
+<a class="reference internal" href="versions.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">VERSION</span></code></span></a>, and <a class="reference internal" href="cachedir.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">--cache_dir</span></code></span></a> are available on
+separate pages.</p>
+</section>
+<section id="working-with-cached-jdks">
+<h2>Working with cached JDKs<a class="headerlink" href="#working-with-cached-jdks" title="Permalink to this headline">#</a></h2>
+<section id="exec">
+<h3><code class="docutils literal notranslate"><span class="pre">exec</span></code><a class="headerlink" href="#exec" title="Permalink to this headline">#</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ cjdk exec --help
+Usage: cjdk exec [OPTIONS] PROG [ARGS]...
+
+  Run PROG with the environment variables set for the requested JDK.
+
+  The JDK is download if not already cached.
+
+  See &#39;cjdk --help&#39; for the common options used to specify the JDK and how it
+  is obtained.
+
+  Pass &#39;--&#39; before PROG to prevent any of ARGS to be interpreted by cjdk.
+
+Options:
+  --help  Show this message and exit.
+</pre></div>
+</div>
+<p>For example, run the <code class="docutils literal notranslate"><span class="pre">java</span></code> command from the Temurin JRE 17.0.3 with the
+<code class="docutils literal notranslate"><span class="pre">-version</span></code> option, installing the JRE if necessary:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ cjdk --jdk temurin-jre:17.0.3 exec -- java -version
+openjdk version &quot;17.0.3&quot; 2022-04-19
+OpenJDK Runtime Environment Temurin-17.0.3+7 (build 17.0.3+7)
+OpenJDK 64-Bit Server VM Temurin-17.0.3+7 (build 17.0.3+7, mixed mode, sharing)
+</pre></div>
+</div>
+</section>
+<section id="java-home">
+<h3><code class="docutils literal notranslate"><span class="pre">java-home</span></code><a class="headerlink" href="#java-home" title="Permalink to this headline">#</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ cjdk java-home --help
+Usage: cjdk java-home [OPTIONS]
+
+  Print the path that is suitable as the value of JAVA_HOME for the requested
+  JDK.
+
+  The JDK is downloaded if not already cached.
+
+  See &#39;cjdk --help&#39; for the common options used to specify the JDK and how it
+  is obtained.
+
+Options:
+  --help  Show this message and exit.
+</pre></div>
+</div>
+<p>For example, to print the Java home directory for the Temurin JRE 17.0.3,
+installing it if necessary:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ cjdk --jdk temurin-jre:17.0.3 java-home
+/Users/mark/Library/Caches/cjdk/v0/jdks/0f77e52f812d326e1137d7a22b81d6c328679c68/jdk-17.0.3+7-jre/Contents/Home
+</pre></div>
+</div>
+<p>(The output will depend on your operating system and configuration; the example
+shown was on macOS.)</p>
+</section>
+<section id="cache-jdk">
+<h3><code class="docutils literal notranslate"><span class="pre">cache-jdk</span></code><a class="headerlink" href="#cache-jdk" title="Permalink to this headline">#</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ cjdk cache-jdk --help
+Usage: cjdk cache-jdk [OPTIONS]
+
+  Download and extract the requested JDK if it is not already cached.
+
+  Usually there is no need to invoke this command on its own, but it may be
+  useful if you want any potentil JDK download to happen at a controlled point
+  in time.
+
+  See &#39;cjdk --help&#39; for the common options used to specify the JDK and how it
+  is obtained.
+
+Options:
+  --help  Show this message and exit.
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.2.0.</span></p>
+</div>
+</section>
+</section>
+<section id="caching-arbitrary-files-and-packages">
+<h2>Caching arbitrary files and packages<a class="headerlink" href="#caching-arbitrary-files-and-packages" title="Permalink to this headline">#</a></h2>
+<section id="cache-file">
+<h3><code class="docutils literal notranslate"><span class="pre">cache-file</span></code><a class="headerlink" href="#cache-file" title="Permalink to this headline">#</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ cjdk cache-file --help
+Usage: cjdk cache-file [OPTIONS] URL FILENAME
+
+  Download and store an arbitrary file if it is not already cached.
+
+  The file at URL (whose scheme must be https) is stored in the cache with the
+  given FILENAME, and the full path to it is printed to standard output.
+
+  See &#39;cjdk --help&#39; for the common options (JDK-specific options are ignored).
+
+Options:
+  --name NAME    Name to display in progress message.
+  --ttl SECONDS  Time to live for the cached file.
+  --sha1 HASH    Check the downloaded file against the given SHA-1 hash.
+  --sha256 HASH  Check the downloaded file against the given SHA-256 hash.
+  --sha512 HASH  Check the downloaded file against the given SHA-512 hash.
+  --help         Show this message and exit.
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.2.0.</span></p>
+</div>
+</section>
+<section id="cache-package">
+<h3><code class="docutils literal notranslate"><span class="pre">cache-package</span></code><a class="headerlink" href="#cache-package" title="Permalink to this headline">#</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ cjdk cache-package --help
+Usage: cjdk cache-package [OPTIONS] URL
+
+  Download, extract, and store an arbitrary .zip or .tar.gz package if it is
+  not already cached.
+
+  The file at URL (whose scheme must be tgz+https or zip+https) is extracted
+  into a directory in the cache, and the full path to the directory is printed
+  to standard output.
+
+  See &#39;cjdk --help&#39; for the common options (JDK-specific options are ignored).
+
+Options:
+  --name NAME    Name to display in progress message.
+  --sha1 HASH    Check the downloaded file against the given SHA-1 hash.
+  --sha256 HASH  Check the downloaded file against the given SHA-256 hash.
+  --sha512 HASH  Check the downloaded file against the given SHA-512 hash.
+  --help         Show this message and exit.
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.2.0.</span></p>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="api.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Python API</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="environ.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Environment variables</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Mark A. Tsuchida<br/>
+  
+      &copy; Copyright 2022 Board of Regents of the University of Wisconsin System.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
