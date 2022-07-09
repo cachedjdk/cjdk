@@ -76,13 +76,13 @@ with cjdk.java_env(**cjdk_config):
     subprocess.run(["native-image", "Hello"], check=True)
 ```
 
-Finally, let's run the native image.
+Finally, let's run the native image. Being a native image, it does not need
+`java_env()` to run:
 
 ```{code-cell} ipython3
-with cjdk.java_env(**cjdk_config):
-    subprocess.run(["./hello"], check=True)
+r = subprocess.run(["./hello"], check=True)
 ```
 
 ```{code-cell} ipython3
-
+r.returncode
 ```
