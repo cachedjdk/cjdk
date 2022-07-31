@@ -11,7 +11,7 @@ download and run JDK (Java Development Kit) or JRE (Java Runtime Environment)
 distributions.
 
 Previously used JDKs are kept in the user's cache directory, so that future
-invocations do now require a download.
+invocations do not require a download.
 
 ## What for
 
