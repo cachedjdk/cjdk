@@ -35,17 +35,17 @@ repos:
         # E501 line too long
         args: ["--extend-ignore", "E203,E501"]
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.14
+    rev: 0.7.16
     hooks:
       - id: mdformat
         additional_dependencies:
           - mdformat-gfm
-        args: ["--wrap=79"]
+        args: ["--wrap=79", "--end-of-line=keep"]
         exclude: '^docs/.*$'
       - id: mdformat
         additional_dependencies:
           - mdformat-myst
-        args: ["--wrap=79"]
+        args: ["--wrap=79", "--end-of-line=keep"]
         exclude: '^(?!docs/.*)$'
   - repo: https://github.com/fsfe/reuse-tool
     rev: v1.0.0
