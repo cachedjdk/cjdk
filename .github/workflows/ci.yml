@@ -106,16 +106,6 @@ jobs:
       - name: Build sdist and wheel
         run: |
           python -m build --sdist --wheel --outdir dist .
-      - name: Publish on Test PyPI
-        if: >-
-          github.repository == 'cachedjdk/cjdk' &&
-          github.event_name == 'push' &&
-          startsWith(github.ref, 'refs/tags/v')
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: __token__
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-          repository_url: https://test.pypi.org/legacy/
       - name: Publish on PyPI
         if: >-
           github.repository == 'cachedjdk/cjdk' &&
