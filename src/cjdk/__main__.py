@@ -64,6 +64,17 @@ def main(ctx, jdk, cache_dir, index_url, index_ttl, os, arch, progress):
     )
 
 
+@click.command(short_help="List available JDKs matching criteria.")
+@click.pass_context
+def list_jdks(ctx):
+    """
+    Output a list of JDKs matching the given criteria.
+
+    See 'cjdk --help' for the common options used to specify the JDK.
+    """
+    _api.list_jdks(**ctx.obj)
+
+
 @click.command(short_help="Ensure the requested JDK is cached.")
 @click.pass_context
 def cache_jdk(ctx):
@@ -223,6 +234,7 @@ def cache_package(ctx, url, name, sha1, sha256, sha512):
 
 main.add_command(java_home)
 main.add_command(exec)
+main.add_command(list_jdks)
 main.add_command(cache_jdk)
 main.add_command(cache_file)
 main.add_command(cache_package)

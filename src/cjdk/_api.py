@@ -6,15 +6,58 @@ import hashlib
 import os
 from contextlib import contextmanager
 
-from . import _conf, _install, _jdk
+from . import _conf, _install, _index, _jdk
 
 __all__ = [
+    "list_jdks",
     "cache_jdk",
     "java_env",
     "java_home",
     "cache_file",
     "cache_package",
 ]
+
+
+def list_jdks(*, vendor=None, version=None, **kwargs):
+    """
+    Output a list of JDKs matching the given criteria.
+
+    Parameters
+    ----------
+    vendor : str, optional
+        JDK vendor name, such as "adoptium".
+    version : str, optional
+        JDK version expression, such as "17+".
+
+    Other Parameters
+    ----------------
+    jdk : str, optional
+        JDK vendor and version, such as "adoptium:17+". Cannot be specified
+        together with `vendor` or `version`.
+    cache_dir : pathlib.Path or str, optional
+        Override the root cache directory.
+    index_url : str, optional
+        Alternative URL for the JDK index.
+    os : str, optional
+        Operating system for the JDK (default: current operating system).
+    arch : str, optional
+        CPU architecture for the JDK (default: current architecture).
+
+    Returns
+    -------
+    None
+    """
+    conf = _conf.configure(vendor=vendor, version=version, **kwargs)
+    # TODO: Eliminate code duplication with _index.resolve_jdk_version.
+    jdks = _index.available_jdks(_index.jdk_index(conf), conf)
+    versions = [i[1] for i in jdks if i[0] == conf.vendor]
+    if not versions:
+        raise KeyError(
+            f"No {conf.vendor} JDK is available for {conf.os}-{conf.arch}"
+        )
+    matched = _index._match_versions(conf.vendor, versions, conf.version)
+    print(f"[{conf.vendor}]")
+    print(os.linesep.join([v for _, v in sorted(matched.items())]))
 
 
 def cache_jdk(*, vendor=None, version=None, **kwargs):
