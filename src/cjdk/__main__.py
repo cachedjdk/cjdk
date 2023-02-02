@@ -64,6 +64,15 @@ def main(ctx, jdk, cache_dir, index_url, index_ttl, os, arch, progress):
     )
 
 
+@click.command(short_help="List available JDK vendors.")
+@click.pass_context
+def list_vendors(ctx):
+    """
+    Output the list of available vendors.
+    """
+    _api.list_vendors(**ctx.obj)
+
+
 @click.command(short_help="List available JDKs matching criteria.")
 @click.pass_context
 def list_jdks(ctx):
@@ -234,6 +243,7 @@ def cache_package(ctx, url, name, sha1, sha256, sha512):
 
 main.add_command(java_home)
 main.add_command(exec)
+main.add_command(list_vendors)
 main.add_command(list_jdks)
 main.add_command(cache_jdk)
 main.add_command(cache_file)

@@ -9,6 +9,7 @@ from contextlib import contextmanager
 from . import _conf, _install, _index, _jdk
 
 __all__ = [
+    "list_vendors",
     "list_jdks",
     "cache_jdk",
     "java_env",
@@ -16,6 +17,34 @@ __all__ = [
     "cache_file",
     "cache_package",
 ]
+
+
+def list_vendors(**kwargs):
+    """
+    Output the list of available vendors.
+
+    Parameters
+    ----------
+    None
+
+    Other Parameters
+    ----------------
+    index_url : str, optional
+        Alternative URL for the JDK index.
+
+    Returns
+    -------
+    None
+    """
+    conf = _conf.configure(**kwargs)
+    index = _index.jdk_index(conf)
+    vendors = {
+        vendor.replace("jdk@", "")
+        for osys in index
+        for arch in index[osys]
+        for vendor in index[osys][arch].keys()
+    }
+    print(os.linesep.join(sorted(vendors)))
 
 
 def list_jdks(*, vendor=None, version=None, **kwargs):

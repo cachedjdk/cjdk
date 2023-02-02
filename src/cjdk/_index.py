@@ -29,6 +29,18 @@ def jdk_index(conf: Configuration):
     return _read_index(_cached_index(conf))
 
 
+def available_vendors(index):
+    """
+    Find in index the available JDK vendors.
+
+    A set of strings is returned.
+
+    Arguments:
+    index -- The JDK index (nested dict)
+    """
+    return set(index[os][arch] for os in index for arch in index[os])
+
+
 def available_jdks(index, conf: Configuration):
     """
     Find in index the available JDK vendor-version combinations.
