@@ -71,7 +71,7 @@ def cache_jdk(ctx):
     Download and extract the requested JDK if it is not already cached.
 
     Usually there is no need to invoke this command on its own, but it may be
-    useful if you want any potentil JDK download to happen at a controlled
+    useful if you want any potential JDK download to happen at a controlled
     point in time.
 
     See 'cjdk --help' for the common options used to specify the JDK and how it
@@ -108,7 +108,7 @@ def exec(ctx, prog, args):
     """
     Run PROG with the environment variables set for the requested JDK.
 
-    The JDK is download if not already cached.
+    The JDK is downloaded if not already cached.
 
     See 'cjdk --help' for the common options used to specify the JDK and how it
     is obtained.

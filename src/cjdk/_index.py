@@ -56,7 +56,7 @@ def resolve_jdk_version(index, conf: Configuration):
     Find in index the exact JDK version for the given configuration.
 
     Arguments:
-    index -- The JDK index (dested dict)
+    index -- The JDK index (nested dict)
     """
     jdks = available_jdks(index, conf)
     versions = [i[1] for i in jdks if i[0] == conf.vendor]
