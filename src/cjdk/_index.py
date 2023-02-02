@@ -109,7 +109,8 @@ def _read_index(path):
         return json.load(infile)
 
 
-def _match_version(vendor, candidates, requested):
+def _match_versions(vendor, candidates, requested):
+    # Find all candidates compatible with the request
     is_graal = "graalvm" in vendor.lower()
     normreq = _normalize_version(requested, remove_prefix_1=not is_graal)
     normcands = {}
@@ -126,14 +127,19 @@ def _match_version(vendor, candidates, requested):
             continue  # Skip any non-numeric versions (not expected)
         normcands[normcand] = candidate
 
-    # Find the newest candidate compatible with the request
-    for normcand in sorted(normcands.keys(), reverse=True):
-        if _is_version_compatible_with_spec(normcand, normreq):
-            return normcands[normcand]
-        if normcand > normreq:
-            continue
-        break
-    raise LookupError(f"No matching version for '{vendor}:{requested}'")
+    return {
+        k: v for k, v in normcands.items()
+        if _is_version_compatible_with_spec(k, normreq)
+    }
+
+
+def _match_version(vendor, candidates, requested):
+    matched = _match_versions(vendor, candidates, requested)
+
+    if len(matched) == 0:
+        raise LookupError(f"No matching version for '{vendor}:{requested}'")
+
+    return matched[max(matched)]
 
 
 _VER_SEPS = re.compile(r"[.-]")
