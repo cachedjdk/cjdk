@@ -1,0 +1,103 @@
+Traceback (most recent call last):
+  File "/home/runner/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/runner/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/nbclient/client.py", line 1305, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/jupyter_core/utils/__init__.py", line 173, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.5/x64/lib/python3.11/asyncio/base_events.py", line 653, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/runner/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/nbclient/client.py", line 705, in async_execute
+    await self.async_execute_cell(
+  File "/home/runner/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/nbclient/client.py", line 1058, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/runner/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+maven_dir = cjdk.cache_package("Maven", maven_url, sha512=maven_sha512)
+------------------
+
+----- stderr -----
+cjdk: Installing Maven to /home/runner/.cache/cjdk
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mHTTPError[0m                                 Traceback (most recent call last)
+Cell [0;32mIn[3], line 1[0m
+[0;32m----> 1[0m maven_dir [38;5;241m=[39m [43mcjdk[49m[38;5;241;43m.[39;49m[43mcache_package[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mMaven[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[43mmaven_url[49m[43m,[49m[43m [49m[43msha512[49m[38;5;241;43m=[39;49m[43mmaven_sha512[49m[43m)[49m
+
+File [0;32m~/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/cjdk/_api.py:194[0m, in [0;36mcache_package[0;34m(name, url, **kwargs)[0m
+[1;32m    191[0m check_hashes [38;5;241m=[39m _make_hash_checker(kwargs)
+[1;32m    192[0m conf [38;5;241m=[39m _conf[38;5;241m.[39mconfigure([38;5;241m*[39m[38;5;241m*[39mkwargs)
+[0;32m--> 194[0m [38;5;28;01mreturn[39;00m [43m_install[49m[38;5;241;43m.[39;49m[43minstall_dir[49m[43m([49m
+[1;32m    195[0m [43m    [49m[38;5;124;43m"[39;49m[38;5;124;43mmisc-dirs[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[43mname[49m[43m,[49m[43m [49m[43murl[49m[43m,[49m[43m [49m[43mconf[49m[43m,[49m[43m [49m[43mcheckfunc[49m[38;5;241;43m=[39;49m[43mcheck_hashes[49m
+[1;32m    196[0m [43m[49m[43m)[49m
+
+File [0;32m~/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/cjdk/_install.py:47[0m, in [0;36minstall_dir[0;34m(prefix, name, url, conf, checkfunc)[0m
+[1;32m     38[0m     _print_progress_header(conf, name)
+[1;32m     39[0m     _download[38;5;241m.[39mdownload_and_extract(
+[1;32m     40[0m         destdir,
+[1;32m     41[0m         url,
+[0;32m   (...)[0m
+[1;32m     44[0m         _allow_insecure_for_testing[38;5;241m=[39mconf[38;5;241m.[39m_allow_insecure_for_testing,
+[1;32m     45[0m     )
+[0;32m---> 47[0m [38;5;28;01mreturn[39;00m [43m_cache[49m[38;5;241;43m.[39;49m[43mpermanent_directory[49m[43m([49m
+[1;32m     48[0m [43m    [49m[43mprefix[49m[43m,[49m
+[1;32m     49[0m [43m    [49m[43murl[49m[43m,[49m
+[1;32m     50[0m [43m    [49m[43mfetch[49m[43m,[49m
+[1;32m     51[0m [43m    [49m[43mcache_dir[49m[38;5;241;43m=[39;49m[43mconf[49m[38;5;241;43m.[39;49m[43mcache_dir[49m[43m,[49m
+[1;32m     52[0m [43m    [49m[43mtimeout_for_fetch_elsewhere[49m[38;5;241;43m=[39;49m[38;5;241;43m300[39;49m[43m,[49m
+[1;32m     53[0m [43m[49m[43m)[49m
+
+File [0;32m~/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/cjdk/_cache.py:137[0m, in [0;36mpermanent_directory[0;34m(prefix, key_url, fetchfunc, cache_dir, timeout_for_fetch_elsewhere)[0m
+[1;32m    135[0m [38;5;28;01mwith[39;00m _create_key_tmpdir(cache_dir, key) [38;5;28;01mas[39;00m tmpdir:
+[1;32m    136[0m     [38;5;28;01mif[39;00m tmpdir:
+[0;32m--> 137[0m         [43mfetchfunc[49m[43m([49m[43mtmpdir[49m[43m)[49m
+[1;32m    138[0m         _move_in_fetched_directory(keydir, tmpdir)
+[1;32m    139[0m         _add_url_file(keydir, key_url)
+
+File [0;32m~/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/cjdk/_install.py:39[0m, in [0;36minstall_dir.<locals>.fetch[0;34m(destdir)[0m
+[1;32m     37[0m [38;5;28;01mdef[39;00m [38;5;21mfetch[39m(destdir):
+[1;32m     38[0m     _print_progress_header(conf, name)
+[0;32m---> 39[0m     [43m_download[49m[38;5;241;43m.[39;49m[43mdownload_and_extract[49m[43m([49m
+[1;32m     40[0m [43m        [49m[43mdestdir[49m[43m,[49m
+[1;32m     41[0m [43m        [49m[43murl[49m[43m,[49m
+[1;32m     42[0m [43m        [49m[43mcheckfunc[49m[38;5;241;43m=[39;49m[43mcheckfunc[49m[43m,[49m
+[1;32m     43[0m [43m        [49m[43mprogress[49m[38;5;241;43m=[39;49m[43mconf[49m[38;5;241;43m.[39;49m[43mprogress[49m[43m,[49m
+[1;32m     44[0m [43m        [49m[43m_allow_insecure_for_testing[49m[38;5;241;43m=[39;49m[43mconf[49m[38;5;241;43m.[39;49m[43m_allow_insecure_for_testing[49m[43m,[49m
+[1;32m     45[0m [43m    [49m[43m)[49m
+
+File [0;32m~/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/cjdk/_download.py:49[0m, in [0;36mdownload_and_extract[0;34m(destdir, url, checkfunc, progress, _allow_insecure_for_testing)[0m
+[1;32m     47[0m [38;5;28;01mwith[39;00m tempfile[38;5;241m.[39mTemporaryDirectory(prefix[38;5;241m=[39m[38;5;124m"[39m[38;5;124mcjdk-[39m[38;5;124m"[39m) [38;5;28;01mas[39;00m tempd:
+[1;32m     48[0m     file [38;5;241m=[39m Path(tempd) [38;5;241m/[39m [38;5;124mf[39m[38;5;124m"[39m[38;5;124marchive.[39m[38;5;132;01m{[39;00mext[38;5;132;01m}[39;00m[38;5;124m"[39m
+[0;32m---> 49[0m     [43mdownload_file[49m[43m([49m
+[1;32m     50[0m [43m        [49m[43mfile[49m[43m,[49m
+[1;32m     51[0m [43m        [49m[43murl[49m[43m,[49m
+[1;32m     52[0m [43m        [49m[43mcheckfunc[49m[38;5;241;43m=[39;49m[43mcheckfunc[49m[43m,[49m
+[1;32m     53[0m [43m        [49m[43mprogress[49m[38;5;241;43m=[39;49m[43mprogress[49m[43m,[49m
+[1;32m     54[0m [43m        [49m[43m_allow_insecure_for_testing[49m[38;5;241;43m=[39;49m[43m_allow_insecure_for_testing[49m[43m,[49m
+[1;32m     55[0m [43m    [49m[43m)[49m
+[1;32m     56[0m     extract(destdir, file, progress)
+
+File [0;32m~/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/cjdk/_download.py:80[0m, in [0;36mdownload_file[0;34m(dest, url, checkfunc, progress, _allow_insecure_for_testing)[0m
+[1;32m     75[0m         [38;5;28;01mraise[39;00m [38;5;167;01mNotImplementedError[39;00m(
+[1;32m     76[0m             [38;5;124mf[39m[38;5;124m"[39m[38;5;124mCannot handle [39m[38;5;132;01m{[39;00mscheme[38;5;132;01m}[39;00m[38;5;124m (must be https)[39m[38;5;124m"[39m
+[1;32m     77[0m         )
+[1;32m     79[0m response [38;5;241m=[39m requests[38;5;241m.[39mget(url, stream[38;5;241m=[39m[38;5;28;01mTrue[39;00m)
+[0;32m---> 80[0m [43mresponse[49m[38;5;241;43m.[39;49m[43mraise_for_status[49m[43m([49m[43m)[49m
+[1;32m     81[0m total [38;5;241m=[39m response[38;5;241m.[39mheaders[38;5;241m.[39mget([38;5;124m"[39m[38;5;124mcontent-length[39m[38;5;124m"[39m, [38;5;28;01mNone[39;00m)
+[1;32m     82[0m total [38;5;241m=[39m [38;5;28mint[39m(total) [38;5;28;01mif[39;00m total [38;5;28;01melse[39;00m [38;5;28;01mNone[39;00m
+
+File [0;32m~/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/requests/models.py:1021[0m, in [0;36mResponse.raise_for_status[0;34m(self)[0m
+[1;32m   1016[0m     http_error_msg [38;5;241m=[39m (
+[1;32m   1017[0m         [38;5;124mf[39m[38;5;124m"[39m[38;5;132;01m{[39;00m[38;5;28mself[39m[38;5;241m.[39mstatus_code[38;5;132;01m}[39;00m[38;5;124m Server Error: [39m[38;5;132;01m{[39;00mreason[38;5;132;01m}[39;00m[38;5;124m for url: [39m[38;5;132;01m{[39;00m[38;5;28mself[39m[38;5;241m.[39murl[38;5;132;01m}[39;00m[38;5;124m"[39m
+[1;32m   1018[0m     )
+[1;32m   1020[0m [38;5;28;01mif[39;00m http_error_msg:
+[0;32m-> 1021[0m     [38;5;28;01mraise[39;00m HTTPError(http_error_msg, response[38;5;241m=[39m[38;5;28mself[39m)
+
+[0;31mHTTPError[0m: 404 Client Error: Not Found for url: https://dlcdn.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz
+
