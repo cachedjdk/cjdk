@@ -9,7 +9,6 @@ import zipfile
 
 import mock_server
 import pytest
-
 from cjdk import _download
 
 

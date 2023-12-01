@@ -7,7 +7,6 @@ from concurrent.futures import ThreadPoolExecutor
 from queue import SimpleQueue
 
 import pytest
-
 from cjdk import _cache
 from cjdk._cache import permanent_directory
 

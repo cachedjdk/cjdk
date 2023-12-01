@@ -13,27 +13,12 @@ repos:
     hooks:
       - id: editorconfig-checker
         alias: ec
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.0
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.1.6
     hooks:
-      - id: pyupgrade
-        args: ["--py38-plus"]
-  - repo: https://github.com/psf/black
-    rev: 23.10.0
-    hooks:
-      - id: black
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-  - repo: https://github.com/PyCQA/flake8
-    rev: 6.1.0
-    hooks:
-      - id: flake8
-        # Ignore items that conflict with Black
-        # E203 whitespace before ':'
-        # E501 line too long
-        args: ["--extend-ignore", "E203,E501"]
+      - id: ruff
+        args: ["--fix"]
+      - id: ruff-format
   - repo: https://github.com/executablebooks/mdformat
     rev: 0.7.17
     hooks:
