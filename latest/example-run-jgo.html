@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html lang="en" data-content_root="" >
 
   <head>
     <meta charset="utf-8" />
@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,9 +38,9 @@
     <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=ac02cc09edc035673794" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794" />
-  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=ac02cc09edc035673794"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -139,9 +139,11 @@ const thebe_selector_output = ".output, .cell_output"
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
+
   
 
 <a class="navbar-brand logo" href="index.html">
+  
   
   
   
@@ -348,6 +350,7 @@ const thebe_selector_output = ".output, .cell_output"
 </button>
 
 
+
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -357,6 +360,7 @@ document.write(`
   </button>
 `);
 </script>
+
 
 <script>
 document.write(`
@@ -434,14 +438,14 @@ repository using <a class="reference external" href="https://github.com/scijava/
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
 <span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">maven_dir</span> <span class="o">=</span> <span class="n">cjdk</span><span class="o">.</span><span class="n">cache_package</span><span class="p">(</span><span class="s2">&quot;Maven&quot;</span><span class="p">,</span> <span class="n">maven_url</span><span class="p">,</span> <span class="n">sha512</span><span class="o">=</span><span class="n">maven_sha512</span><span class="p">)</span>
 
-<span class="nn">File ~/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/cjdk/_api.py:194,</span> in <span class="ni">cache_package</span><span class="nt">(name, url, **kwargs)</span>
+<span class="nn">File ~/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/cjdk/_api.py:194,</span> in <span class="ni">cache_package</span><span class="nt">(name, url, **kwargs)</span>
 <span class="g g-Whitespace">    </span><span class="mi">191</span> <span class="n">check_hashes</span> <span class="o">=</span> <span class="n">_make_hash_checker</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
 <span class="g g-Whitespace">    </span><span class="mi">192</span> <span class="n">conf</span> <span class="o">=</span> <span class="n">_conf</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 <span class="ne">--&gt; </span><span class="mi">194</span> <span class="k">return</span> <span class="n">_install</span><span class="o">.</span><span class="n">install_dir</span><span class="p">(</span>
 <span class="g g-Whitespace">    </span><span class="mi">195</span>     <span class="s2">&quot;misc-dirs&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">conf</span><span class="p">,</span> <span class="n">checkfunc</span><span class="o">=</span><span class="n">check_hashes</span>
 <span class="g g-Whitespace">    </span><span class="mi">196</span> <span class="p">)</span>
 
-<span class="nn">File ~/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/cjdk/_install.py:47,</span> in <span class="ni">install_dir</span><span class="nt">(prefix, name, url, conf, checkfunc)</span>
+<span class="nn">File ~/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/cjdk/_install.py:47,</span> in <span class="ni">install_dir</span><span class="nt">(prefix, name, url, conf, checkfunc)</span>
 <span class="g g-Whitespace">     </span><span class="mi">38</span>     <span class="n">_print_progress_header</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 <span class="g g-Whitespace">     </span><span class="mi">39</span>     <span class="n">_download</span><span class="o">.</span><span class="n">download_and_extract</span><span class="p">(</span>
 <span class="g g-Whitespace">     </span><span class="mi">40</span>         <span class="n">destdir</span><span class="p">,</span>
@@ -457,14 +461,14 @@ repository using <a class="reference external" href="https://github.com/scijava/
 <span class="g g-Whitespace">     </span><span class="mi">52</span>     <span class="n">timeout_for_fetch_elsewhere</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
 <span class="g g-Whitespace">     </span><span class="mi">53</span> <span class="p">)</span>
 
-<span class="nn">File ~/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/cjdk/_cache.py:137,</span> in <span class="ni">permanent_directory</span><span class="nt">(prefix, key_url, fetchfunc, cache_dir, timeout_for_fetch_elsewhere)</span>
+<span class="nn">File ~/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/cjdk/_cache.py:137,</span> in <span class="ni">permanent_directory</span><span class="nt">(prefix, key_url, fetchfunc, cache_dir, timeout_for_fetch_elsewhere)</span>
 <span class="g g-Whitespace">    </span><span class="mi">135</span> <span class="k">with</span> <span class="n">_create_key_tmpdir</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
 <span class="g g-Whitespace">    </span><span class="mi">136</span>     <span class="k">if</span> <span class="n">tmpdir</span><span class="p">:</span>
 <span class="ne">--&gt; </span><span class="mi">137</span>         <span class="n">fetchfunc</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span>
 <span class="g g-Whitespace">    </span><span class="mi">138</span>         <span class="n">_move_in_fetched_directory</span><span class="p">(</span><span class="n">keydir</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">)</span>
 <span class="g g-Whitespace">    </span><span class="mi">139</span>         <span class="n">_add_url_file</span><span class="p">(</span><span class="n">keydir</span><span class="p">,</span> <span class="n">key_url</span><span class="p">)</span>
 
-<span class="nn">File ~/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/cjdk/_install.py:39,</span> in <span class="ni">install_dir.&lt;locals&gt;.fetch</span><span class="nt">(destdir)</span>
+<span class="nn">File ~/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/cjdk/_install.py:39,</span> in <span class="ni">install_dir.&lt;locals&gt;.fetch</span><span class="nt">(destdir)</span>
 <span class="g g-Whitespace">     </span><span class="mi">37</span> <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">destdir</span><span class="p">):</span>
 <span class="g g-Whitespace">     </span><span class="mi">38</span>     <span class="n">_print_progress_header</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 <span class="ne">---&gt; </span><span class="mi">39</span>     <span class="n">_download</span><span class="o">.</span><span class="n">download_and_extract</span><span class="p">(</span>
@@ -475,7 +479,7 @@ repository using <a class="reference external" href="https://github.com/scijava/
 <span class="g g-Whitespace">     </span><span class="mi">44</span>         <span class="n">_allow_insecure_for_testing</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">_allow_insecure_for_testing</span><span class="p">,</span>
 <span class="g g-Whitespace">     </span><span class="mi">45</span>     <span class="p">)</span>
 
-<span class="nn">File ~/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/cjdk/_download.py:49,</span> in <span class="ni">download_and_extract</span><span class="nt">(destdir, url, checkfunc, progress, _allow_insecure_for_testing)</span>
+<span class="nn">File ~/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/cjdk/_download.py:49,</span> in <span class="ni">download_and_extract</span><span class="nt">(destdir, url, checkfunc, progress, _allow_insecure_for_testing)</span>
 <span class="g g-Whitespace">     </span><span class="mi">47</span> <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;cjdk-&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tempd</span><span class="p">:</span>
 <span class="g g-Whitespace">     </span><span class="mi">48</span>     <span class="n">file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempd</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;archive.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span>
 <span class="ne">---&gt; </span><span class="mi">49</span>     <span class="n">download_file</span><span class="p">(</span>
@@ -487,7 +491,7 @@ repository using <a class="reference external" href="https://github.com/scijava/
 <span class="g g-Whitespace">     </span><span class="mi">55</span>     <span class="p">)</span>
 <span class="g g-Whitespace">     </span><span class="mi">56</span>     <span class="n">extract</span><span class="p">(</span><span class="n">destdir</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">progress</span><span class="p">)</span>
 
-<span class="nn">File ~/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/cjdk/_download.py:80,</span> in <span class="ni">download_file</span><span class="nt">(dest, url, checkfunc, progress, _allow_insecure_for_testing)</span>
+<span class="nn">File ~/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/cjdk/_download.py:80,</span> in <span class="ni">download_file</span><span class="nt">(dest, url, checkfunc, progress, _allow_insecure_for_testing)</span>
 <span class="g g-Whitespace">     </span><span class="mi">75</span>         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
 <span class="g g-Whitespace">     </span><span class="mi">76</span>             <span class="sa">f</span><span class="s2">&quot;Cannot handle </span><span class="si">{</span><span class="n">scheme</span><span class="si">}</span><span class="s2"> (must be https)&quot;</span>
 <span class="g g-Whitespace">     </span><span class="mi">77</span>         <span class="p">)</span>
@@ -496,7 +500,7 @@ repository using <a class="reference external" href="https://github.com/scijava/
 <span class="g g-Whitespace">     </span><span class="mi">81</span> <span class="n">total</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content-length&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 <span class="g g-Whitespace">     </span><span class="mi">82</span> <span class="n">total</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">total</span><span class="p">)</span> <span class="k">if</span> <span class="n">total</span> <span class="k">else</span> <span class="kc">None</span>
 
-<span class="nn">File ~/work/cjdk/cjdk/.nox/docs/lib/python3.11/site-packages/requests/models.py:1021,</span> in <span class="ni">Response.raise_for_status</span><span class="nt">(self)</span>
+<span class="nn">File ~/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/requests/models.py:1021,</span> in <span class="ni">Response.raise_for_status</span><span class="nt">(self)</span>
 <span class="g g-Whitespace">   </span><span class="mi">1016</span>     <span class="n">http_error_msg</span> <span class="o">=</span> <span class="p">(</span>
 <span class="g g-Whitespace">   </span><span class="mi">1017</span>         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2"> Server Error: </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2"> for url: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
 <span class="g g-Whitespace">   </span><span class="mi">1018</span>     <span class="p">)</span>
@@ -583,7 +587,7 @@ directory within it:</p>
               
               
                 <footer class="prev-next-footer">
-                  <!-- Previous / next buttons -->
+                  
 <div class="prev-next-area">
     <a class="left-prev"
        href="example-run-jar.html"
@@ -626,6 +630,7 @@ By Mark A. Tsuchida
   
   <div class="footer-item">
     
+
   <p class="copyright">
     
       © Copyright 2022 Board of Regents of the University of Wisconsin System.
@@ -652,8 +657,8 @@ By Mark A. Tsuchida
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=ac02cc09edc035673794"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794"></script>
+  <script src="_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
 
   <footer class="bd-footer">
   </footer>
