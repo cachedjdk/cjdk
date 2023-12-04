@@ -65,14 +65,13 @@ def test_download_file(tmp_path):
     def check_not_called(filepath):
         assert False
 
-    with mock_server.start() as server:
-        with pytest.raises(Exception):
-            _download.download_file(
-                destfile,
-                server.url("/error"),
-                checkfunc=check_not_called,
-                _allow_insecure_for_testing=True,
-            )
+    with mock_server.start() as server, pytest.raises(Exception):
+        _download.download_file(
+            destfile,
+            server.url("/error"),
+            checkfunc=check_not_called,
+            _allow_insecure_for_testing=True,
+        )
 
 
 def test_extract_zip(tmp_path):

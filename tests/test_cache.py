@@ -76,9 +76,8 @@ def test_swap_in_fetched_file(tmp_path):
     # With dest left open
     if sys.platform == "win32":
         src.touch()
-        with open(dest) as fp:
-            with pytest.raises(OSError):
-                _cache._swap_in_fetched_file(dest, src, timeout=0.1)
+        with open(dest) as fp, pytest.raises(OSError):
+            _cache._swap_in_fetched_file(dest, src, timeout=0.1)
 
 
 def test_move_in_fetched_directory(tmp_path):

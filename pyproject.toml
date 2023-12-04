@@ -59,4 +59,4 @@ line-length = 79
 [tool.ruff.lint]
 select = ["E", "F", "UP", "B", "SIM", "I"]
 # Disable rules that failed when we switched to ruff. To be cleaned up.
-ignore = ["B006", "B007", "B011", "B017", "B028", "B904", "E501", "SIM117"]
+ignore = ["B006", "B007", "B011", "B017", "B028", "B904", "E501"]
