@@ -119,7 +119,10 @@ def _match_version(vendor, candidates, requested):
                 candidate, remove_prefix_1=not is_graal
             )
         except ValueError:
-            warnings.warn(f"Invalid version '{candidate}' in index; skipped")
+            warnings.warn(
+                f"Invalid version '{candidate}' in index; skipped",
+                stacklevel=2,
+            )
             continue  # Skip any non-numeric versions (not expected)
         normcands[normcand] = candidate
 
