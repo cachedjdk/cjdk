@@ -34,14 +34,16 @@ def download_and_extract(
     scheme = urlparse(url).scheme
     try:
         ext, http = scheme.split("+")
-    except ValueError:
-        raise NotImplementedError(f"Cannot handle {scheme} URL")
+    except ValueError as err:
+        raise NotImplementedError(f"Cannot handle {scheme} URL") from err
     if http != "https" and not _allow_insecure_for_testing:
         raise NotImplementedError(f"Cannot handle {http} (must be https)")
     try:
         extract = {"zip": _extract_zip, "tgz": _extract_tgz}[ext]
-    except KeyError:
-        raise NotImplementedError(f"Cannot handle compression type {ext}")
+    except KeyError as err:
+        raise NotImplementedError(
+            f"Cannot handle compression type {ext}"
+        ) from err
 
     url = http + _compat.str_removeprefix(url, scheme)
     with tempfile.TemporaryDirectory(prefix="cjdk-") as tempd:

@@ -154,8 +154,8 @@ def _normalize_version(ver, *, remove_prefix_1=False):
         norm = re.split(_VER_SEPS, ver)
         try:
             norm = tuple(int(e) for e in norm)
-        except ValueError:
-            raise ValueError(f"Invalid version string: {ver}")
+        except ValueError as err:
+            raise ValueError(f"Invalid version string: {ver}") from err
     else:
         norm = ()
     plus = ("+",) if is_plus else ()
