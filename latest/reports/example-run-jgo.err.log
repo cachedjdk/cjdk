@@ -4,10 +4,10 @@ Traceback (most recent call last):
   File "/home/runner/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/nbclient/client.py", line 1305, in execute
     return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 173, in wrapped
+  File "/home/runner/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 172, in wrapped
     return loop.run_until_complete(inner)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.0/x64/lib/python3.12/asyncio/base_events.py", line 664, in run_until_complete
+  File "/opt/hostedtoolcache/Python/3.12.1/x64/lib/python3.12/asyncio/base_events.py", line 684, in run_until_complete
     return future.result()
            ^^^^^^^^^^^^^^^
   File "/home/runner/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/nbclient/client.py", line 705, in async_execute
@@ -71,26 +71,26 @@ File [0;32m~/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/cjdk/_instal
 [1;32m     44[0m [43m        [49m[43m_allow_insecure_for_testing[49m[38;5;241;43m=[39;49m[43mconf[49m[38;5;241;43m.[39;49m[43m_allow_insecure_for_testing[49m[43m,[49m
 [1;32m     45[0m [43m    [49m[43m)[49m
 
-File [0;32m~/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/cjdk/_download.py:49[0m, in [0;36mdownload_and_extract[0;34m(destdir, url, checkfunc, progress, _allow_insecure_for_testing)[0m
-[1;32m     47[0m [38;5;28;01mwith[39;00m tempfile[38;5;241m.[39mTemporaryDirectory(prefix[38;5;241m=[39m[38;5;124m"[39m[38;5;124mcjdk-[39m[38;5;124m"[39m) [38;5;28;01mas[39;00m tempd:
-[1;32m     48[0m     file [38;5;241m=[39m Path(tempd) [38;5;241m/[39m [38;5;124mf[39m[38;5;124m"[39m[38;5;124marchive.[39m[38;5;132;01m{[39;00mext[38;5;132;01m}[39;00m[38;5;124m"[39m
-[0;32m---> 49[0m     [43mdownload_file[49m[43m([49m
-[1;32m     50[0m [43m        [49m[43mfile[49m[43m,[49m
-[1;32m     51[0m [43m        [49m[43murl[49m[43m,[49m
-[1;32m     52[0m [43m        [49m[43mcheckfunc[49m[38;5;241;43m=[39;49m[43mcheckfunc[49m[43m,[49m
-[1;32m     53[0m [43m        [49m[43mprogress[49m[38;5;241;43m=[39;49m[43mprogress[49m[43m,[49m
-[1;32m     54[0m [43m        [49m[43m_allow_insecure_for_testing[49m[38;5;241;43m=[39;49m[43m_allow_insecure_for_testing[49m[43m,[49m
-[1;32m     55[0m [43m    [49m[43m)[49m
-[1;32m     56[0m     extract(destdir, file, progress)
+File [0;32m~/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/cjdk/_download.py:51[0m, in [0;36mdownload_and_extract[0;34m(destdir, url, checkfunc, progress, _allow_insecure_for_testing)[0m
+[1;32m     49[0m [38;5;28;01mwith[39;00m tempfile[38;5;241m.[39mTemporaryDirectory(prefix[38;5;241m=[39m[38;5;124m"[39m[38;5;124mcjdk-[39m[38;5;124m"[39m) [38;5;28;01mas[39;00m tempd:
+[1;32m     50[0m     file [38;5;241m=[39m Path(tempd) [38;5;241m/[39m [38;5;124mf[39m[38;5;124m"[39m[38;5;124marchive.[39m[38;5;132;01m{[39;00mext[38;5;132;01m}[39;00m[38;5;124m"[39m
+[0;32m---> 51[0m     [43mdownload_file[49m[43m([49m
+[1;32m     52[0m [43m        [49m[43mfile[49m[43m,[49m
+[1;32m     53[0m [43m        [49m[43murl[49m[43m,[49m
+[1;32m     54[0m [43m        [49m[43mcheckfunc[49m[38;5;241;43m=[39;49m[43mcheckfunc[49m[43m,[49m
+[1;32m     55[0m [43m        [49m[43mprogress[49m[38;5;241;43m=[39;49m[43mprogress[49m[43m,[49m
+[1;32m     56[0m [43m        [49m[43m_allow_insecure_for_testing[49m[38;5;241;43m=[39;49m[43m_allow_insecure_for_testing[49m[43m,[49m
+[1;32m     57[0m [43m    [49m[43m)[49m
+[1;32m     58[0m     extract(destdir, file, progress)
 
-File [0;32m~/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/cjdk/_download.py:80[0m, in [0;36mdownload_file[0;34m(dest, url, checkfunc, progress, _allow_insecure_for_testing)[0m
-[1;32m     75[0m         [38;5;28;01mraise[39;00m [38;5;167;01mNotImplementedError[39;00m(
-[1;32m     76[0m             [38;5;124mf[39m[38;5;124m"[39m[38;5;124mCannot handle [39m[38;5;132;01m{[39;00mscheme[38;5;132;01m}[39;00m[38;5;124m (must be https)[39m[38;5;124m"[39m
-[1;32m     77[0m         )
-[1;32m     79[0m response [38;5;241m=[39m requests[38;5;241m.[39mget(url, stream[38;5;241m=[39m[38;5;28;01mTrue[39;00m)
-[0;32m---> 80[0m [43mresponse[49m[38;5;241;43m.[39;49m[43mraise_for_status[49m[43m([49m[43m)[49m
-[1;32m     81[0m total [38;5;241m=[39m response[38;5;241m.[39mheaders[38;5;241m.[39mget([38;5;124m"[39m[38;5;124mcontent-length[39m[38;5;124m"[39m, [38;5;28;01mNone[39;00m)
-[1;32m     82[0m total [38;5;241m=[39m [38;5;28mint[39m(total) [38;5;28;01mif[39;00m total [38;5;28;01melse[39;00m [38;5;28;01mNone[39;00m
+File [0;32m~/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/cjdk/_download.py:82[0m, in [0;36mdownload_file[0;34m(dest, url, checkfunc, progress, _allow_insecure_for_testing)[0m
+[1;32m     77[0m         [38;5;28;01mraise[39;00m [38;5;167;01mNotImplementedError[39;00m(
+[1;32m     78[0m             [38;5;124mf[39m[38;5;124m"[39m[38;5;124mCannot handle [39m[38;5;132;01m{[39;00mscheme[38;5;132;01m}[39;00m[38;5;124m (must be https)[39m[38;5;124m"[39m
+[1;32m     79[0m         )
+[1;32m     81[0m response [38;5;241m=[39m requests[38;5;241m.[39mget(url, stream[38;5;241m=[39m[38;5;28;01mTrue[39;00m)
+[0;32m---> 82[0m [43mresponse[49m[38;5;241;43m.[39;49m[43mraise_for_status[49m[43m([49m[43m)[49m
+[1;32m     83[0m total [38;5;241m=[39m response[38;5;241m.[39mheaders[38;5;241m.[39mget([38;5;124m"[39m[38;5;124mcontent-length[39m[38;5;124m"[39m, [38;5;28;01mNone[39;00m)
+[1;32m     84[0m total [38;5;241m=[39m [38;5;28mint[39m(total) [38;5;28;01mif[39;00m total [38;5;28;01melse[39;00m [38;5;28;01mNone[39;00m
 
 File [0;32m~/work/cjdk/cjdk/.nox/docs/lib/python3.12/site-packages/requests/models.py:1021[0m, in [0;36mResponse.raise_for_status[0;34m(self)[0m
 [1;32m   1016[0m     http_error_msg [38;5;241m=[39m (

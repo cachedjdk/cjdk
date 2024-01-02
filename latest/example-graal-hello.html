@@ -490,59 +490,59 @@ GraalVM Native Image: Generating &#39;hello&#39; (executable)...
 ========================================================================================================================
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1/7] Initializing...                                                                                    (4.5s @ 0.19GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1/7] Initializing...                                                                                    (5.2s @ 0.18GB)
  Version info: &#39;GraalVM 22.1.0 Java 17 CE&#39;
  C compiler: gcc (linux, x86_64, 11.4.0)
  Garbage collector: Serial GC
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[2/7] Performing analysis...  [******]                                                                  (14.6s @ 0.67GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[2/7] Performing analysis...  [******]                                                                  (13.4s @ 0.68GB)
    2,852 (74.19%) of  3,844 classes reachable
    3,399 (50.83%) of  6,687 fields reachable
-  12,932 (44.55%) of 29,029 methods reachable
+  12,932 (44.56%) of 29,019 methods reachable
       27 classes,     0 fields, and   345 methods registered for reflection
       57 classes,    58 fields, and    51 methods registered for JNI access
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[3/7] Building universe...                                                                               (1.0s @ 0.88GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[3/7] Building universe...                                                                               (1.2s @ 0.88GB)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[4/7] Parsing methods...      [*]                                                                        (0.9s @ 1.14GB)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[5/7] Inlining methods...     [****]                                                                     (1.5s @ 0.66GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[5/7] Inlining methods...     [****]                                                                     (1.5s @ 0.64GB)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[6/7] Compiling methods...    [***]                                                                     (10.6s @ 1.36GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[6/7] Compiling methods...    [***]                                                                     (10.5s @ 1.31GB)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[7/7] Creating image...                                                                                  (1.6s @ 1.66GB)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[7/7] Creating image...                                                                                  (1.5s @ 1.60GB)
    4.41MB (35.36%) for code area:    7,591 compilation units
-   6.97MB (55.89%) for image heap:   1,711 classes and 102,360 objects
-   1.09MB ( 8.75%) for other data
-  12.47MB in total
+   6.97MB (55.91%) for image heap:   1,711 classes and 102,366 objects
+   1.09MB ( 8.73%) for other data
+  12.46MB in total
 ------------------------------------------------------------------------------------------------------------------------
 Top 10 packages in code area:                               Top 10 object types in image heap:
- 666.55KB java.util                                         1014.05KB byte[] for general heap data
- 338.23KB java.lang                                          984.94KB java.lang.String
- 274.64KB java.text                                          944.49KB byte[] for code metadata
+ 666.54KB java.util                                         1014.07KB byte[] for general heap data
+ 338.27KB java.lang                                          984.94KB java.lang.String
+ 274.64KB java.text                                          944.58KB byte[] for code metadata
  235.70KB java.util.regex                                    645.59KB java.lang.Class
- 194.32KB com.oracle.svm.jni                                 572.10KB byte[] for java.lang.String
- 193.15KB java.util.concurrent                               474.56KB java.util.HashMap$Node
- 157.78KB com.oracle.svm.core.reflect                        222.81KB com.oracle.svm.core.hub.DynamicHubCompanion
+ 194.33KB com.oracle.svm.jni                                 572.10KB byte[] for java.lang.String
+ 193.11KB java.util.concurrent                               474.56KB java.util.HashMap$Node
+ 157.08KB com.oracle.svm.core.reflect                        222.81KB com.oracle.svm.core.hub.DynamicHubCompanion
  147.39KB java.math                                          201.63KB java.lang.String[]
   98.45KB java.util.logging                                  197.61KB java.util.HashMap$Node[]
   94.89KB com.oracle.svm.core.genscavenge                    155.91KB java.util.concurrent.ConcurrentHashMap$Node
       ... 119 additional packages                                 ... 778 additional object types
                                            (use GraalVM Dashboard to see all)
 ------------------------------------------------------------------------------------------------------------------------
-                        1.6s (4.4% of total time) in 17 GCs | Peak RSS: 3.39GB | CPU load: 3.62
+                        1.7s (4.7% of total time) in 17 GCs | Peak RSS: 3.42GB | CPU load: 3.55
 ------------------------------------------------------------------------------------------------------------------------
 Produced artifacts:
- /tmp/tmpyk5n6qcu/hello (executable)
- /tmp/tmpyk5n6qcu/hello.build_artifacts.txt
+ /tmp/tmpc81y_fkp/hello (executable)
+ /tmp/tmpc81y_fkp/hello.build_artifacts.txt
 ========================================================================================================================
-Finished generating &#39;hello&#39; in 36.1s.
+Finished generating &#39;hello&#39; in 35.4s.
 </pre></div>
 </div>
 </div>
