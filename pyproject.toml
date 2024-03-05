@@ -14,7 +14,7 @@ name = "cjdk"
 dynamic = ["version"]
 description = "Auto-download JDK or JRE and run Java apps from Python or CLI"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = {file = "LICENSE.txt"}
 keywords = ["Java", "JDK", "JRE", "JVM"]
 authors = [
