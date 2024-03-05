@@ -33,8 +33,8 @@ from contextlib import contextmanager
 
 ```{code-cell} ipython3
 # From https://maven.apache.org/download.html
-maven_url = "tgz+https://dlcdn.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz"
-maven_sha512 = "f790857f3b1f90ae8d16281f902c689e4f136ebe584aba45e4b1fa66c80cba826d3e0e52fdd04ed44b4c66f6d3fe3584a057c26dfcac544a60b301e6d0f91c26"
+maven_url = "tgz+https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz"
+maven_sha512 = "706f01b20dec0305a822ab614d51f32b07ee11d0218175e55450242e49d2156386483b506b3a4e8a03ac8611bae96395fd5eec15f50d3013d5deed6d1ee18224"
 ```
 
 ```{code-cell} ipython3
