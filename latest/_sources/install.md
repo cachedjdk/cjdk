@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 **cjdk** is a pure Python package and does not require a pre-installed JDK or
 JRE.
 
-Python 3.8 or later is required.
+Python 3.9 or later is required.
 
 ```sh
 pip install cjdk
