@@ -2,13 +2,14 @@
 # Copyright 2022 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
+import hashlib
 import shutil
 import time
 import urllib
 from contextlib import contextmanager
 from pathlib import Path
 
-from . import _compat, _progress
+from . import _progress
 
 __all__ = [
     "atomic_file",
@@ -43,7 +44,7 @@ def _key_for_url(url):
 
     normalized = "/".join(percent_reencode(i) for i in items)
 
-    hasher = _compat.sha1_not_for_security()
+    hasher = hashlib.sha1(usedforsecurity=False)
     hasher.update(normalized.encode())
     return hasher.hexdigest().lower()
 

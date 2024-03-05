@@ -7,7 +7,7 @@ import json
 import re
 import warnings
 
-from . import _compat, _install
+from . import _install
 from ._conf import Configuration
 
 __all__ = [
@@ -45,7 +45,7 @@ def available_jdks(index, conf: Configuration):
         return []
 
     return sorted(
-        (_compat.str_removeprefix(vendor, "jdk@"), version)
+        (vendor.removeprefix("jdk@"), version)
         for vendor, versions in jdks.items()
         for version in versions
     )

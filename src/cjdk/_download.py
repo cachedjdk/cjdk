@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 
 import requests
 
-from . import _compat, _progress
+from . import _progress
 
 __all__ = [
     "download_and_extract",
@@ -45,7 +45,7 @@ def download_and_extract(
             f"Cannot handle compression type {ext}"
         ) from err
 
-    url = http + _compat.str_removeprefix(url, scheme)
+    url = http + url.removeprefix(scheme)
     with tempfile.TemporaryDirectory(prefix="cjdk-") as tempd:
         file = Path(tempd) / f"archive.{ext}"
         download_file(
