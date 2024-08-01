@@ -86,7 +86,7 @@ def ls(ctx):
 
 @click.command(short_help="Ensure the requested JDK is cached.")
 @click.pass_context
-def cache_jdk(ctx):
+def cache(ctx):
     """
     Download and extract the requested JDK if it is not already cached.
 
@@ -96,6 +96,15 @@ def cache_jdk(ctx):
 
     See 'cjdk --help' for the common options used to specify the JDK and how it
     is obtained.
+    """
+    _api.cache_jdk(**ctx.obj)
+
+
+@click.command(hidden=True)
+@click.pass_context
+def cache_jdk(ctx):
+    """
+    Deprecated. Use cache function instead.
     """
     _api.cache_jdk(**ctx.obj)
 
@@ -241,14 +250,17 @@ def cache_package(ctx, url, name, sha1, sha256, sha512):
     )
 
 
+# Register current commands.
 main.add_command(java_home)
 main.add_command(exec)
 main.add_command(ls_vendors)
 main.add_command(ls)
-main.add_command(cache_jdk)
+main.add_command(cache)
 main.add_command(cache_file)
 main.add_command(cache_package)
 
+# Register hidden/deprecated commands, for backwards compatibility.
+main.add_command(cache_jdk)
 
 if __name__ == "__main__":
     main()
