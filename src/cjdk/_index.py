@@ -119,7 +119,32 @@ def _cached_index_path(conf: Configuration) -> Path:
 
 def _read_index(path: Path) -> Index:
     with open(path, encoding="ascii") as infile:
-        return json.load(infile)
+        index = json.load(infile)
+
+    # Post-process the index to normalize the data.
+    # Some "vendors" include the major Java version,
+    # so let's merge such entries. In particular:
+    #
+    # * ibm-semuru-openj9-java<##>
+    # * graalvm-java<##>
+    #
+    # However: while the graalvm vendors follow this pattern, the version
+    # numbers for graalvm are *not* JDK versions, but rather GraalVM versions,
+    # which merely strongly resemble JDK version strings. For example,
+    # graalvm-java17 version 22.3.3 bundles OpenJDK 17.0.8, but
+    # unfortunately there is no way to know this from the index alone.
+
+    pattern = re.compile('^(jdk@ibm-semeru.*)-java\\d+$')
+    for os, arches in index.items():
+        for arch, vendors in arches.items():
+            for vendor, versions in vendors.copy().items():
+                if not vendor.startswith("jdk@graalvm") and (m := pattern.match(vendor)):
+                    true_vendor = m.group(1)
+                    if not true_vendor in index[os][arch]:
+                        index[os][arch][true_vendor] = {}
+                    index[os][arch][true_vendor].update(versions)
+
+    return index
 
 
 def _get_versions(jdks: Tuple[str, str], conf) -> List[str]:
