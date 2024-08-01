@@ -79,17 +79,8 @@ def resolve_jdk_version(index: Index, conf: Configuration):
     index -- The JDK index (nested dict)
     """
     jdks = available_jdks(index, conf)
-    versions = [i[1] for i in jdks if i[0] == conf.vendor]
-    if not versions:
-        raise KeyError(
-            f"No {conf.vendor} JDK is available for {conf.os}-{conf.arch}"
-        )
-    matched = _match_version(conf.vendor, versions, conf.version)
-    if not matched:
-        raise KeyError(
-            f"No JDK matching version {conf.version} for {conf.os}-{conf.arch}-{conf.vendor}"
-        )
-    return matched
+    versions = _get_versions(jdks, conf)
+    return _match_version(conf.vendor, versions, conf.version)
 
 
 def jdk_url(index: Index, conf: Configuration):
@@ -127,6 +118,15 @@ def _cached_index_path(conf: Configuration) -> Path:
 def _read_index(path: Path) -> Index:
     with open(path, encoding="ascii") as infile:
         return json.load(infile)
+
+
+def _get_versions(jdks: Tuple[str, str], conf) -> List[str]:
+    versions = [i[1] for i in jdks if i[0] == conf.vendor]
+    if not versions:
+        raise KeyError(
+            f"No {conf.vendor} JDK is available for {conf.os}-{conf.arch}"
+        )
+    return versions
 
 
 def _match_versions(vendor, candidates: List[str], requested):

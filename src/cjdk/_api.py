@@ -77,13 +77,8 @@ def list_jdks(*, vendor=None, version=None, **kwargs):
     None
     """
     conf = _conf.configure(vendor=vendor, version=version, **kwargs)
-    # TODO: Eliminate code duplication with _index.resolve_jdk_version.
     jdks = _index.available_jdks(_index.jdk_index(conf), conf)
-    versions = [i[1] for i in jdks if i[0] == conf.vendor]
-    if not versions:
-        raise KeyError(
-            f"No {conf.vendor} JDK is available for {conf.os}-{conf.arch}"
-        )
+    versions = _index._get_versions(jdks, conf)
     matched = _index._match_versions(conf.vendor, versions, conf.version)
     print(f"[{conf.vendor}]")
     print(os.linesep.join([v for _, v in sorted(matched.items())]))
