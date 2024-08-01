@@ -89,7 +89,7 @@ def test_jdk_url():
     )
 
 
-def test_cached_index(tmp_path):
+def test_cached_index_path(tmp_path):
     with mock_server.start(
         endpoint="/index.json", data={"hello": "world"}
     ) as server:
@@ -101,7 +101,7 @@ def test_cached_index(tmp_path):
             / _cache._key_for_url(url)
             / _index._INDEX_FILENAME
         )
-        path = _index._cached_index(
+        path = _index._cached_index_path(
             configure(
                 index_url=url,
                 cache_dir=tmp_path,
@@ -116,7 +116,7 @@ def test_cached_index(tmp_path):
 
         # Second time should return same data without fetching.
         assert server.request_count() == 1
-        path2 = _index._cached_index(
+        path2 = _index._cached_index_path(
             configure(
                 index_url=url,
                 cache_dir=tmp_path,

@@ -6,6 +6,8 @@ import copy
 import json
 import re
 import warnings
+from pathlib import Path
+from typing import Dict, List, Tuple
 
 from . import _install
 from ._conf import Configuration
@@ -22,14 +24,21 @@ _INDEX_KEY_PREFIX = "index"
 _INDEX_FILENAME = "jdk-index.json"
 
 
-def jdk_index(conf: Configuration):
+# Type alias declarations.
+Versions = Dict[str, str]  # key = version, value = archive URL
+Vendors = Dict[str, Versions]  # key = vendor name
+Arches = Dict[str, Vendors]  # key = arch name
+Index = Dict[str, Arches]  # key = os name
+
+
+def jdk_index(conf: Configuration) -> Index:
     """
     Get the JDK index, from cache if possible.
     """
-    return _read_index(_cached_index(conf))
+    return _read_index(_cached_index_path(conf))
 
 
-def available_vendors(index):
+def available_vendors(index: Index):
     """
     Find in index the available JDK vendors.
 
@@ -41,7 +50,7 @@ def available_vendors(index):
     return set(index[os][arch] for os in index for arch in index[os])
 
 
-def available_jdks(index, conf: Configuration):
+def available_jdks(index: Index, conf: Configuration) -> Tuple[str, str]:
     """
     Find in index the available JDK vendor-version combinations.
 
@@ -51,8 +60,7 @@ def available_jdks(index, conf: Configuration):
     index -- The JDK index (nested dict)
     """
     try:
-        # jdks is dict: vendor -> (version -> url)
-        jdks = index[conf.os][conf.arch]
+        jdks: Vendors = index[conf.os][conf.arch]
     except KeyError:
         return []
 
@@ -63,7 +71,7 @@ def available_jdks(index, conf: Configuration):
     )
 
 
-def resolve_jdk_version(index, conf: Configuration):
+def resolve_jdk_version(index: Index, conf: Configuration):
     """
     Find in index the exact JDK version for the given configuration.
 
@@ -84,7 +92,7 @@ def resolve_jdk_version(index, conf: Configuration):
     return matched
 
 
-def jdk_url(index, conf: Configuration):
+def jdk_url(index: Index, conf: Configuration):
     """
     Find in index the URL for the JDK binary for the given vendor and version.
 
@@ -97,7 +105,7 @@ def jdk_url(index, conf: Configuration):
     return index[conf.os][conf.arch][f"jdk@{conf.vendor}"][matched]
 
 
-def _cached_index(conf: Configuration):
+def _cached_index_path(conf: Configuration) -> Path:
     def check_index(path):
         # Ensure valid JSON.
         _read_index(path)
@@ -116,12 +124,12 @@ def _cached_index(conf: Configuration):
     )
 
 
-def _read_index(path):
+def _read_index(path: Path) -> Index:
     with open(path, encoding="ascii") as infile:
         return json.load(infile)
 
 
-def _match_versions(vendor, candidates, requested):
+def _match_versions(vendor, candidates: List[str], requested):
     # Find all candidates compatible with the request
     is_graal = "graalvm" in vendor.lower()
     normreq = _normalize_version(requested, remove_prefix_1=not is_graal)

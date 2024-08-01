@@ -59,7 +59,7 @@ def atomic_file(
     ttl,
     timeout_for_fetch_elsewhere=10,
     timeout_for_read_elsewhere=2.5,
-):
+) -> Path:
     """
     Retrieve cached file for key, fetching with fetchfunc if necessary.
 
@@ -150,7 +150,7 @@ def permanent_directory(
     return keydir
 
 
-def _file_exists_and_is_fresh(file, ttl):
+def _file_exists_and_is_fresh(file, ttl) -> bool:
     if not file.is_file():
         return False
     now = time.time()
@@ -185,11 +185,11 @@ def _create_key_tmpdir(cache_dir, key):
                 shutil.rmtree(tmpdir)
 
 
-def _key_directory(cache_dir, key):
+def _key_directory(cache_dir: Path, key) -> Path:
     return cache_dir / "v0" / Path(*key)
 
 
-def _key_tmpdir(cache_dir, key):
+def _key_tmpdir(cache_dir: Path, key) -> Path:
     return cache_dir / "v0" / Path("fetching", *key)
 
 
