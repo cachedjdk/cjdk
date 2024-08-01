@@ -71,7 +71,7 @@ def available_jdks(index: Index, conf: Configuration) -> Tuple[str, str]:
     )
 
 
-def resolve_jdk_version(index: Index, conf: Configuration):
+def resolve_jdk_version(index: Index, conf: Configuration) -> str:
     """
     Find in index the exact JDK version for the given configuration.
 
@@ -83,7 +83,7 @@ def resolve_jdk_version(index: Index, conf: Configuration):
     return _match_version(conf.vendor, versions, conf.version)
 
 
-def jdk_url(index: Index, conf: Configuration):
+def jdk_url(index: Index, conf: Configuration, exact_version: str = None) -> str:
     """
     Find in index the URL for the JDK binary for the given vendor and version.
 
@@ -91,9 +91,11 @@ def jdk_url(index: Index, conf: Configuration):
 
     Arguments:
     index -- The JDK index (nested dict)
+    exact_version (optional) -- The JDK version, or None to resolve it from the configuration
     """
-    matched = resolve_jdk_version(index, conf)
-    return index[conf.os][conf.arch][f"jdk@{conf.vendor}"][matched]
+    if exact_version is None:
+        exact_version = resolve_jdk_version(index, conf)
+    return index[conf.os][conf.arch][f"jdk@{conf.vendor}"][exact_version]
 
 
 def _cached_index_path(conf: Configuration) -> Path:
@@ -129,7 +131,7 @@ def _get_versions(jdks: Tuple[str, str], conf) -> List[str]:
     return versions
 
 
-def _match_versions(vendor, candidates: List[str], requested):
+def _match_versions(vendor, candidates: List[str], requested) -> Dict[Tuple[int], str]:
     # Find all candidates compatible with the request
     is_graal = "graalvm" in vendor.lower()
     normreq = _normalize_version(requested, remove_prefix_1=not is_graal)
@@ -153,7 +155,7 @@ def _match_versions(vendor, candidates: List[str], requested):
     }
 
 
-def _match_version(vendor, candidates, requested):
+def _match_version(vendor, candidates: List[str], requested) -> str:
     matched = _match_versions(vendor, candidates, requested)
 
     if len(matched) == 0:

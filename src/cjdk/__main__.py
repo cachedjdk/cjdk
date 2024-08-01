@@ -73,15 +73,20 @@ def ls_vendors(ctx):
     _api.list_vendors(**ctx.obj)
 
 
-@click.command(short_help="List available JDKs matching criteria.")
+@click.command(short_help="List cached or available JDKs matching criteria.")
 @click.pass_context
-def ls(ctx):
+@click.option(
+    "--cached/--available",
+    default=True,
+    help="Show only already-cached JDKs, or show all available JDKs from the index (default cached only).",
+)
+def ls(ctx, cached: bool = False):
     """
     Output a list of JDKs matching the given criteria.
 
     See 'cjdk --help' for the common options used to specify the JDK.
     """
-    _api.list_jdks(**ctx.obj)
+    _api.list_jdks(**ctx.obj, cached_only=cached)
 
 
 @click.command(short_help="Ensure the requested JDK is cached.")
