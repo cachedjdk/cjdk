@@ -7,7 +7,6 @@ import json
 import re
 import warnings
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 from . import _install
 from ._conf import Configuration
@@ -25,10 +24,10 @@ _INDEX_FILENAME = "jdk-index.json"
 
 
 # Type alias declarations.
-Versions = Dict[str, str]  # key = version, value = archive URL
-Vendors = Dict[str, Versions]  # key = vendor name
-Arches = Dict[str, Vendors]  # key = arch name
-Index = Dict[str, Arches]  # key = os name
+Versions = dict[str, str]  # key = version, value = archive URL
+Vendors = dict[str, Versions]  # key = vendor name
+Arches = dict[str, Vendors]  # key = arch name
+Index = dict[str, Arches]  # key = os name
 
 
 def jdk_index(conf: Configuration) -> Index:
@@ -50,7 +49,7 @@ def available_vendors(index: Index):
     return set(index[os][arch] for os in index for arch in index[os])
 
 
-def available_jdks(index: Index, conf: Configuration) -> Tuple[str, str]:
+def available_jdks(index: Index, conf: Configuration) -> tuple[str, str]:
     """
     Find in index the available JDK vendor-version combinations.
 
@@ -83,7 +82,9 @@ def resolve_jdk_version(index: Index, conf: Configuration) -> str:
     return _match_version(conf.vendor, versions, conf.version)
 
 
-def jdk_url(index: Index, conf: Configuration, exact_version: str = None) -> str:
+def jdk_url(
+    index: Index, conf: Configuration, exact_version: str = None
+) -> str:
     """
     Find in index the URL for the JDK binary for the given vendor and version.
 
@@ -134,20 +135,22 @@ def _read_index(path: Path) -> Index:
     # graalvm-java17 version 22.3.3 bundles OpenJDK 17.0.8, but
     # unfortunately there is no way to know this from the index alone.
 
-    pattern = re.compile('^(jdk@ibm-semeru.*)-java\\d+$')
+    pattern = re.compile("^(jdk@ibm-semeru.*)-java\\d+$")
     for os, arches in index.items():
         for arch, vendors in arches.items():
             for vendor, versions in vendors.copy().items():
-                if not vendor.startswith("jdk@graalvm") and (m := pattern.match(vendor)):
+                if not vendor.startswith("jdk@graalvm") and (
+                    m := pattern.match(vendor)
+                ):
                     true_vendor = m.group(1)
-                    if not true_vendor in index[os][arch]:
+                    if true_vendor not in index[os][arch]:
                         index[os][arch][true_vendor] = {}
                     index[os][arch][true_vendor].update(versions)
 
     return index
 
 
-def _get_versions(jdks: Tuple[str, str], conf) -> List[str]:
+def _get_versions(jdks: tuple[str, str], conf) -> list[str]:
     versions = [i[1] for i in jdks if i[0] == conf.vendor]
     if not versions:
         raise KeyError(
@@ -156,7 +159,9 @@ def _get_versions(jdks: Tuple[str, str], conf) -> List[str]:
     return versions
 
 
-def _match_versions(vendor, candidates: List[str], requested) -> Dict[Tuple[int], str]:
+def _match_versions(
+    vendor, candidates: list[str], requested
+) -> dict[tuple[int], str]:
     # Find all candidates compatible with the request
     is_graal = "graalvm" in vendor.lower()
     normreq = _normalize_version(requested, remove_prefix_1=not is_graal)
@@ -175,12 +180,13 @@ def _match_versions(vendor, candidates: List[str], requested) -> Dict[Tuple[int]
         normcands[normcand] = candidate
 
     return {
-        k: v for k, v in normcands.items()
+        k: v
+        for k, v in normcands.items()
         if _is_version_compatible_with_spec(k, normreq)
     }
 
 
-def _match_version(vendor, candidates: List[str], requested) -> str:
+def _match_version(vendor, candidates: list[str], requested) -> str:
     matched = _match_versions(vendor, candidates, requested)
 
     if len(matched) == 0:

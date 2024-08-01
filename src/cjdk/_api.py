@@ -6,7 +6,7 @@ import hashlib
 import os
 from contextlib import contextmanager
 
-from . import _cache, _conf, _install, _index, _jdk
+from . import _cache, _conf, _index, _install, _jdk
 
 __all__ = [
     "list_vendors",
@@ -42,7 +42,7 @@ def list_vendors(**kwargs):
         vendor.replace("jdk@", "")
         for osys in index
         for arch in index[osys]
-        for vendor in index[osys][arch].keys()
+        for vendor in index[osys][arch]
     }
     print(os.linesep.join(sorted(vendors)))
 
@@ -92,11 +92,8 @@ def list_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
             key = (_jdk._JDK_KEY_PREFIX, _cache._key_for_url(url))
             keydir = _cache._key_directory(conf.cache_dir, key)
             return keydir.exists()
-        matched = {
-            k: v
-            for k, v in matched.items()
-            if is_cached(v)
-        }
+
+        matched = {k: v for k, v in matched.items() if is_cached(v)}
 
     print(f"[{conf.vendor}]")
     print(os.linesep.join([v for _, v in sorted(matched.items())]))
