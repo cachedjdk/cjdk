@@ -36,15 +36,7 @@ def list_vendors(**kwargs):
     -------
     None
     """
-    conf = _conf.configure(**kwargs)
-    index = _index.jdk_index(conf)
-    vendors = {
-        vendor.replace("jdk@", "")
-        for osys in index
-        for arch in index[osys]
-        for vendor in index[osys][arch]
-    }
-    print(os.linesep.join(sorted(vendors)))
+    print(os.linesep.join(sorted(_get_vendors(**kwargs))))
 
 
 def list_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
@@ -79,24 +71,10 @@ def list_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
     -------
     None
     """
-    conf = _conf.configure(vendor=vendor, version=version, **kwargs)
-    index = _index.jdk_index(conf)
-    jdks = _index.available_jdks(index, conf)
-    versions = _index._get_versions(jdks, conf)
-    matched = _index._match_versions(conf.vendor, versions, conf.version)
-
-    if cached_only:
-        # Filter matches by existing key directories.
-        def is_cached(v):
-            url = _index.jdk_url(index, conf, v)
-            key = (_jdk._JDK_KEY_PREFIX, _cache._key_for_url(url))
-            keydir = _cache._key_directory(conf.cache_dir, key)
-            return keydir.exists()
-
-        matched = {k: v for k, v in matched.items() if is_cached(v)}
-
-    print(f"[{conf.vendor}]")
-    print(os.linesep.join([v for _, v in sorted(matched.items())]))
+    jdks_list = _get_jdks(
+        vendor=vendor, version=version, cached_only=cached_only, **kwargs
+    )
+    print(os.linesep.join(jdks_list))
 
 
 def cache_jdk(*, vendor=None, version=None, **kwargs):
@@ -276,6 +254,37 @@ def cache_package(name, url, **kwargs):
     return _install.install_dir(
         "misc-dirs", name, url, conf, checkfunc=check_hashes
     )
+
+
+def _get_vendors(**kwargs):
+    conf = _conf.configure(**kwargs)
+    index = _index.jdk_index(conf)
+    return {
+        vendor.replace("jdk@", "")
+        for osys in index
+        for arch in index[osys]
+        for vendor in index[osys][arch]
+    }
+
+
+def _get_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
+    conf = _conf.configure(vendor=vendor, version=version, **kwargs)
+    index = _index.jdk_index(conf)
+    jdks = _index.available_jdks(index, conf)
+    versions = _index._get_versions(jdks, conf)
+    matched = _index._match_versions(conf.vendor, versions, conf.version)
+
+    if cached_only:
+        # Filter matches by existing key directories.
+        def is_cached(v):
+            url = _index.jdk_url(index, conf, v)
+            key = (_jdk._JDK_KEY_PREFIX, _cache._key_for_url(url))
+            keydir = _cache._key_directory(conf.cache_dir, key)
+            return keydir.exists()
+
+        matched = {k: v for k, v in matched.items() if is_cached(v)}
+
+    return [f"{conf.vendor}:{v}" for k, v in sorted(matched.items())]
 
 
 def _make_hash_checker(hashes):
