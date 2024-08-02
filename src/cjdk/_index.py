@@ -136,8 +136,14 @@ def _read_index(path: Path) -> Index:
     # unfortunately there is no way to know this from the index alone.
 
     pattern = re.compile("^(jdk@ibm-semeru.*)-java\\d+$")
+    if not hasattr(index, "items"):
+        return index
     for os, arches in index.items():
+        if not hasattr(arches, "items"):
+            continue
         for arch, vendors in arches.items():
+            if not hasattr(vendors, "items"):
+                continue
             for vendor, versions in vendors.copy().items():
                 if not vendor.startswith("jdk@graalvm") and (
                     m := pattern.match(vendor)
