@@ -201,16 +201,16 @@ def _match_version(vendor, candidates: list[str], requested) -> str:
     return matched[max(matched)]
 
 
-_VER_SEPS = re.compile(r"[.-]")
+_VER_SEPS = re.compile(r"[.+_-]")
 
 
 def _normalize_version(ver, *, remove_prefix_1=False):
     # Normalize requested version and candidates:
     # - Split at dots and dashes (so we don't distinguish between '.' and '-')
-    # - Convert elements to integers (so that we require numeric elements and
-    #   compare them numerically)
+    # - Try to convert elements to integers (so that we can compare elements
+    #   numerically where feasible)
     # - If remove_prefix_1 and first element is 1, remove it (so JDK 1.8 == 8)
-    # - Return as tuple of ints (so that we compare lexicographically)
+    # - Return as a tuple (so that we compare element by element)
     # - Trailing zero elements are NOT removed, so, e.g., 11 < 11.0 (for the
     #   most part, the index uses versions with the same number of elements
     #   within a given vendor; versions like "11" are outliers)
@@ -219,17 +219,21 @@ def _normalize_version(ver, *, remove_prefix_1=False):
     if is_plus:
         ver = ver[:-1]
     if ver:
-        norm = re.split(_VER_SEPS, ver)
-        try:
-            norm = tuple(int(e) for e in norm)
-        except ValueError as err:
-            raise ValueError(f"Invalid version string: {ver}") from err
+        norm = tuple(re.split(_VER_SEPS, ver))
+        norm = tuple(_intify(e) for e in norm)
     else:
         norm = ()
     plus = ("+",) if is_plus else ()
     if remove_prefix_1 and len(norm) and norm[0] == 1:
         return norm[1:] + plus
     return norm + plus
+
+
+def _intify(s: str):
+    try:
+        return int(s)
+    except ValueError:
+        return s
 
 
 def _is_version_compatible_with_spec(version, spec):

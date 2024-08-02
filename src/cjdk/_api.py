@@ -302,7 +302,28 @@ def _get_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
 
         matched = {k: v for k, v in matched.items() if is_cached(v)}
 
-    return [f"{conf.vendor}:{v}" for k, v in sorted(matched.items())]
+    class VersionElement:
+        def __init__(self, value):
+            self.value = value
+            self.is_int = isinstance(value, int)
+
+        def __eq__(self, other):
+            if self.is_int and other.is_int:
+                return self.value == other.value
+            return str(self.value) == str(other.value)
+
+        def __lt__(self, other):
+            if self.is_int and other.is_int:
+                return self.value < other.value
+            return str(self.value) < str(other.value)
+
+    def version_key(version_tuple):
+        return tuple(VersionElement(elem) for elem in version_tuple[0])
+
+    return [
+        f"{conf.vendor}:{v}"
+        for k, v in sorted(matched.items(), key=version_key)
+    ]
 
 
 def _make_hash_checker(hashes):

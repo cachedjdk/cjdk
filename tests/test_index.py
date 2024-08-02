@@ -160,8 +160,8 @@ def test_normalize_version():
     assert f("1", remove_prefix_1=True) == ()
     assert f("1.8", remove_prefix_1=True) == (8,)
     assert f("1.8.0", remove_prefix_1=True) == (8, 0)
-    with pytest.raises(ValueError):
-        f("1.8u300", remove_prefix_1=True)
+    assert f("1.8u300", remove_prefix_1=True) == ("8u300",)
+    assert f("21.0.1+12_openj9-0.42.0") == (21, 0, 1, 12, "openj9", 0, 42, 0)
 
 
 def test_is_version_compatible_with_spec():
