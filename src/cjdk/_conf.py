@@ -39,10 +39,15 @@ def configure(**kwargs):
             raise ValueError("Cannot specify jdk= together with version=")
         kwargs["vendor"], kwargs["version"] = _parse_vendor_version(jdk)
 
+    default_vendor = (
+        _default_vendor()
+        if kwargs.pop("fallback_to_default_vendor", True)
+        else None
+    )
     conf = Configuration(
         os=_canonicalize_os(kwargs.pop("os", None)),
         arch=_canonicalize_arch(kwargs.pop("arch", None)),
-        vendor=kwargs.pop("vendor", None) or _default_vendor(),
+        vendor=kwargs.pop("vendor", None) or default_vendor,
         version=kwargs.pop("version", "") or "",
         cache_dir=kwargs.pop("cache_dir", None) or _default_cachedir(),
         index_url=kwargs.pop("index_url", None) or _default_index_url(),

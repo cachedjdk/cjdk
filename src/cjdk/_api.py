@@ -268,7 +268,25 @@ def _get_vendors(**kwargs):
 
 
 def _get_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
-    conf = _conf.configure(vendor=vendor, version=version, **kwargs)
+    conf = _conf.configure(
+        vendor=vendor,
+        version=version,
+        fallback_to_default_vendor=False,
+        **kwargs,
+    )
+    if conf.vendor is None:
+        # Search across all vendors.
+        kwargs.pop("jdk", None)  # It was already parsed.
+        return [
+            jdk
+            for v in sorted(_get_vendors())
+            for jdk in _get_jdks(
+                vendor=v,
+                version=conf.version,
+                cached_only=cached_only,
+                **kwargs,
+            )
+        ]
     index = _index.jdk_index(conf)
     jdks = _index.available_jdks(index, conf)
     versions = _index._get_versions(jdks, conf)
