@@ -24,6 +24,26 @@ More details about the choices and defaults for [`VENDOR`](./vendors.md),
 [`VERSION`](./versions.md), and [`--cache_dir`](./cachedir.md) are available on
 separate pages.
 
+## Querying the JDK index
+
+### `ls`
+
+```{command-output} cjdk ls --help
+```
+
+```{eval-rst}
+.. versionadded:: 0.4.0
+```
+
+### `ls-vendors`
+
+```{command-output} cjdk ls-vendors --help
+```
+
+```{eval-rst}
+.. versionadded:: 0.4.0
+```
+
 ## Working with cached JDKs
 
 ### `exec`
@@ -53,13 +73,13 @@ $ cjdk --jdk temurin-jre:17.0.3 java-home
 (The output will depend on your operating system and configuration; the example
 shown was on macOS.)
 
-### `cache-jdk`
+### `cache`
 
-```{command-output} cjdk cache-jdk --help
+```{command-output} cjdk cache --help
 ```
 
 ```{eval-rst}
-.. versionadded:: 0.2.0
+.. versionadded:: 0.4.0
 ```
 
 ## Caching arbitrary files and packages
