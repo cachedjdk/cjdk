@@ -10,7 +10,15 @@ See also the section on [versioning](versioning-scheme).
 
 ## [Unreleased]
 
-- No notable changes yet.
+### Added
+
+- Python API functions `list_jdks()` and `list_vendors()`.
+- Command line commands `ls` and `ls-vendors`.
+- Light postprocessing of vendor names, notably `ibm-semeru-openj9`.
+
+### Changed
+
+- Command line command `cache-jdk` renamed to `cache`.
 
 ## [0.3.0] - 2022-07-09
 
