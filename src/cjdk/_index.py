@@ -110,18 +110,25 @@ def _read_index(path: Path) -> Index:
     with open(path, encoding="ascii") as infile:
         index = json.load(infile)
 
-    # Post-process the index to normalize the data.
-    # Some "vendors" include the major Java version,
-    # so let's merge such entries. In particular:
-    #
-    # * ibm-semuru-openj9-java<##>
-    # * graalvm-java<##>
-    #
-    # However: while the graalvm vendors follow this pattern, the version
-    # numbers for graalvm are *not* JDK versions, but rather GraalVM versions,
-    # which merely strongly resemble JDK version strings. For example,
-    # graalvm-java17 version 22.3.3 bundles OpenJDK 17.0.8, but
-    # unfortunately there is no way to know this from the index alone.
+    return _postprocess_index(index)
+
+
+def _postprocess_index(index: Index) -> Index:
+    """
+    Post-process the index to normalize the data.
+
+    Some "vendors" include the major Java version,
+    so let's merge such entries. In particular:
+
+    * ibm-semuru-openj9-java<##>
+    * graalvm-java<##>
+
+    However: while the graalvm vendors follow this pattern, the version
+    numbers for graalvm are *not* JDK versions, but rather GraalVM versions,
+    which merely strongly resemble JDK version strings. For example,
+    graalvm-java17 version 22.3.3 bundles OpenJDK 17.0.8, but
+    unfortunately there is no way to know this from the index alone.
+    """
 
     pattern = re.compile("^(jdk@ibm-semeru.*)-java\\d+$")
     if not hasattr(index, "items"):
