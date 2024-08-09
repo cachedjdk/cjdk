@@ -67,6 +67,10 @@ def resolve_jdk_version(index: Index, conf: Configuration) -> str:
     """
     jdks = available_jdks(index, conf)
     versions = _get_versions(jdks, conf)
+    if not versions:
+        raise KeyError(
+            f"No {conf.vendor} JDK is available for {conf.os}-{conf.arch}"
+        )
     return _match_version(conf.vendor, versions, conf.version)
 
 
@@ -152,12 +156,7 @@ def _postprocess_index(index: Index) -> Index:
 
 
 def _get_versions(jdks: tuple[str, str], conf) -> list[str]:
-    versions = [i[1] for i in jdks if i[0] == conf.vendor]
-    if not versions:
-        raise KeyError(
-            f"No {conf.vendor} JDK is available for {conf.os}-{conf.arch}"
-        )
-    return versions
+    return [i[1] for i in jdks if i[0] == conf.vendor]
 
 
 def _match_versions(
