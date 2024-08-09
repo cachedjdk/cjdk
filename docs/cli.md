@@ -79,7 +79,8 @@ shown was on macOS.)
 ```
 
 ```{eval-rst}
-.. versionadded:: 0.4.0
+.. versionchanged:: 0.4.0
+   Renamed from ``cache-jdk``.
 ```
 
 ## Caching arbitrary files and packages
