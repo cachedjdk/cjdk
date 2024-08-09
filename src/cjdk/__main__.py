@@ -68,9 +68,11 @@ def main(ctx, jdk, cache_dir, index_url, index_ttl, os, arch, progress):
 @click.pass_context
 def ls_vendors(ctx):
     """
-    Output the list of available vendors.
+    Print the list of available JDK vendors.
     """
-    _api.list_vendors(**ctx.obj)
+    vendors = _api.list_vendors(**ctx.obj)
+    if vendors:
+        print("\n".join(vendors))
 
 
 @click.command(short_help="List cached or available JDKs matching criteria.")
@@ -82,11 +84,13 @@ def ls_vendors(ctx):
 )
 def ls(ctx, cached: bool = False):
     """
-    Output a list of JDKs matching the given criteria.
+    Print the list of JDKs matching the given criteria.
 
-    See 'cjdk --help' for the common options used to specify the JDK.
+    See 'cjdk --help' for the common options used to specify the criteria.
     """
-    _api.list_jdks(**ctx.obj, cached_only=cached)
+    jdks = _api.list_jdks(**ctx.obj, cached_only=cached)
+    if jdks:
+        print("\n".join(jdks))
 
 
 @click.command(short_help="Ensure the requested JDK is cached.")

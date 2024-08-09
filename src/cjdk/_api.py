@@ -9,19 +9,19 @@ from contextlib import contextmanager
 from . import _cache, _conf, _index, _install, _jdk
 
 __all__ = [
-    "list_vendors",
-    "list_jdks",
+    "cache_file",
     "cache_jdk",
+    "cache_package",
     "java_env",
     "java_home",
-    "cache_file",
-    "cache_package",
+    "list_jdks",
+    "list_vendors",
 ]
 
 
 def list_vendors(**kwargs):
     """
-    Output the list of available vendors.
+    Return the list of available JDK vendors.
 
     Parameters
     ----------
@@ -34,14 +34,15 @@ def list_vendors(**kwargs):
 
     Returns
     -------
-    None
+    list[str]
+        The available JDK vendors.
     """
-    print(os.linesep.join(sorted(_get_vendors(**kwargs))))
+    return sorted(_get_vendors(**kwargs))
 
 
 def list_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
     """
-    Output a list of JDKs matching the given criteria.
+    Return the list of JDKs matching the given criteria.
 
     Parameters
     ----------
@@ -69,12 +70,12 @@ def list_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
 
     Returns
     -------
-    None
+    list[str]
+        JDKs (vendor:version) matching the criteria.
     """
-    jdks_list = _get_jdks(
+    return _get_jdks(
         vendor=vendor, version=version, cached_only=cached_only, **kwargs
     )
-    print(os.linesep.join(jdks_list))
 
 
 def cache_jdk(*, vendor=None, version=None, **kwargs):

@@ -15,10 +15,10 @@ from ._version import __version__ as __version__
 
 __all__ = [
     "cache_file",
-    "list_vendors",
-    "list_jdks",
     "cache_jdk",
     "cache_package",
     "java_env",
     "java_home",
+    "list_jdks",
+    "list_vendors",
 ]
