@@ -64,18 +64,56 @@ def main(ctx, jdk, cache_dir, index_url, index_ttl, os, arch, progress):
     )
 
 
+@click.command(short_help="List available JDK vendors.")
+@click.pass_context
+def ls_vendors(ctx):
+    """
+    Print the list of available JDK vendors.
+    """
+    vendors = _api.list_vendors(**ctx.obj)
+    if vendors:
+        print("\n".join(vendors))
+
+
+@click.command(short_help="List cached or available JDKs matching criteria.")
+@click.pass_context
+@click.option(
+    "--cached/--available",
+    default=True,
+    help="Show only already-cached JDKs, or show all available JDKs from the index (default cached only).",
+)
+def ls(ctx, cached: bool = False):
+    """
+    Print the list of JDKs matching the given criteria.
+
+    See 'cjdk --help' for the common options used to specify the criteria.
+    """
+    jdks = _api.list_jdks(**ctx.obj, cached_only=cached)
+    if jdks:
+        print("\n".join(jdks))
+
+
 @click.command(short_help="Ensure the requested JDK is cached.")
 @click.pass_context
-def cache_jdk(ctx):
+def cache(ctx):
     """
     Download and extract the requested JDK if it is not already cached.
 
     Usually there is no need to invoke this command on its own, but it may be
-    useful if you want any potentil JDK download to happen at a controlled
+    useful if you want any potential JDK download to happen at a controlled
     point in time.
 
     See 'cjdk --help' for the common options used to specify the JDK and how it
     is obtained.
+    """
+    _api.cache_jdk(**ctx.obj)
+
+
+@click.command(hidden=True)
+@click.pass_context
+def cache_jdk(ctx):
+    """
+    Deprecated. Use cache function instead.
     """
     _api.cache_jdk(**ctx.obj)
 
@@ -108,7 +146,7 @@ def exec(ctx, prog, args):
     """
     Run PROG with the environment variables set for the requested JDK.
 
-    The JDK is download if not already cached.
+    The JDK is downloaded if not already cached.
 
     See 'cjdk --help' for the common options used to specify the JDK and how it
     is obtained.
@@ -221,12 +259,17 @@ def cache_package(ctx, url, name, sha1, sha256, sha512):
     )
 
 
+# Register current commands.
 main.add_command(java_home)
 main.add_command(exec)
-main.add_command(cache_jdk)
+main.add_command(ls_vendors)
+main.add_command(ls)
+main.add_command(cache)
 main.add_command(cache_file)
 main.add_command(cache_package)
 
+# Register hidden/deprecated commands, for backwards compatibility.
+main.add_command(cache_jdk)
 
 if __name__ == "__main__":
     main()

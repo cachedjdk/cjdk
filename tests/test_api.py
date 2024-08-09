@@ -152,3 +152,37 @@ def test_env_var_set():
     with f("CJDK_TEST_ENV_VAR", "testvalue"):
         assert os.environ["CJDK_TEST_ENV_VAR"] == "testvalue"
     assert "CJDK_TEST_ENV_VAR" not in os.environ
+
+
+def test_get_vendors():
+    vendors = _api._get_vendors()
+    assert vendors is not None
+    assert "adoptium" in vendors
+    assert "corretto" in vendors
+    assert "graalvm" in vendors
+    assert "ibm-semeru-openj9" in vendors
+    assert "java-oracle" in vendors
+    assert "liberica" in vendors
+    assert "temurin" in vendors
+    assert "zulu" in vendors
+
+
+def test_get_jdks():
+    jdks = _api._get_jdks(cached_only=False)
+    assert jdks is not None
+    assert "adoptium:1.21.0.4" in jdks
+    assert "corretto:21.0.4.7.1" in jdks
+    assert "graalvm-community:21.0.2" in jdks
+    assert "graalvm-java21:21.0.2" in jdks
+    assert "liberica:22.0.2" in jdks
+    assert "temurin:1.21.0.4" in jdks
+    assert "zulu:8.0.362" in jdks
+
+    cached_jdks = _api._get_jdks()
+    assert cached_jdks is not None
+    assert len(cached_jdks) < len(jdks)
+
+    zulu_jdks = _api._get_jdks(vendor="zulu", cached_only=False)
+    assert zulu_jdks is not None
+    assert len(set(zulu_jdks))
+    assert all(jdk.startswith("zulu:") for jdk in zulu_jdks)

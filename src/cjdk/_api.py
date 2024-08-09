@@ -6,15 +6,76 @@ import hashlib
 import os
 from contextlib import contextmanager
 
-from . import _conf, _install, _jdk
+from . import _cache, _conf, _index, _install, _jdk
 
 __all__ = [
+    "cache_file",
     "cache_jdk",
+    "cache_package",
     "java_env",
     "java_home",
-    "cache_file",
-    "cache_package",
+    "list_jdks",
+    "list_vendors",
 ]
+
+
+def list_vendors(**kwargs):
+    """
+    Return the list of available JDK vendors.
+
+    Parameters
+    ----------
+    None
+
+    Other Parameters
+    ----------------
+    index_url : str, optional
+        Alternative URL for the JDK index.
+
+    Returns
+    -------
+    list[str]
+        The available JDK vendors.
+    """
+    return sorted(_get_vendors(**kwargs))
+
+
+def list_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
+    """
+    Return the list of JDKs matching the given criteria.
+
+    Parameters
+    ----------
+    vendor : str, optional
+        JDK vendor name, such as "adoptium".
+    version : str, optional
+        JDK version expression, such as "17+".
+    cached_only : bool, optional
+        If True, list only already-cached JDKs.
+        If False, list all matching JDKs in the index.
+
+    Other Parameters
+    ----------------
+    jdk : str, optional
+        JDK vendor and version, such as "adoptium:17+". Cannot be specified
+        together with `vendor` or `version`.
+    cache_dir : pathlib.Path or str, optional
+        Override the root cache directory.
+    index_url : str, optional
+        Alternative URL for the JDK index.
+    os : str, optional
+        Operating system for the JDK (default: current operating system).
+    arch : str, optional
+        CPU architecture for the JDK (default: current architecture).
+
+    Returns
+    -------
+    list[str]
+        JDKs (vendor:version) matching the criteria.
+    """
+    return _get_jdks(
+        vendor=vendor, version=version, cached_only=cached_only, **kwargs
+    )
 
 
 def cache_jdk(*, vendor=None, version=None, **kwargs):
@@ -194,6 +255,76 @@ def cache_package(name, url, **kwargs):
     return _install.install_dir(
         "misc-dirs", name, url, conf, checkfunc=check_hashes
     )
+
+
+def _get_vendors(**kwargs):
+    conf = _conf.configure(**kwargs)
+    index = _index.jdk_index(conf)
+    return {
+        vendor.replace("jdk@", "")
+        for osys in index
+        for arch in index[osys]
+        for vendor in index[osys][arch]
+    }
+
+
+def _get_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
+    conf = _conf.configure(
+        vendor=vendor,
+        version=version,
+        fallback_to_default_vendor=False,
+        **kwargs,
+    )
+    if conf.vendor is None:
+        # Search across all vendors.
+        kwargs.pop("jdk", None)  # It was already parsed.
+        return [
+            jdk
+            for v in sorted(_get_vendors())
+            for jdk in _get_jdks(
+                vendor=v,
+                version=conf.version,
+                cached_only=cached_only,
+                **kwargs,
+            )
+        ]
+    index = _index.jdk_index(conf)
+    jdks = _index.available_jdks(index, conf)
+    versions = _index._get_versions(jdks, conf)
+    matched = _index._match_versions(conf.vendor, versions, conf.version)
+
+    if cached_only:
+        # Filter matches by existing key directories.
+        def is_cached(v):
+            url = _index.jdk_url(index, conf, v)
+            key = (_jdk._JDK_KEY_PREFIX, _cache._key_for_url(url))
+            keydir = _cache._key_directory(conf.cache_dir, key)
+            return keydir.exists()
+
+        matched = {k: v for k, v in matched.items() if is_cached(v)}
+
+    class VersionElement:
+        def __init__(self, value):
+            self.value = value
+            self.is_int = isinstance(value, int)
+
+        def __eq__(self, other):
+            if self.is_int and other.is_int:
+                return self.value == other.value
+            return str(self.value) == str(other.value)
+
+        def __lt__(self, other):
+            if self.is_int and other.is_int:
+                return self.value < other.value
+            return str(self.value) < str(other.value)
+
+    def version_key(version_tuple):
+        return tuple(VersionElement(elem) for elem in version_tuple[0])
+
+    return [
+        f"{conf.vendor}:{v}"
+        for k, v in sorted(matched.items(), key=version_key)
+    ]
 
 
 def _make_hash_checker(hashes):

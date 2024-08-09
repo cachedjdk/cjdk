@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import sys
+from pathlib import Path
 
 from . import _cache, _download
 
@@ -12,7 +13,9 @@ __all__ = [
 ]
 
 
-def install_file(prefix, name, url, filename, conf, *, ttl, checkfunc=None):
+def install_file(
+    prefix, name, url, filename, conf, *, ttl, checkfunc=None
+) -> Path:
     def fetch(dest):
         _print_progress_header(conf, name)
         _download.download_file(
@@ -33,7 +36,7 @@ def install_file(prefix, name, url, filename, conf, *, ttl, checkfunc=None):
     )
 
 
-def install_dir(prefix, name, url, conf, *, checkfunc=None):
+def install_dir(prefix, name, url, conf, *, checkfunc=None) -> Path:
     def fetch(destdir):
         _print_progress_header(conf, name)
         _download.download_and_extract(

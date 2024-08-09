@@ -30,6 +30,10 @@ def test_configure():
     assert conf.vendor == _conf._default_vendor()
     assert not conf.version
 
+    conf = f(jdk=":", fallback_to_default_vendor=False)
+    assert conf.vendor is None
+    assert not conf.version
+
     conf = f(cache_dir="abc")
     assert conf.cache_dir == Path("abc")
 

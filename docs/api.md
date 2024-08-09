@@ -6,6 +6,18 @@ SPDX-License-Identifier: MIT
 
 # Python API
 
+## Querying the JDK index
+
+```{eval-rst}
+.. autofunction:: cjdk.list_vendors
+.. versionadded:: 0.4.0
+```
+
+```{eval-rst}
+.. autofunction:: cjdk.list_jdks
+.. versionadded:: 0.4.0
+```
+
 ## Working with cached JDKs
 
 ```{eval-rst}

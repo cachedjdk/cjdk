@@ -6,6 +6,7 @@ import copy
 import json
 import re
 import warnings
+from pathlib import Path
 
 from . import _install
 from ._conf import Configuration
@@ -22,14 +23,21 @@ _INDEX_KEY_PREFIX = "index"
 _INDEX_FILENAME = "jdk-index.json"
 
 
-def jdk_index(conf: Configuration):
+# Type alias declarations.
+Versions = dict[str, str]  # key = version, value = archive URL
+Vendors = dict[str, Versions]  # key = vendor name
+Arches = dict[str, Vendors]  # key = arch name
+Index = dict[str, Arches]  # key = os name
+
+
+def jdk_index(conf: Configuration) -> Index:
     """
     Get the JDK index, from cache if possible.
     """
-    return _read_index(_cached_index(conf))
+    return _read_index(_cached_index_path(conf))
 
 
-def available_jdks(index, conf: Configuration):
+def available_jdks(index: Index, conf: Configuration) -> tuple[str, str]:
     """
     Find in index the available JDK vendor-version combinations.
 
@@ -39,8 +47,7 @@ def available_jdks(index, conf: Configuration):
     index -- The JDK index (nested dict)
     """
     try:
-        # jdks is dict: vendor -> (version -> url)
-        jdks = index[conf.os][conf.arch]
+        jdks: Vendors = index[conf.os][conf.arch]
     except KeyError:
         return []
 
@@ -51,28 +58,25 @@ def available_jdks(index, conf: Configuration):
     )
 
 
-def resolve_jdk_version(index, conf: Configuration):
+def resolve_jdk_version(index: Index, conf: Configuration) -> str:
     """
     Find in index the exact JDK version for the given configuration.
 
     Arguments:
-    index -- The JDK index (dested dict)
+    index -- The JDK index (nested dict)
     """
     jdks = available_jdks(index, conf)
-    versions = [i[1] for i in jdks if i[0] == conf.vendor]
+    versions = _get_versions(jdks, conf)
     if not versions:
         raise KeyError(
             f"No {conf.vendor} JDK is available for {conf.os}-{conf.arch}"
         )
-    matched = _match_version(conf.vendor, versions, conf.version)
-    if not matched:
-        raise KeyError(
-            f"No JDK matching version {conf.version} for {conf.os}-{conf.arch}-{conf.vendor}"
-        )
-    return matched
+    return _match_version(conf.vendor, versions, conf.version)
 
 
-def jdk_url(index, conf: Configuration):
+def jdk_url(
+    index: Index, conf: Configuration, exact_version: str = None
+) -> str:
     """
     Find in index the URL for the JDK binary for the given vendor and version.
 
@@ -80,12 +84,14 @@ def jdk_url(index, conf: Configuration):
 
     Arguments:
     index -- The JDK index (nested dict)
+    exact_version (optional) -- The JDK version, or None to resolve it from the configuration
     """
-    matched = resolve_jdk_version(index, conf)
-    return index[conf.os][conf.arch][f"jdk@{conf.vendor}"][matched]
+    if exact_version is None:
+        exact_version = resolve_jdk_version(index, conf)
+    return index[conf.os][conf.arch][f"jdk@{conf.vendor}"][exact_version]
 
 
-def _cached_index(conf: Configuration):
+def _cached_index_path(conf: Configuration) -> Path:
     def check_index(path):
         # Ensure valid JSON.
         _read_index(path)
@@ -104,12 +110,59 @@ def _cached_index(conf: Configuration):
     )
 
 
-def _read_index(path):
+def _read_index(path: Path) -> Index:
     with open(path, encoding="ascii") as infile:
-        return json.load(infile)
+        index = json.load(infile)
+
+    return _postprocess_index(index)
 
 
-def _match_version(vendor, candidates, requested):
+def _postprocess_index(index: Index) -> Index:
+    """
+    Post-process the index to normalize the data.
+
+    Some "vendors" include the major Java version,
+    so let's merge such entries. In particular:
+
+    * ibm-semuru-openj9-java<##>
+    * graalvm-java<##>
+
+    However: while the graalvm vendors follow this pattern, the version
+    numbers for graalvm are *not* JDK versions, but rather GraalVM versions,
+    which merely strongly resemble JDK version strings. For example,
+    graalvm-java17 version 22.3.3 bundles OpenJDK 17.0.8, but
+    unfortunately there is no way to know this from the index alone.
+    """
+
+    pattern = re.compile("^(jdk@ibm-semeru.*)-java\\d+$")
+    if not hasattr(index, "items"):
+        return index
+    for os, arches in index.items():
+        if not hasattr(arches, "items"):
+            continue
+        for arch, vendors in arches.items():
+            if not hasattr(vendors, "items"):
+                continue
+            for vendor, versions in vendors.copy().items():
+                if not vendor.startswith("jdk@graalvm") and (
+                    m := pattern.match(vendor)
+                ):
+                    true_vendor = m.group(1)
+                    if true_vendor not in index[os][arch]:
+                        index[os][arch][true_vendor] = {}
+                    index[os][arch][true_vendor].update(versions)
+
+    return index
+
+
+def _get_versions(jdks: tuple[str, str], conf) -> list[str]:
+    return [i[1] for i in jdks if i[0] == conf.vendor]
+
+
+def _match_versions(
+    vendor, candidates: list[str], requested
+) -> dict[tuple[int], str]:
+    # Find all candidates compatible with the request
     is_graal = "graalvm" in vendor.lower()
     normreq = _normalize_version(requested, remove_prefix_1=not is_graal)
     normcands = {}
@@ -126,26 +179,32 @@ def _match_version(vendor, candidates, requested):
             continue  # Skip any non-numeric versions (not expected)
         normcands[normcand] = candidate
 
-    # Find the newest candidate compatible with the request
-    for normcand in sorted(normcands.keys(), reverse=True):
-        if _is_version_compatible_with_spec(normcand, normreq):
-            return normcands[normcand]
-        if normcand > normreq:
-            continue
-        break
-    raise LookupError(f"No matching version for '{vendor}:{requested}'")
+    return {
+        k: v
+        for k, v in normcands.items()
+        if _is_version_compatible_with_spec(k, normreq)
+    }
 
 
-_VER_SEPS = re.compile(r"[.-]")
+def _match_version(vendor, candidates: list[str], requested) -> str:
+    matched = _match_versions(vendor, candidates, requested)
+
+    if len(matched) == 0:
+        raise LookupError(f"No matching version for '{vendor}:{requested}'")
+
+    return matched[max(matched)]
+
+
+_VER_SEPS = re.compile(r"[.+_-]")
 
 
 def _normalize_version(ver, *, remove_prefix_1=False):
     # Normalize requested version and candidates:
     # - Split at dots and dashes (so we don't distinguish between '.' and '-')
-    # - Convert elements to integers (so that we require numeric elements and
-    #   compare them numerically)
+    # - Try to convert elements to integers (so that we can compare elements
+    #   numerically where feasible)
     # - If remove_prefix_1 and first element is 1, remove it (so JDK 1.8 == 8)
-    # - Return as tuple of ints (so that we compare lexicographically)
+    # - Return as a tuple (so that we compare element by element)
     # - Trailing zero elements are NOT removed, so, e.g., 11 < 11.0 (for the
     #   most part, the index uses versions with the same number of elements
     #   within a given vendor; versions like "11" are outliers)
@@ -154,17 +213,21 @@ def _normalize_version(ver, *, remove_prefix_1=False):
     if is_plus:
         ver = ver[:-1]
     if ver:
-        norm = re.split(_VER_SEPS, ver)
-        try:
-            norm = tuple(int(e) for e in norm)
-        except ValueError as err:
-            raise ValueError(f"Invalid version string: {ver}") from err
+        norm = tuple(re.split(_VER_SEPS, ver))
+        norm = tuple(_intify(e) for e in norm)
     else:
         norm = ()
     plus = ("+",) if is_plus else ()
     if remove_prefix_1 and len(norm) and norm[0] == 1:
         return norm[1:] + plus
     return norm + plus
+
+
+def _intify(s: str):
+    try:
+        return int(s)
+    except ValueError:
+        return s
 
 
 def _is_version_compatible_with_spec(version, spec):
