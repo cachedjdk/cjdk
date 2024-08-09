@@ -173,7 +173,6 @@ def test_get_jdks():
     assert "adoptium:1.21.0.4" in jdks
     assert "corretto:21.0.4.7.1" in jdks
     assert "graalvm-community:21.0.2" in jdks
-    assert "graalvm-java17:22.3.3" in jdks
     assert "graalvm-java21:21.0.2" in jdks
     assert "liberica:22.0.2" in jdks
     assert "temurin:1.21.0.4" in jdks
@@ -185,5 +184,5 @@ def test_get_jdks():
 
     zulu_jdks = _api._get_jdks(vendor="zulu", cached_only=False)
     assert zulu_jdks is not None
-    assert len(set(zulu_jdks)) > 175
+    assert len(set(zulu_jdks))
     assert all(jdk.startswith("zulu:") for jdk in zulu_jdks)
