@@ -112,4 +112,4 @@ def _extract_zip(destdir, srcfile, progress=True):
 def _extract_tgz(destdir, srcfile, progress=True):
     with tarfile.open(srcfile, "r:gz", bufsize=65536) as tf:
         for member in _progress.iterate(tf, enabled=progress, text="Extract"):
-            tf.extract(member, destdir)
+            tf.extract(member, destdir, filter="tar")
