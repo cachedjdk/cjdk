@@ -60,3 +60,7 @@ line-length = 79
 select = ["E", "F", "UP", "B", "SIM", "I"]
 # Disable rules that failed when we switched to ruff. To be cleaned up.
 ignore = ["B006", "B007", "B011", "B017", "E501"]
+
+[tool.uv]
+# setuptools_scm compatibility
+cache-keys = [{file = "pyproject.toml"}, {git = {commit = true, tags = true}}]
