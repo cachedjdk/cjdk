@@ -2,6 +2,7 @@
 # Copyright 2022 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
+import sys
 import tarfile
 import tempfile
 import zipfile
@@ -110,6 +111,7 @@ def _extract_zip(destdir, srcfile, progress=True):
 
 
 def _extract_tgz(destdir, srcfile, progress=True):
+    filter_kwargs = {} if sys.version_info < (3, 12) else {"filter": "tar"}
     with tarfile.open(srcfile, "r:gz", bufsize=65536) as tf:
         for member in _progress.iterate(tf, enabled=progress, text="Extract"):
-            tf.extract(member, destdir, filter="tar")
+            tf.extract(member, destdir, **filter_kwargs)
