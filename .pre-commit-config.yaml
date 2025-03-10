@@ -4,23 +4,23 @@
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
       - id: check-toml
       - id: check-yaml
   - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 2.7.3
+    rev: 3.2.0
     hooks:
       - id: editorconfig-checker
         alias: ec
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.1.6
+    rev: v0.9.10
     hooks:
       - id: ruff
         args: ["--fix"]
       - id: ruff-format
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.17
+    rev: 0.7.22
     hooks:
       - id: mdformat
         additional_dependencies:
@@ -33,6 +33,6 @@ repos:
         args: ["--wrap=79", "--end-of-line=keep"]
         exclude: '^(?!docs/.*)$'
   - repo: https://github.com/fsfe/reuse-tool
-    rev: v2.1.0
+    rev: v5.0.2
     hooks:
       - id: reuse
