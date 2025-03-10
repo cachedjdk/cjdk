@@ -49,14 +49,10 @@ def find_home(path, _recursion_depth=2):
 
 
 def _looks_like_java_home(path):
-    if not (path / "bin").is_dir():
-        return False
-    if not (
+    return (path / "bin").is_dir() and (
         (path / "bin" / "java").is_file()
         or (path / "bin" / "java.exe").is_file()
-    ):
-        return False
-    return True
+    )
 
 
 def _contains_single_subdir(path):

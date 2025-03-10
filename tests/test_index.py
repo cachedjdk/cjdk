@@ -6,6 +6,7 @@ import json
 
 import mock_server
 import pytest
+
 from cjdk import _cache, _index
 from cjdk._conf import configure
 

@@ -33,9 +33,9 @@ def configure(**kwargs):
 
     jdk = kwargs.pop("jdk", None)
     if jdk:
-        if kwargs.get("vendor", None):
+        if kwargs.get("vendor"):
             raise ValueError("Cannot specify jdk= together with vendor=")
-        if kwargs.get("version", None):
+        if kwargs.get("version"):
             raise ValueError("Cannot specify jdk= together with version=")
         kwargs["vendor"], kwargs["version"] = _parse_vendor_version(jdk)
 
