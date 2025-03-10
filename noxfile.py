@@ -18,5 +18,5 @@ def test(session):
 @nox.session
 def docs(session):
     session.install("-e", ".")
-    session.install("-e", "-r", "docs/requirements.txt")
+    session.install("-r", "docs/requirements.txt")
     session.run("jb", "build", "docs/", env={"CJDK_HIDE_PROGRESS_BARS": "1"})
