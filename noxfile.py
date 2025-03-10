@@ -11,12 +11,12 @@ nox.options.default_venv_backend = "uv|virtualenv"
 
 @nox.session(python=["3.9", "3.10", "3.11", "3.12", "3.13"])
 def test(session):
-    session.install(".[testing]")
+    session.install("-e", ".[testing]")
     session.run("pytest")
 
 
 @nox.session
 def docs(session):
-    session.install(".")
-    session.install("-r", "docs/requirements.txt")
+    session.install("-e", ".")
+    session.install("-e", "-r", "docs/requirements.txt")
     session.run("jb", "build", "docs/", env={"CJDK_HIDE_PROGRESS_BARS": "1"})
