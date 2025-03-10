@@ -28,14 +28,22 @@ jobs:
       fail-fast: false
       matrix:
         runner: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          # Only test with Python versions available on the runners.
+          - runner: ubuntu-latest
+            py_versions: 3.9 3.10 3.11 3.12 3.13
+          - runner: macos-latest
+            py_versions: 3.11 3.12 3.13
+          - runner: windows-latest
+            py_versions: 3.9 3.10 3.11 3.12 3.13
     name: test-${{ matrix.runner }}
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Full history needed for setuptools_scm
-      - uses: excitedleigh/setup-nox@v2.1.0
-      - run: nox
+      - uses: fjwillemsen/setup-nox2@v3.0.0
+      - run: nox -p ${{ matrix.py_versions }}
 
   docs:
     needs:
