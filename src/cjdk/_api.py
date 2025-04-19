@@ -198,6 +198,10 @@ def cache_file(
     url: str,
     filename: str,
     ttl: int | None = None,
+    *,
+    sha1: str | None = None,
+    sha256: str | None = None,
+    sha512: str | None = None,
     **kwargs: Unpack[ConfigKwargs],
 ) -> Path:
     """
@@ -236,7 +240,7 @@ def cache_file(
     """
     if ttl is None:
         ttl = 2**63
-    check_hashes = _make_hash_checker(kwargs)  # type: ignore [arg-type]
+    check_hashes = _make_hash_checker(dict(sha1=sha1, sha256=sha256, sha512=sha512))
     conf = _conf.configure(**kwargs)
 
     return _install.install_file(
@@ -250,7 +254,15 @@ def cache_file(
     )
 
 
-def cache_package(name: str, url: str, **kwargs: Unpack[ConfigKwargs]) -> Path:
+def cache_package(
+    name: str,
+    url: str,
+    *,
+    sha1: str | None = None,
+    sha256: str | None = None,
+    sha512: str | None = None,
+    **kwargs: Unpack[ConfigKwargs],
+) -> Path:
     """
     Install any package into the cache, downloading and extracting if
     necessary.
@@ -283,7 +295,7 @@ def cache_package(name: str, url: str, **kwargs: Unpack[ConfigKwargs]) -> Path:
     unextracted archive) after a download; it is not performed if the directory
     already exists in the cache.
     """
-    check_hashes = _make_hash_checker(kwargs)  # type: ignore [arg-type]
+    check_hashes = _make_hash_checker(dict(sha1=sha1, sha256=sha256, sha512=sha512))
     conf = _conf.configure(**kwargs)
 
     if not url.startswith(("tgz+http", "zip+http")):
