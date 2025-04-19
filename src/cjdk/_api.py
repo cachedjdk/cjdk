@@ -240,7 +240,9 @@ def cache_file(
     """
     if ttl is None:
         ttl = 2**63
-    check_hashes = _make_hash_checker(dict(sha1=sha1, sha256=sha256, sha512=sha512))
+    check_hashes = _make_hash_checker(
+        dict(sha1=sha1, sha256=sha256, sha512=sha512)
+    )
     conf = _conf.configure(**kwargs)
 
     return _install.install_file(
@@ -295,7 +297,9 @@ def cache_package(
     unextracted archive) after a download; it is not performed if the directory
     already exists in the cache.
     """
-    check_hashes = _make_hash_checker(dict(sha1=sha1, sha256=sha256, sha512=sha512))
+    check_hashes = _make_hash_checker(
+        dict(sha1=sha1, sha256=sha256, sha512=sha512)
+    )
     conf = _conf.configure(**kwargs)
 
     if not url.startswith(("tgz+http", "zip+http")):
