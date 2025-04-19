@@ -1,12 +1,21 @@
 # This file is part of cjdk.
 # Copyright 2022 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+from __future__ import annotations
 
 import hashlib
 import os
 from contextlib import contextmanager
+from typing import TYPE_CHECKING
 
 from . import _cache, _conf, _index, _install, _jdk
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+    from pathlib import Path
+    from typing import Any, Callable, Unpack
+
+    from ._conf import ConfigKwargs
 
 __all__ = [
     "cache_file",
@@ -19,7 +28,7 @@ __all__ = [
 ]
 
 
-def list_vendors(**kwargs):
+def list_vendors(**kwargs: Unpack[ConfigKwargs]) -> list[str]:
     """
     Return the list of available JDK vendors.
 
@@ -40,7 +49,13 @@ def list_vendors(**kwargs):
     return sorted(_get_vendors(**kwargs))
 
 
-def list_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
+def list_jdks(  # type: ignore [misc]  # overlap with kwargs
+    *,
+    vendor: str | None = None,
+    version: str | None = None,
+    cached_only: bool = True,
+    **kwargs: Unpack[ConfigKwargs],
+) -> list[str]:
     """
     Return the list of JDKs matching the given criteria.
 
@@ -78,7 +93,12 @@ def list_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
     )
 
 
-def cache_jdk(*, vendor=None, version=None, **kwargs):
+def cache_jdk(  # type: ignore [misc]  # overlap with kwargs
+    *,
+    vendor: str | None = None,
+    version: str | None = None,
+    **kwargs: Unpack[ConfigKwargs],
+) -> None:
     """
     Download and extract the given JDK if it is not already cached.
 
@@ -115,7 +135,12 @@ def cache_jdk(*, vendor=None, version=None, **kwargs):
     _jdk.install_jdk(conf)
 
 
-def java_home(*, vendor=None, version=None, **kwargs):
+def java_home(  # type: ignore [misc]  # overlap with kwargs
+    *,
+    vendor: str | None = None,
+    version: str | None = None,
+    **kwargs: Unpack[ConfigKwargs],
+) -> Path:
     """
     Return the JDK home directory for the given JDK, installing if necessary.
 
@@ -132,7 +157,13 @@ def java_home(*, vendor=None, version=None, **kwargs):
 
 
 @contextmanager
-def java_env(*, vendor=None, version=None, add_bin=True, **kwargs):
+def java_env(  # type: ignore [misc]  # overlap with kwargs
+    *,
+    vendor: str | None = None,
+    version: str | None = None,
+    add_bin: bool = True,
+    **kwargs: Unpack[ConfigKwargs],
+) -> Iterator[Path]:
     """
     Context manager to set environment variables for the given JDK, installing
     if necessary.
@@ -155,16 +186,20 @@ def java_env(*, vendor=None, version=None, add_bin=True, **kwargs):
     home = java_home(vendor=vendor, version=version, **kwargs)
     with _env_var_set("JAVA_HOME", str(home)):
         if add_bin:
-            path = (
-                str(home / "bin") + os.pathsep + os.environ.get("PATH", None)
-            )
+            path = str(home / "bin") + os.pathsep + os.environ.get("PATH", "")
             with _env_var_set("PATH", path):
                 yield home
         else:
             yield home
 
 
-def cache_file(name, url, filename, **kwargs):
+def cache_file(
+    name: str,
+    url: str,
+    filename: str,
+    ttl: int | None = None,
+    **kwargs: Unpack[ConfigKwargs],
+) -> Path:
     """
     Install any file resource into the cache, downloading if necessary.
 
@@ -199,10 +234,9 @@ def cache_file(name, url, filename, **kwargs):
     The check for SHA-1/SHA-256/SHA-512 hashes is only performed after a
     download; it is not performed if the file already exists in the cache.
     """
-    ttl = kwargs.pop("ttl", None)
     if ttl is None:
         ttl = 2**63
-    check_hashes = _make_hash_checker(kwargs)
+    check_hashes = _make_hash_checker(kwargs)  # type: ignore [arg-type]
     conf = _conf.configure(**kwargs)
 
     return _install.install_file(
@@ -216,7 +250,7 @@ def cache_file(name, url, filename, **kwargs):
     )
 
 
-def cache_package(name, url, **kwargs):
+def cache_package(name: str, url: str, **kwargs: Unpack[ConfigKwargs]) -> Path:
     """
     Install any package into the cache, downloading and extracting if
     necessary.
@@ -249,15 +283,25 @@ def cache_package(name, url, **kwargs):
     unextracted archive) after a download; it is not performed if the directory
     already exists in the cache.
     """
-    check_hashes = _make_hash_checker(kwargs)
+    check_hashes = _make_hash_checker(kwargs)  # type: ignore [arg-type]
     conf = _conf.configure(**kwargs)
+
+    if not url.startswith(("tgz+http", "zip+http")):
+        if url.endswith(".tgz"):
+            url = "tgz+http" + url.removeprefix("http")
+        elif url.endswith(".zip"):
+            url = "zip+http" + url.removeprefix("http")
+        else:
+            raise ValueError(
+                f"Cannot handle {url!r} URL (must be tgz+https or zip+https)"
+            )
 
     return _install.install_dir(
         "misc-dirs", name, url, conf, checkfunc=check_hashes
     )
 
 
-def _get_vendors(**kwargs):
+def _get_vendors(**kwargs: Unpack[ConfigKwargs]) -> set[str]:
     conf = _conf.configure(**kwargs)
     index = _index.jdk_index(conf)
     return {
@@ -327,24 +371,24 @@ def _get_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
     ]
 
 
-def _make_hash_checker(hashes):
+def _make_hash_checker(hashes: dict) -> Callable[[Any], None]:
     checks = [
         (hashes.pop("sha1", None), hashlib.sha1),
         (hashes.pop("sha256", None), hashlib.sha256),
         (hashes.pop("sha512", None), hashlib.sha512),
     ]
 
-    def check(filepath):
+    def check(filepath: Any) -> None:
         for hash, hasher in checks:
             if hash:
-                hasher = hasher()
+                _hasher = hasher()
                 with open(filepath, "rb") as infile:
                     while True:
                         bytes = infile.read(16384)
                         if not len(bytes):
                             break
-                        hasher.update(bytes)
-                if hasher.hexdigest().lower() != hash.lower():
+                        _hasher.update(bytes)
+                if _hasher.hexdigest().lower() != hash.lower():
                     raise ValueError("Hash does not match")
 
     return check
