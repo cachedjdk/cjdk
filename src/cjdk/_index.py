@@ -1,15 +1,20 @@
 # This file is part of cjdk.
 # Copyright 2022 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+from __future__ import annotations
 
 import copy
 import json
 import re
 import warnings
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from . import _install
-from ._conf import Configuration
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from ._conf import Configuration
 
 __all__ = [
     "jdk_index",
@@ -75,7 +80,7 @@ def resolve_jdk_version(index: Index, conf: Configuration) -> str:
 
 
 def jdk_url(
-    index: Index, conf: Configuration, exact_version: str = None
+    index: Index, conf: Configuration, exact_version: str | None = None
 ) -> str:
     """
     Find in index the URL for the JDK binary for the given vendor and version.

@@ -1,6 +1,7 @@
 # This file is part of cjdk.
 # Copyright 2022 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+from __future__ import annotations
 
 import os
 import platform
@@ -8,6 +9,24 @@ import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing import TypedDict, Unpack
+
+    class ConfigKwargs(TypedDict, total=False):
+        jdk: str
+        fallback_to_default_vendor: bool
+        os: str
+        arch: str
+        vendor: str | None
+        version: str | None
+        cache_dir: Path
+        index_url: str
+        index_ttl: int
+        progress: bool
+        _allow_insecure_for_testing: bool
+
 
 __all__ = [
     "Configuration",
@@ -28,7 +47,7 @@ class Configuration:
     _allow_insecure_for_testing: bool
 
 
-def configure(**kwargs):
+def configure(**kwargs: Unpack[ConfigKwargs]) -> Configuration:
     # kwargs must have API-specific items removed before passing here.
 
     jdk = kwargs.pop("jdk", None)
