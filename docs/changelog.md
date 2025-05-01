@@ -12,13 +12,20 @@ See also the section on [versioning](versioning-scheme).
 
 - No notable changes yet.
 
+## [0.4.1] - 2025-05-01
+
+### Added
+
+- Add type hints to Python API (@tlambert03).
+
 ## [0.4.0] - 2025-04-17
 
 ### Added
 
-- Python API functions `list_jdks()` and `list_vendors()`.
-- Command line commands `ls` and `ls-vendors`.
-- Light postprocessing of vendor names, notably `ibm-semeru-openj9`.
+- Python API functions `list_jdks()` and `list_vendors()` (@ctrueden).
+- Command line commands `ls` and `ls-vendors` (@ctrueden).
+- Light postprocessing of vendor names, notably `ibm-semeru-openj9`
+  (@ctrueden).
 - Python 3.13 compatibility.
 
 ### Changed
@@ -75,4 +82,5 @@ Tag created but not actually released.
 [0.2.0]: https://github.com/cachedjdk/cjdk/compare/v0.1.1...v0.2.0
 [0.3.0]: https://github.com/cachedjdk/cjdk/compare/v0.2.0...v0.3.0
 [0.4.0]: https://github.com/cachedjdk/cjdk/compare/v0.3.0...v0.4.0
-[unreleased]: https://github.com/cachedjdk/cjdk/compare/v0.4.0...HEAD
+[0.4.1]: https://github.com/cachedjdk/cjdk/compare/v0.4.0...v0.4.1
+[unreleased]: https://github.com/cachedjdk/cjdk/compare/v0.4.1...HEAD
