@@ -15,13 +15,13 @@ dynamic = ["version"]
 description = "Auto-download JDK or JRE and run Java apps from Python or CLI"
 readme = "README.md"
 requires-python = ">=3.9"
-license = {file = "LICENSE.txt"}
+license = "MIT"
+license-files = ["LICENSE.txt"]
 keywords = ["Java", "JDK", "JRE", "JVM"]
 authors = [
     {name = "Mark A. Tsuchida"},
 ]
 classifiers = [
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Java",
     "Topic :: Software Development",
