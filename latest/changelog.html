@@ -403,25 +403,29 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unreleased">Unreleased</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">0.4.0 - 2025-04-17</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">0.4.1 - 2025-05-01</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#added">Added</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">0.4.0 - 2025-04-17</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Added</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed">Changed</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">0.3.0 - 2022-07-09</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Added</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Changed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">0.3.0 - 2022-07-09</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Changed</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed">Fixed</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">0.2.0 - 2022-07-02</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Added</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Changed</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Fixed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">0.2.0 - 2022-07-02</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">Fixed</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">0.1.1 - 2022-06-23</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">0.1.0 - 2022-06-23</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">0.1.1 - 2022-06-23</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">0.1.0 - 2022-06-23</a></li>
 </ul>
             </nav>
         </div>
@@ -442,19 +446,29 @@ SPDX-License-Identifier: MIT
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading">#</a></h1>
 <p>See also the section on <a class="reference internal" href="development.html#versioning-scheme"><span class="std std-ref">versioning</span></a>.</p>
 <section id="unreleased">
-<h2><a class="reference external" href="https://github.com/cachedjdk/cjdk/compare/v0.4.0...HEAD">Unreleased</a><a class="headerlink" href="#unreleased" title="Link to this heading">#</a></h2>
+<h2><a class="reference external" href="https://github.com/cachedjdk/cjdk/compare/v0.4.1...HEAD">Unreleased</a><a class="headerlink" href="#unreleased" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>No notable changes yet.</p></li>
 </ul>
 </section>
 <section id="id1">
-<h2><a class="reference external" href="https://github.com/cachedjdk/cjdk/compare/v0.3.0...v0.4.0">0.4.0</a> - 2025-04-17<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h2><a class="reference external" href="https://github.com/cachedjdk/cjdk/compare/v0.4.0...v0.4.1">0.4.1</a> - 2025-05-01<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <section id="added">
 <h3>Added<a class="headerlink" href="#added" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>Python API functions <code class="docutils literal notranslate"><span class="pre">list_jdks()</span></code> and <code class="docutils literal notranslate"><span class="pre">list_vendors()</span></code>.</p></li>
-<li><p>Command line commands <code class="docutils literal notranslate"><span class="pre">ls</span></code> and <code class="docutils literal notranslate"><span class="pre">ls-vendors</span></code>.</p></li>
-<li><p>Light postprocessing of vendor names, notably <code class="docutils literal notranslate"><span class="pre">ibm-semeru-openj9</span></code>.</p></li>
+<li><p>Add type hints to Python API (&#64;tlambert03).</p></li>
+</ul>
+</section>
+</section>
+<section id="id2">
+<h2><a class="reference external" href="https://github.com/cachedjdk/cjdk/compare/v0.3.0...v0.4.0">0.4.0</a> - 2025-04-17<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<section id="id3">
+<h3>Added<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Python API functions <code class="docutils literal notranslate"><span class="pre">list_jdks()</span></code> and <code class="docutils literal notranslate"><span class="pre">list_vendors()</span></code> (&#64;ctrueden).</p></li>
+<li><p>Command line commands <code class="docutils literal notranslate"><span class="pre">ls</span></code> and <code class="docutils literal notranslate"><span class="pre">ls-vendors</span></code> (&#64;ctrueden).</p></li>
+<li><p>Light postprocessing of vendor names, notably <code class="docutils literal notranslate"><span class="pre">ibm-semeru-openj9</span></code>
+(&#64;ctrueden).</p></li>
 <li><p>Python 3.13 compatibility.</p></li>
 </ul>
 </section>
@@ -465,17 +479,17 @@ SPDX-License-Identifier: MIT
 </ul>
 </section>
 </section>
-<section id="id2">
-<h2><a class="reference external" href="https://github.com/cachedjdk/cjdk/compare/v0.2.0...v0.3.0">0.3.0</a> - 2022-07-09<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
-<section id="id3">
-<h3>Added<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<section id="id4">
+<h2><a class="reference external" href="https://github.com/cachedjdk/cjdk/compare/v0.2.0...v0.3.0">0.3.0</a> - 2022-07-09<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<section id="id5">
+<h3>Added<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Support running the CLI via <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">cjdk</span></code>.</p></li>
 <li><p>Environment variable <code class="docutils literal notranslate"><span class="pre">CJDK_HIDE_PROGRESS_BARS</span></code>.</p></li>
 </ul>
 </section>
-<section id="id4">
-<h3>Changed<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<section id="id6">
+<h3>Changed<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Source code repository moved to <a class="github reference external" href="https://github.com/cachedjdk/cjdk">cachedjdk/cjdk</a>.</p></li>
 </ul>
@@ -487,10 +501,10 @@ SPDX-License-Identifier: MIT
 </ul>
 </section>
 </section>
-<section id="id5">
-<h2><a class="reference external" href="https://github.com/cachedjdk/cjdk/compare/v0.1.1...v0.2.0">0.2.0</a> - 2022-07-02<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
-<section id="id6">
-<h3>Added<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<section id="id7">
+<h2><a class="reference external" href="https://github.com/cachedjdk/cjdk/compare/v0.1.1...v0.2.0">0.2.0</a> - 2022-07-02<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
+<section id="id8">
+<h3>Added<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Python API functions <code class="docutils literal notranslate"><span class="pre">cache_jdk()</span></code>, <code class="docutils literal notranslate"><span class="pre">cache_file()</span></code>, and <code class="docutils literal notranslate"><span class="pre">cache_package()</span></code>.</p></li>
 <li><p>Command line commands <code class="docutils literal notranslate"><span class="pre">cache-jdk</span></code>, <code class="docutils literal notranslate"><span class="pre">cache-file</span></code>, and <code class="docutils literal notranslate"><span class="pre">cache-package</span></code>.</p></li>
@@ -500,14 +514,14 @@ SPDX-License-Identifier: MIT
 <li><p>Documentation using Jupyter Book, published to GitHub Pages.</p></li>
 </ul>
 </section>
-<section id="id7">
-<h3>Changed<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<section id="id9">
+<h3>Changed<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Rename environment variable <code class="docutils literal notranslate"><span class="pre">CJDK_DEFAULT_VENDOR</span></code> to <code class="docutils literal notranslate"><span class="pre">CJDK_VENDOR</span></code>.</p></li>
 </ul>
 </section>
-<section id="id8">
-<h3>Fixed<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<section id="id10">
+<h3>Fixed<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Always print progress messages to standard error.</p></li>
 <li><p>Correctly restore environment when exiting the <code class="docutils literal notranslate"><span class="pre">java_env()</span></code> context manager,
@@ -516,12 +530,12 @@ even when there was an error.</p></li>
 </ul>
 </section>
 </section>
-<section id="id9">
-<h2><a class="reference external" href="https://github.com/cachedjdk/cjdk/compare/v0.1.0...v0.1.1">0.1.1</a> - 2022-06-23<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
+<section id="id11">
+<h2><a class="reference external" href="https://github.com/cachedjdk/cjdk/compare/v0.1.0...v0.1.1">0.1.1</a> - 2022-06-23<a class="headerlink" href="#id11" title="Link to this heading">#</a></h2>
 <p>First release.</p>
 </section>
-<section id="id10">
-<h2><a class="reference external" href="https://github.com/cachedjdk/cjdk/tree/v0.1.0">0.1.0</a> - 2022-06-23<a class="headerlink" href="#id10" title="Link to this heading">#</a></h2>
+<section id="id12">
+<h2><a class="reference external" href="https://github.com/cachedjdk/cjdk/tree/v0.1.0">0.1.0</a> - 2022-06-23<a class="headerlink" href="#id12" title="Link to this heading">#</a></h2>
 <p>Tag created but not actually released.</p>
 </section>
 </section>
@@ -582,25 +596,29 @@ even when there was an error.</p></li>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unreleased">Unreleased</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">0.4.0 - 2025-04-17</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">0.4.1 - 2025-05-01</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#added">Added</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">0.4.0 - 2025-04-17</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Added</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed">Changed</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">0.3.0 - 2022-07-09</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Added</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Changed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">0.3.0 - 2022-07-09</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Changed</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed">Fixed</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">0.2.0 - 2022-07-02</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Added</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Changed</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Fixed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">0.2.0 - 2022-07-02</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">Fixed</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">0.1.1 - 2022-06-23</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">0.1.0 - 2022-06-23</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">0.1.1 - 2022-06-23</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">0.1.0 - 2022-06-23</a></li>
 </ul>
   </nav></div>
 
