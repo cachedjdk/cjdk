@@ -259,6 +259,24 @@ def cache_package(ctx, url, name, sha1, sha256, sha512):
     )
 
 
+@click.command(short_help="Remove all cached files.")
+@click.pass_context
+def clear_cache(ctx):
+    """
+    Remove all cached JDKs, files, and packages from the cache directory.
+
+    This permanently deletes everything in the cache. Subsequent commands will
+    re-download any needed files.
+
+    When clearing the cache, ensure that no other processes are using cjdk or
+    the JDKs, files, or packages installed by cjdk.
+
+    See 'cjdk --help' for the common options (only --cache-dir is relevant).
+    """
+    cleared = _api.clear_cache(**ctx.obj)
+    click.echo(f"Cleared cache: {cleared}")
+
+
 # Register current commands.
 main.add_command(java_home)
 main.add_command(exec)
@@ -267,6 +285,7 @@ main.add_command(ls)
 main.add_command(cache)
 main.add_command(cache_file)
 main.add_command(cache_package)
+main.add_command(clear_cache)
 
 # Register hidden/deprecated commands, for backwards compatibility.
 main.add_command(cache_jdk)
