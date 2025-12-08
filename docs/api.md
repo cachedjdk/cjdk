@@ -53,3 +53,10 @@ install an application JAR.
 .. autofunction:: cjdk.cache_package
 .. versionadded:: 0.2.0
 ```
+
+## Managing the cache
+
+```{eval-rst}
+.. autofunction:: cjdk.clear_cache
+.. versionadded:: 0.5.0
+```

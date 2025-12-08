@@ -10,7 +10,7 @@ See also the section on [versioning](versioning-scheme).
 
 ## [Unreleased]
 
-- No notable changes yet.
+- Add `cjdk clear-cache` and `clear_cache()`.
 
 ## [0.4.1] - 2025-05-01
 

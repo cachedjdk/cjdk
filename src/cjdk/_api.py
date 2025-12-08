@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import shutil
 from contextlib import contextmanager
 from typing import TYPE_CHECKING
 
@@ -21,6 +22,7 @@ __all__ = [
     "cache_file",
     "cache_jdk",
     "cache_package",
+    "clear_cache",
     "java_env",
     "java_home",
     "list_jdks",
@@ -91,6 +93,30 @@ def list_jdks(  # type: ignore [misc]  # overlap with kwargs
     return _get_jdks(
         vendor=vendor, version=version, cached_only=cached_only, **kwargs
     )
+
+
+def clear_cache(**kwargs: Unpack[ConfigKwargs]) -> Path:
+    """
+    Remove all cached files and directories.
+
+    This should not be called when other processes may be using cjdk or the
+    JDKs and files installed by cjdk.
+
+    Parameters
+    ----------
+    cache_dir : pathlib.Path or str, optional
+        Override the root cache directory.
+
+    Returns
+    -------
+    pathlib.Path
+        The cache directory that was cleared.
+    """
+    conf = _conf.configure(**kwargs)
+    cache_path = conf.cache_dir
+    if cache_path.exists():
+        shutil.rmtree(cache_path)
+    return cache_path
 
 
 def cache_jdk(  # type: ignore [misc]  # overlap with kwargs
