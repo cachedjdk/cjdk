@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -444,6 +444,84 @@ repository using <a class="reference external" href="https://github.com/scijava/
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cjdk: Installing Maven to /home/runner/.cache/cjdk
 </pre></div>
 </div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">HTTPError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">maven_dir</span> <span class="o">=</span> <span class="n">cjdk</span><span class="o">.</span><span class="n">cache_package</span><span class="p">(</span><span class="s2">&quot;Maven&quot;</span><span class="p">,</span> <span class="n">maven_url</span><span class="p">,</span> <span class="n">sha512</span><span class="o">=</span><span class="n">maven_sha512</span><span class="p">)</span>
+
+<span class="nn">File ~/work/cjdk/cjdk/src/cjdk/_api.py:341,</span> in <span class="ni">cache_package</span><span class="nt">(name, url, sha1, sha256, sha512, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">336</span>     <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">337</span>         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">338</span>             <span class="sa">f</span><span class="s2">&quot;Cannot handle </span><span class="si">{</span><span class="n">url</span><span class="si">!r}</span><span class="s2"> URL (must be tgz+https or zip+https)&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">339</span>         <span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">341</span> <span class="k">return</span> <span class="n">_install</span><span class="o">.</span><span class="n">install_dir</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">342</span>     <span class="s2">&quot;misc-dirs&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">conf</span><span class="p">,</span> <span class="n">checkfunc</span><span class="o">=</span><span class="n">check_hashes</span>
+<span class="g g-Whitespace">    </span><span class="mi">343</span> <span class="p">)</span>
+
+<span class="nn">File ~/work/cjdk/cjdk/src/cjdk/_install.py:50,</span> in <span class="ni">install_dir</span><span class="nt">(prefix, name, url, conf, checkfunc)</span>
+<span class="g g-Whitespace">     </span><span class="mi">41</span>     <span class="n">_print_progress_header</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">42</span>     <span class="n">_download</span><span class="o">.</span><span class="n">download_and_extract</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">43</span>         <span class="n">destdir</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">44</span>         <span class="n">url</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>     <span class="mi">47</span>         <span class="n">_allow_insecure_for_testing</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">_allow_insecure_for_testing</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">48</span>     <span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">50</span> <span class="k">return</span> <span class="n">_cache</span><span class="o">.</span><span class="n">permanent_directory</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">51</span>     <span class="n">prefix</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">52</span>     <span class="n">url</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">53</span>     <span class="n">fetch</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">54</span>     <span class="n">cache_dir</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">cache_dir</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">55</span>     <span class="n">timeout_for_fetch_elsewhere</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">56</span> <span class="p">)</span>
+
+<span class="nn">File ~/work/cjdk/cjdk/src/cjdk/_cache.py:138,</span> in <span class="ni">permanent_directory</span><span class="nt">(prefix, key_url, fetchfunc, cache_dir, timeout_for_fetch_elsewhere)</span>
+<span class="g g-Whitespace">    </span><span class="mi">136</span> <span class="k">with</span> <span class="n">_create_key_tmpdir</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">137</span>     <span class="k">if</span> <span class="n">tmpdir</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">138</span>         <span class="n">fetchfunc</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">139</span>         <span class="n">_move_in_fetched_directory</span><span class="p">(</span><span class="n">keydir</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">140</span>         <span class="n">_add_url_file</span><span class="p">(</span><span class="n">keydir</span><span class="p">,</span> <span class="n">key_url</span><span class="p">)</span>
+
+<span class="nn">File ~/work/cjdk/cjdk/src/cjdk/_install.py:42,</span> in <span class="ni">install_dir.&lt;locals&gt;.fetch</span><span class="nt">(destdir)</span>
+<span class="g g-Whitespace">     </span><span class="mi">40</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="n">destdir</span><span class="p">):</span>
+<span class="g g-Whitespace">     </span><span class="mi">41</span>     <span class="n">_print_progress_header</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">42</span>     <span class="n">_download</span><span class="o">.</span><span class="n">download_and_extract</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">43</span>         <span class="n">destdir</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">44</span>         <span class="n">url</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">45</span>         <span class="n">checkfunc</span><span class="o">=</span><span class="n">checkfunc</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">46</span>         <span class="n">progress</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">progress</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">47</span>         <span class="n">_allow_insecure_for_testing</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">_allow_insecure_for_testing</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">48</span>     <span class="p">)</span>
+
+<span class="nn">File ~/work/cjdk/cjdk/src/cjdk/_download.py:52,</span> in <span class="ni">download_and_extract</span><span class="nt">(destdir, url, checkfunc, progress, _allow_insecure_for_testing)</span>
+<span class="g g-Whitespace">     </span><span class="mi">50</span> <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;cjdk-&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tempd</span><span class="p">:</span>
+<span class="g g-Whitespace">     </span><span class="mi">51</span>     <span class="n">file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempd</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;archive.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="ne">---&gt; </span><span class="mi">52</span>     <span class="n">download_file</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">53</span>         <span class="n">file</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">54</span>         <span class="n">url</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">55</span>         <span class="n">checkfunc</span><span class="o">=</span><span class="n">checkfunc</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">56</span>         <span class="n">progress</span><span class="o">=</span><span class="n">progress</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">57</span>         <span class="n">_allow_insecure_for_testing</span><span class="o">=</span><span class="n">_allow_insecure_for_testing</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">58</span>     <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">59</span>     <span class="n">extract</span><span class="p">(</span><span class="n">destdir</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">progress</span><span class="p">)</span>
+
+<span class="nn">File ~/work/cjdk/cjdk/src/cjdk/_download.py:83,</span> in <span class="ni">download_file</span><span class="nt">(dest, url, checkfunc, progress, _allow_insecure_for_testing)</span>
+<span class="g g-Whitespace">     </span><span class="mi">78</span>         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">79</span>             <span class="sa">f</span><span class="s2">&quot;Cannot handle </span><span class="si">{</span><span class="n">scheme</span><span class="si">}</span><span class="s2"> (must be https)&quot;</span>
+<span class="g g-Whitespace">     </span><span class="mi">80</span>         <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">82</span> <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">83</span> <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">84</span> <span class="n">total</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content-length&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">85</span> <span class="n">total</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">total</span><span class="p">)</span> <span class="k">if</span> <span class="n">total</span> <span class="k">else</span> <span class="kc">None</span>
+
+<span class="nn">File ~/work/cjdk/cjdk/.nox/docs/lib/python3.14/site-packages/requests/models.py:1026,</span> in <span class="ni">Response.raise_for_status</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1021</span>     <span class="n">http_error_msg</span> <span class="o">=</span> <span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1022</span>         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2"> Server Error: </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2"> for url: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">1023</span>     <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1025</span> <span class="k">if</span> <span class="n">http_error_msg</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">1026</span>     <span class="k">raise</span> <span class="n">HTTPError</span><span class="p">(</span><span class="n">http_error_msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+<span class="ne">HTTPError</span>: 404 Client Error: Not Found for url: https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
+</pre></div>
+</div>
 </div>
 </div>
 <p>The Maven <code class="docutils literal notranslate"><span class="pre">.tar.gz</span></code> file has been extracted into <code class="docutils literal notranslate"><span class="pre">maven_dir</span></code>; find the <code class="docutils literal notranslate"><span class="pre">bin</span></code>
@@ -487,17 +565,6 @@ directory within it:</p>
             <span class="n">primary_endpoint_main_class</span><span class="o">=</span><span class="s2">&quot;com.puppycrawl.tools.checkstyle.Main&quot;</span><span class="p">,</span>
             <span class="n">argv</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;--version&quot;</span><span class="p">],</span>
         <span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cjdk: Installing JDK zulu-jre:8.0.452 to /home/runner/.cache/cjdk
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO 2025-05-01 19:41:12,980: First time start-up may be slow. Downloaded dependencies will be cached for shorter start-up times in subsequent executions.
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Checkstyle version: 9.3
 </pre></div>
 </div>
 </div>

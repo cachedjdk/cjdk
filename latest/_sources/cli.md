@@ -102,3 +102,14 @@ shown was on macOS.)
 ```{eval-rst}
 .. versionadded:: 0.2.0
 ```
+
+## Managing the cache
+
+### `clear-cache`
+
+```{command-output} cjdk clear-cache --help
+```
+
+```{eval-rst}
+.. versionadded:: 0.5.0
+```

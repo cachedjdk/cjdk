@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -420,6 +420,10 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cache-package"><code class="docutils literal notranslate"><span class="pre">cache-package</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#managing-the-cache">Managing the cache</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clear-cache"><code class="docutils literal notranslate"><span class="pre">clear-cache</span></code></a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -466,6 +470,7 @@ Commands:
   cache          Ensure the requested JDK is cached.
   cache-file     Cache an arbitrary file.
   cache-package  Cache an arbitrary package.
+  clear-cache    Remove all cached files.
   exec           Run a program using the requested JDK.
   java-home      Print the Java home directory for the requested JDK.
   ls             List cached or available JDKs matching criteria.
@@ -649,6 +654,32 @@ Options:
 </div>
 </section>
 </section>
+<section id="managing-the-cache">
+<h2>Managing the cache<a class="headerlink" href="#managing-the-cache" title="Link to this heading">#</a></h2>
+<section id="clear-cache">
+<h3><code class="docutils literal notranslate"><span class="pre">clear-cache</span></code><a class="headerlink" href="#clear-cache" title="Link to this heading">#</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ cjdk clear-cache --help
+Usage: cjdk clear-cache [OPTIONS]
+
+  Remove all cached JDKs, files, and packages from the cache directory.
+
+  This permanently deletes everything in the cache. Subsequent commands will
+  re-download any needed files.
+
+  When clearing the cache, ensure that no other processes are using cjdk or
+  the JDKs, files, or packages installed by cjdk.
+
+  See &#39;cjdk --help&#39; for the common options (only --cache-dir is relevant).
+
+Options:
+  --help  Show this message and exit.
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.5.0.</span></p>
+</div>
+</section>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -730,6 +761,10 @@ Options:
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#caching-arbitrary-files-and-packages">Caching arbitrary files and packages</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cache-file"><code class="docutils literal notranslate"><span class="pre">cache-file</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cache-package"><code class="docutils literal notranslate"><span class="pre">cache-package</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#managing-the-cache">Managing the cache</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clear-cache"><code class="docutils literal notranslate"><span class="pre">clear-cache</span></code></a></li>
 </ul>
 </li>
 </ul>
