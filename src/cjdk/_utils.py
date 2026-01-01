@@ -90,6 +90,7 @@ def unlink_file(path, timeout=2.5):
     from ctypes import wintypes
 
     kernel32 = ctypes.windll.kernel32
+    kernel32.CreateFileW.restype = wintypes.HANDLE
 
     DELETE = 0x00010000
     FILE_SHARE_READ = 0x01
