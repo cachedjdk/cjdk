@@ -79,18 +79,18 @@ def download_file(
                 f"Cannot handle {scheme} (must be https)"
             )
 
-    response = requests.get(url, stream=True)
-    response.raise_for_status()
-    total = response.headers.get("content-length", None)
-    total = int(total) if total else None
-    with open(dest, "wb") as outfile:
-        for chunk in _progress.data_transfer(
-            total,
-            response.iter_content(chunk_size=16384),
-            enabled=progress,
-            text="Download",
-        ):
-            outfile.write(chunk)
+    with requests.get(url, stream=True) as response:
+        response.raise_for_status()
+        total = response.headers.get("content-length", None)
+        total = int(total) if total else None
+        with open(dest, "wb") as outfile:
+            for chunk in _progress.data_transfer(
+                total,
+                response.iter_content(chunk_size=16384),
+                enabled=progress,
+                text="Download",
+            ):
+                outfile.write(chunk)
 
     if checkfunc:
         checkfunc(dest)
