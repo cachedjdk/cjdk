@@ -3,14 +3,13 @@
 # SPDX-License-Identifier: MIT
 
 import hashlib
-import shutil
 import sys
 import time
 import urllib
 from contextlib import contextmanager
 from pathlib import Path
 
-from . import _progress
+from . import _progress, _utils
 
 __all__ = [
     "atomic_file",
@@ -164,31 +163,6 @@ def _file_exists_and_is_fresh(file, ttl) -> bool:
     return now + 1.0 < expiration
 
 
-def _rmtree_with_retry(path, timeout=2.5):
-    # Try extra hard to clean up temporary directory. Probably redundant with
-    # the special _download._unlink_file() approach, but this might help catch
-    # additional edge cases.
-
-    # ERROR_ACCESS_DENIED (5) and ERROR_SHARING_VIOLATION (32)
-    WIN_OPEN_FILE_ERRS = (5, 32)
-
-    # No progress bar since we're likely erroring out.
-    for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
-        try:
-            shutil.rmtree(path)
-        except OSError as e:
-            if (
-                hasattr(e, "winerror")
-                and e.winerror in WIN_OPEN_FILE_ERRS
-                and wait_seconds > 0
-            ):
-                time.sleep(wait_seconds)
-                continue
-            raise
-        else:
-            return
-
-
 @contextmanager
 def _create_key_tmpdir(cache_dir, key):
     tmpdir = _key_tmpdir(cache_dir, key)
@@ -210,7 +184,7 @@ def _create_key_tmpdir(cache_dir, key):
             yield tmpdir
         finally:
             if tmpdir.is_dir():
-                _rmtree_with_retry(tmpdir)
+                _utils.rmtree_with_retry(tmpdir)
 
 
 def _key_directory(cache_dir: Path, key) -> Path:
@@ -243,7 +217,7 @@ def _swap_in_fetched_file(target, tmpfile, timeout, progress=False):
     with _progress.indefinite(
         enabled=progress, text="File busy; waiting"
     ) as update_pbar:
-        for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
+        for wait_seconds in _utils.backoff_seconds(0.001, 0.5, timeout):
             try:
                 tmpfile.replace(target)
             except OSError as e:
@@ -282,7 +256,7 @@ def _wait_for_dir_to_vanish(directory, timeout, progress=True):
     with _progress.indefinite(
         enabled=progress, text="Already downloading; waiting"
     ) as update_pbar:
-        for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
+        for wait_seconds in _utils.backoff_seconds(0.001, 0.5, timeout):
             if not directory.is_dir():
                 return
             if wait_seconds < 0:
@@ -291,30 +265,3 @@ def _wait_for_dir_to_vanish(directory, timeout, progress=True):
                 )
             time.sleep(wait_seconds)
             update_pbar()
-
-
-def _backoff_seconds(initial_interval, max_interval, max_total, factor=1.5):
-    """
-    Yield intervals to sleep after repeated attempts with exponential backoff.
-
-    The last-yielded value is -1. When -1 is received, the caller should make
-    the final attempt before giving up.
-    """
-    assert initial_interval > 0
-    assert max_total >= 0
-    assert factor > 1
-    total = 0
-    next_interval = initial_interval
-    while max_total > 0:
-        next_total = total + next_interval
-        if next_total > max_total:
-            remaining = max_total - total
-            if remaining > 0.01:
-                yield remaining
-            break
-        yield next_interval
-        total = next_total
-        next_interval *= factor
-        if next_interval > max_interval:
-            next_interval = max_interval
-    yield -1

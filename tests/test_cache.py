@@ -81,39 +81,6 @@ def test_swap_in_fetched_file(tmp_path):
             _cache._swap_in_fetched_file(dest, src, timeout=0.1)
 
 
-def test_rmtree_with_retry(tmp_path):
-    path = tmp_path / "testdir"
-    path.mkdir()
-    (path / "file").touch()
-    _cache._rmtree_with_retry(path)
-    assert not path.exists()
-
-    # With file inside initially open
-    exec = ThreadPoolExecutor()
-
-    def close_after_delay(f):
-        time.sleep(0.1)
-        f.close()
-
-    path.mkdir()
-    file = path / "file"
-    file.touch()
-    with open(file) as fp:
-        exec.submit(close_after_delay, fp)
-        _cache._rmtree_with_retry(path, timeout=10)
-        assert not path.exists()
-
-    exec.shutdown()
-
-    # With file inside left open
-    if sys.platform == "win32":
-        path.mkdir()
-        file = path / "file"
-        file.touch()
-        with open(file) as fp, pytest.raises(OSError):
-            _cache._rmtree_with_retry(path, timeout=0.1)
-
-
 def test_move_in_fetched_directory(tmp_path):
     dest = tmp_path / "a" / "b" / "target"
     src = tmp_path / "tmpdir"
@@ -139,12 +106,3 @@ def test_wait_for_dir_to_vanish(tmp_path):
     path.mkdir()
     with pytest.raises(Exception):
         _cache._wait_for_dir_to_vanish(path, 0.1)
-
-
-def test_backoff_seconds():
-    f = _cache._backoff_seconds
-    assert list(f(1, 1, 0)) == [-1]
-    assert list(f(1, 1, 1)) == [1, -1]
-    assert list(f(1, 1, 0.1)) == [0.1, -1]
-    assert list(f(1, 5, 10, factor=2)) == [1, 2, 4, 3, -1]
-    assert list(f(1, 2, 10, factor=2)) == [1, 2, 2, 2, 2, 1, -1]
