@@ -101,7 +101,8 @@ def atomic_file(
                 )
                 if not _file_exists_and_is_fresh(target, ttl=2**63):
                     raise Exception(
-                        f"Fetching of file {target} appears to have been completed elsewhere, but file does not exist"
+                        f"Another process was fetching {target} but the file is not present; "
+                        f"the other process may have failed or been interrupted."
                     )
     return target
 
@@ -146,7 +147,8 @@ def permanent_directory(
                 )
                 if not keydir.is_dir():
                     raise Exception(
-                        f"Fetching of directory {keydir} appears to have been completed elsewhere, but directory does not exist"
+                        f"Another process was fetching {keydir} but the directory is not present; "
+                        f"the other process may have failed or been interrupted"
                     )
     return keydir
 
