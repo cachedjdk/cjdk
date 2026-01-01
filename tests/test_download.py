@@ -13,6 +13,17 @@ import pytest
 from cjdk import _download
 
 
+def test_unlink_file(tmp_path):
+    file = tmp_path / "test.txt"
+    file.touch()
+    _download._unlink_file(file)
+    assert not file.exists()
+
+    # Non-existent file raises
+    with pytest.raises(OSError):
+        _download._unlink_file(tmp_path / "nonexistent")
+
+
 def test_download_and_extract(tmp_path):
     (tmp_path / "origfile").touch()
     zip = tmp_path / "orig.zip"

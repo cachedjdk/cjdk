@@ -165,15 +165,9 @@ def _file_exists_and_is_fresh(file, ttl) -> bool:
 
 
 def _rmtree_with_retry(path, timeout=2.5):
-    # Guard against momentary inaccessibility on Windows, sometimes caused by
-    # Antivirus scanning the just-downloaded-and-closed file.
-    # There is theoretically a better way: delete the file by calling
-    # CreateFile(..., FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-    # ..., FILE_FLAG_DELETE_ON_CLOSE) + CloseHandle(), because Windows
-    # Antivirus does open files with FILE_SHARE_DELETE. (os.unlink() fails
-    # because it calls DeleteFile(), which doe not use FILE_SHARE_DELETE.) But
-    # here we just use a retry loop, which is simpler and may also cover other
-    # unexpected cases.
+    # Try extra hard to clean up temporary directory. Probably redundant with
+    # the special _download._unlink_file() approach, but this might help catch
+    # additional edge cases.
 
     # ERROR_ACCESS_DENIED (5) and ERROR_SHARING_VIOLATION (32)
     WIN_OPEN_FILE_ERRS = (5, 32)
