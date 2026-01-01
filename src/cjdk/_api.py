@@ -443,7 +443,7 @@ def _env_var_set(name, value):
     try:
         yield
     finally:
-        if old_value:
+        if old_value is not None:
             os.environ[name] = old_value
         else:
             del os.environ[name]

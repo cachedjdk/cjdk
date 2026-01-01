@@ -81,7 +81,7 @@ def iterate(iter, *, enabled, text, total=None):
 
 
 def _bar_enabled(enabled):
-    if os.environ.get("CJDK_HIDE_PROGRESS_BARS", "0").lower() in (
+    if os.environ.get("CJDK_HIDE_PROGRESS_BARS", "").lower() in (
         "1",
         "true",
         "yes",
