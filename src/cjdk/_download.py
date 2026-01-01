@@ -58,6 +58,7 @@ def download_and_extract(
             _allow_insecure_for_testing=_allow_insecure_for_testing,
         )
         extract(destdir, file, progress)
+        _utils.unlink_file(file)
 
 
 def download_file(

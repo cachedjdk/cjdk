@@ -9,9 +9,12 @@ import time
 
 __all__ = [
     "backoff_seconds",
-    "rmtree_with_retry",
+    "rmtree",
     "unlink_file",
 ]
+
+# ERROR_ACCESS_DENIED (5) and ERROR_SHARING_VIOLATION (32)
+_WIN_OPEN_FILE_ERRS = (5, 32)
 
 
 def backoff_seconds(initial_interval, max_interval, max_total, factor=1.5):
@@ -41,22 +44,20 @@ def backoff_seconds(initial_interval, max_interval, max_total, factor=1.5):
     yield -1
 
 
-def rmtree_with_retry(path, timeout=2.5):
-    # Try extra hard to clean up temporary directory. Probably redundant with
-    # the special unlink_file() approach, but this might help catch
-    # additional edge cases.
+def rmtree(path, timeout=2.5):
+    # Try extra hard to clean up a temporary directory.
 
-    # ERROR_ACCESS_DENIED (5) and ERROR_SHARING_VIOLATION (32)
-    WIN_OPEN_FILE_ERRS = (5, 32)
+    def retry_unlink(func, path, excinfo):
+        if func is os.unlink:
+            unlink_file(path, timeout=0)  # Try again with our special version
 
-    # No progress bar since we're likely erroring out.
     for wait_seconds in backoff_seconds(0.001, 0.5, timeout):
         try:
-            shutil.rmtree(path)
+            shutil.rmtree(path, onexc=retry_unlink)
         except OSError as e:
             if (
                 hasattr(e, "winerror")
-                and e.winerror in WIN_OPEN_FILE_ERRS
+                and e.winerror in _WIN_OPEN_FILE_ERRS
                 and wait_seconds > 0
             ):
                 time.sleep(wait_seconds)
@@ -66,7 +67,7 @@ def rmtree_with_retry(path, timeout=2.5):
             return
 
 
-def unlink_file(path):
+def unlink_file(path, timeout=2.5):
     if sys.platform != "win32":
         return os.unlink(path)
 
@@ -90,19 +91,35 @@ def unlink_file(path):
     FILE_FLAG_DELETE_ON_CLOSE = 0x04000000
     INVALID_HANDLE_VALUE = wintypes.HANDLE(-1).value
 
-    handle = INVALID_HANDLE_VALUE
-    try:
-        handle = kernel32.CreateFileW(
-            str(path),
-            DELETE,
-            FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-            None,
-            OPEN_EXISTING,
-            FILE_FLAG_DELETE_ON_CLOSE,
-            None,
-        )
-        if handle == INVALID_HANDLE_VALUE:
-            os.unlink(path)  # Let it raise an appropriate error.
-    finally:
-        if handle != INVALID_HANDLE_VALUE:
-            kernel32.CloseHandle(handle)
+    def do_unlink(path):
+        handle = INVALID_HANDLE_VALUE
+        try:
+            handle = kernel32.CreateFileW(
+                str(path),
+                DELETE,
+                FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                None,
+                OPEN_EXISTING,
+                FILE_FLAG_DELETE_ON_CLOSE,
+                None,
+            )
+            if handle == INVALID_HANDLE_VALUE:
+                os.unlink(path)  # Let it raise an appropriate error.
+        finally:
+            if handle != INVALID_HANDLE_VALUE:
+                kernel32.CloseHandle(handle)
+
+    for wait_seconds in backoff_seconds(0.001, 0.5, timeout):
+        try:
+            do_unlink(path)
+        except OSError as e:
+            if (
+                hasattr(e, "winerror")
+                and e.winerror in _WIN_OPEN_FILE_ERRS
+                and wait_seconds > 0
+            ):
+                time.sleep(wait_seconds)
+                continue
+            raise
+        else:
+            return

@@ -184,7 +184,7 @@ def _create_key_tmpdir(cache_dir, key):
             yield tmpdir
         finally:
             if tmpdir.is_dir():
-                _utils.rmtree_with_retry(tmpdir)
+                _utils.rmtree(tmpdir)
 
 
 def _key_directory(cache_dir: Path, key) -> Path:

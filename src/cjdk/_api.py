@@ -5,11 +5,10 @@ from __future__ import annotations
 
 import hashlib
 import os
-import shutil
 from contextlib import contextmanager
 from typing import TYPE_CHECKING
 
-from . import _cache, _conf, _index, _install, _jdk
+from . import _cache, _conf, _index, _install, _jdk, _utils
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
@@ -115,7 +114,11 @@ def clear_cache(**kwargs: Unpack[ConfigKwargs]) -> Path:
     conf = _conf.configure(**kwargs)
     cache_path = conf.cache_dir
     if cache_path.exists():
-        shutil.rmtree(cache_path)
+        # No retry loop, but do fall back to Windows robust delete. (Clearing
+        # the cache is supposed to be done when nothing else is active, so we
+        # do not expect waiting an extra few seconds would be beneficial, but
+        # working nicely with Windows Antivirus might still be useful.)
+        _utils.rmtree(cache_path, timeout=0)
     return cache_path
 
 

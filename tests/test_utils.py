@@ -24,7 +24,7 @@ def test_rmtree_with_retry(tmp_path):
     path = tmp_path / "testdir"
     path.mkdir()
     (path / "file").touch()
-    _utils.rmtree_with_retry(path)
+    _utils.rmtree(path)
     assert not path.exists()
 
     # With file inside initially open
@@ -39,7 +39,7 @@ def test_rmtree_with_retry(tmp_path):
     file.touch()
     with open(file) as fp:
         exec.submit(close_after_delay, fp)
-        _utils.rmtree_with_retry(path, timeout=10)
+        _utils.rmtree(path, timeout=10)
         assert not path.exists()
 
     exec.shutdown()
@@ -50,7 +50,7 @@ def test_rmtree_with_retry(tmp_path):
         file = path / "file"
         file.touch()
         with open(file) as fp, pytest.raises(OSError):
-            _utils.rmtree_with_retry(path, timeout=0.1)
+            _utils.rmtree(path, timeout=0.1)
 
 
 def test_unlink_file(tmp_path):
