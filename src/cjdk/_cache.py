@@ -87,7 +87,7 @@ def atomic_file(
         with _create_key_tmpdir(cache_dir, key) as tmpdir:
             if tmpdir:
                 fetchfunc(tmpdir / filename)
-                _swap_in_fetched_file(
+                _utils.swap_in_file(
                     target,
                     tmpdir / filename,
                     timeout=timeout_for_read_elsewhere,
@@ -193,45 +193,6 @@ def _key_directory(cache_dir: Path, key) -> Path:
 
 def _key_tmpdir(cache_dir: Path, key) -> Path:
     return cache_dir / "v0" / Path("fetching", *key)
-
-
-def _swap_in_fetched_file(target, tmpfile, timeout, progress=False):
-    # On POSIX, we only need to try once to move tmpfile to target; this will
-    # work even if target is opened by others, and any failure (e.g.
-    # insufficient permissions) is permanent.
-    # On Windows, there is the case where the file is open by others (busy); we
-    # should wait a little and retry in this case. It is not possible to do
-    # this cleanly, because the error we get when the target is busy is often
-    # "Access is denied" (PermissionError, a subclass of OSError, with
-    # .winerror = 5), which is indistinguishable from the case where target
-    # permanently has bad permissions.
-    # But because this implementation is only intended for small files that
-    # will not be kept open for long, and because permanent bad permissions is
-    # not expected in the typical use case, we can do something that almost
-    # always results in the intended behavior.
-
-    # ERROR_ACCESS_DENIED (5) and ERROR_SHARING_VIOLATION (32)
-    WIN_OPEN_FILE_ERRS = (5, 32)
-
-    target.parent.mkdir(parents=True, exist_ok=True)
-    with _progress.indefinite(
-        enabled=progress, text="File busy; waiting"
-    ) as update_pbar:
-        for wait_seconds in _utils.backoff_seconds(0.001, 0.5, timeout):
-            try:
-                tmpfile.replace(target)
-            except OSError as e:
-                if (
-                    hasattr(e, "winerror")
-                    and e.winerror in WIN_OPEN_FILE_ERRS
-                    and wait_seconds > 0
-                ):
-                    time.sleep(wait_seconds)
-                    update_pbar()
-                    continue
-                raise
-            else:
-                return
 
 
 def _move_in_fetched_directory(target, tmpdir):

@@ -62,3 +62,40 @@ def test_unlink_file(tmp_path):
     # Non-existent file raises
     with pytest.raises(OSError):
         _utils.unlink_file(tmp_path / "nonexistent")
+
+
+def test_swap_in_file(tmp_path):
+    dest = tmp_path / "a" / "b" / "target"
+    src = tmp_path / "tmpfile"
+    src.touch()
+    _utils.swap_in_file(dest, src, timeout=0)
+    assert dest.is_file()
+    assert not src.is_file()
+
+    # With dest existing
+    src.touch()
+    _utils.swap_in_file(dest, src, timeout=0)
+    assert dest.is_file()
+    assert not src.is_file()
+
+    # With dest initially open
+    exec = ThreadPoolExecutor()
+
+    def close_after_delay(f):
+        time.sleep(0.1)
+        f.close()
+
+    src.touch()
+    with open(dest) as fp:
+        exec.submit(close_after_delay, fp)
+        _utils.swap_in_file(dest, src, timeout=10)
+        assert dest.is_file()
+        assert not src.is_file()
+
+    exec.shutdown()
+
+    # With dest left open
+    if sys.platform == "win32":
+        src.touch()
+        with open(dest) as fp, pytest.raises(OSError):
+            _utils.swap_in_file(dest, src, timeout=0.1)

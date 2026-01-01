@@ -7,9 +7,12 @@ import shutil
 import sys
 import time
 
+from . import _progress
+
 __all__ = [
     "backoff_seconds",
     "rmtree",
+    "swap_in_file",
     "unlink_file",
 ]
 
@@ -123,3 +126,42 @@ def unlink_file(path, timeout=2.5):
             raise
         else:
             return
+
+
+def swap_in_file(target, tmpfile, timeout, progress=False):
+    # On POSIX, we only need to try once to move tmpfile to target; this will
+    # work even if target is opened by others, and any failure (e.g.
+    # insufficient permissions) is permanent.
+    # On Windows, there is the case where the file is open by others (busy); we
+    # should wait a little and retry in this case. It is not possible to do
+    # this cleanly, because the error we get when the target is busy is often
+    # "Access is denied" (PermissionError, a subclass of OSError, with
+    # .winerror = 5), which is indistinguishable from the case where target
+    # permanently has bad permissions.
+    # But because this implementation is only intended for small files that
+    # will not be kept open for long, and because permanent bad permissions is
+    # not expected in the typical use case, we can do something that almost
+    # always results in the intended behavior.
+    # Note that this is in a different category from rmtree() and unlink_file()
+    # in that it is adding robustness to the case of cached files being
+    # accessed by other programs, as opposed to cleaning up internal cjdk
+    # files.
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with _progress.indefinite(
+        enabled=progress, text="File busy; waiting"
+    ) as update_pbar:
+        for wait_seconds in backoff_seconds(0.001, 0.5, timeout):
+            try:
+                tmpfile.replace(target)
+            except OSError as e:
+                if (
+                    hasattr(e, "winerror")
+                    and e.winerror in _WIN_OPEN_FILE_ERRS
+                    and wait_seconds > 0
+                ):
+                    time.sleep(wait_seconds)
+                    update_pbar()
+                    continue
+                raise
+            else:
+                return

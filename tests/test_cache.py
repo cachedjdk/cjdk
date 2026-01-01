@@ -2,7 +2,6 @@
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -42,43 +41,6 @@ def test_key_directory():
 def test_key_tmpdir():
     f = _cache._key_tmpdir
     assert f(Path("a"), ("b",)) == Path("a/v0/fetching/b")
-
-
-def test_swap_in_fetched_file(tmp_path):
-    dest = tmp_path / "a" / "b" / "target"
-    src = tmp_path / "tmpfile"
-    src.touch()
-    _cache._swap_in_fetched_file(dest, src, timeout=0)
-    assert dest.is_file()
-    assert not src.is_file()
-
-    # With dest existing
-    src.touch()
-    _cache._swap_in_fetched_file(dest, src, timeout=0)
-    assert dest.is_file()
-    assert not src.is_file()
-
-    # With dest initially open
-    exec = ThreadPoolExecutor()
-
-    def close_after_delay(f):
-        time.sleep(0.1)
-        f.close()
-
-    src.touch()
-    with open(dest) as fp:
-        exec.submit(close_after_delay, fp)
-        _cache._swap_in_fetched_file(dest, src, timeout=10)
-        assert dest.is_file()
-        assert not src.is_file()
-
-    exec.shutdown()
-
-    # With dest left open
-    if sys.platform == "win32":
-        src.touch()
-        with open(dest) as fp, pytest.raises(OSError):
-            _cache._swap_in_fetched_file(dest, src, timeout=0.1)
 
 
 def test_move_in_fetched_directory(tmp_path):
