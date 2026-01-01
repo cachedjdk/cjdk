@@ -112,8 +112,8 @@ def _default_cachedir():
     This is either from the environment variable CJDK_CACHE_DIR, or in the
     default user cache directory.
     """
-    if "CJDK_CACHE_DIR" in os.environ:
-        ret = Path(os.environ["CJDK_CACHE_DIR"])
+    if v := os.environ.get("CJDK_CACHE_DIR"):
+        ret = Path(v)
         if not ret.is_absolute():
             raise ValueError(
                 f"CJDK_CACHE_DIR must be an absolute path (found '{ret}')"
@@ -140,8 +140,8 @@ def _local_app_data(*, create=True):
     # https://docs.microsoft.com/en-us/windows/win32/msi/localappdatafolder
     # It is not clear, but I'm pretty sure it's safe to assume that the
     # directory exists.
-    if "LOCALAPPDATA" in os.environ:
-        return Path(os.environ["LOCALAPPDATA"])
+    if v := os.environ.get("LOCALAPPDATA"):
+        return Path(v)
     return Path.home() / "AppData" / "Local"
 
 
@@ -157,8 +157,8 @@ def _macos_cachedir(*, create=True):
 
 def _xdg_cachedir(*, create=True):
     # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-    if "XDG_CACHE_HOME" in os.environ:
-        caches = Path(os.environ["XDG_CACHE_HOME"])
+    if v := os.environ.get("XDG_CACHE_HOME"):
+        caches = Path(v)
     else:
         caches = Path.home() / ".cache"
     # The spec says that if the directory does not exist, it should be created
@@ -171,7 +171,7 @@ def _xdg_cachedir(*, create=True):
 def _default_index_url():
     # The Coursier JDK index is auto-generated, well curated, and clean.
     coursier_index_url = "https://raw.githubusercontent.com/coursier/jvm-index/master/index.json"
-    return os.environ.get("CJDK_INDEX_URL", None) or coursier_index_url
+    return os.environ.get("CJDK_INDEX_URL") or coursier_index_url
 
     # There is also an older index from the jabba project, but it is manually
     # maintained and would benefit from some data cleaning. Noting down the URL
@@ -181,12 +181,12 @@ def _default_index_url():
 
 
 def _default_index_ttl():
-    return int(os.environ.get("CJDK_INDEX_TTL", "86400"))
+    return int(os.environ.get("CJDK_INDEX_TTL") or "86400")
 
 
 def _canonicalize_os(osname):
     if not osname:
-        osname = os.environ.get("CJDK_OS", sys.platform)
+        osname = os.environ.get("CJDK_OS") or sys.platform
     osname = osname.lower()
 
     if osname == "win32":
@@ -203,7 +203,7 @@ def _canonicalize_os(osname):
 
 def _canonicalize_arch(arch):
     if not arch:
-        arch = os.environ.get("CJDK_ARCH", platform.machine())
+        arch = os.environ.get("CJDK_ARCH") or platform.machine()
     arch = arch.lower()
 
     if arch in ("x86_64", "x86-64", "x64"):
@@ -222,6 +222,4 @@ def _default_vendor():
 
     This is either from the environment variable CJDK_VENDOR, or "adoptium".
     """
-    if "CJDK_VENDOR" in os.environ:
-        return os.environ["CJDK_VENDOR"]
-    return "adoptium"
+    return os.environ.get("CJDK_VENDOR") or "adoptium"

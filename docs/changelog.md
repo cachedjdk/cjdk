@@ -11,6 +11,7 @@ See also the section on [versioning](versioning-scheme).
 ## [Unreleased]
 
 - Add `cjdk clear-cache` and `clear_cache()`.
+- Environment variables set to empty are now treated as unset.
 
 ## [0.4.1] - 2025-05-01
 
