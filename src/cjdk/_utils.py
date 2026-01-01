@@ -50,13 +50,23 @@ def backoff_seconds(initial_interval, max_interval, max_total, factor=1.5):
 def rmtree(path, timeout=2.5):
     # Try extra hard to clean up a temporary directory.
 
-    def retry_unlink(func, path, excinfo):
-        if func is os.unlink:
-            unlink_file(path, timeout=0)  # Try again with our special version
-
     if sys.version_info >= (3, 12):
+
+        def retry_unlink(func, path, exc):
+            if func is os.unlink:
+                unlink_file(path, timeout=0)
+            else:
+                raise exc
+
         rmtree_kwargs = {"onexc": retry_unlink}
     else:
+
+        def retry_unlink(func, path, exc_info):
+            if func is os.unlink:
+                unlink_file(path, timeout=0)
+            else:
+                raise exc_info[1].with_traceback(exc_info[2])
+
         rmtree_kwargs = {"onerror": retry_unlink}
 
     for wait_seconds in backoff_seconds(0.001, 0.5, timeout):
