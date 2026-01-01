@@ -54,9 +54,14 @@ def rmtree(path, timeout=2.5):
         if func is os.unlink:
             unlink_file(path, timeout=0)  # Try again with our special version
 
+    if sys.version_info >= (3, 12):
+        rmtree_kwargs = {"onexc": retry_unlink}
+    else:
+        rmtree_kwargs = {"onerror": retry_unlink}
+
     for wait_seconds in backoff_seconds(0.001, 0.5, timeout):
         try:
-            shutil.rmtree(path, onexc=retry_unlink)
+            shutil.rmtree(path, **rmtree_kwargs)
         except OSError as e:
             if (
                 hasattr(e, "winerror")
