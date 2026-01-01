@@ -4,6 +4,7 @@
 
 import hashlib
 import shutil
+import sys
 import time
 import urllib
 from contextlib import contextmanager
@@ -241,6 +242,14 @@ def _add_url_file(keydir, key_url):
 
 
 def _wait_for_dir_to_vanish(directory, timeout, progress=True):
+    print(
+        "cjdk: Another process is currently downloading the same file",
+        file=sys.stderr,
+    )
+    print(
+        f"cjdk: If you are sure this is not the case (e.g., previous download crashed), try again after deleting the directory {directory}",
+        file=sys.stderr,
+    )
     with _progress.indefinite(
         enabled=progress, text="Already downloading; waiting"
     ) as update_pbar:
