@@ -12,6 +12,7 @@ See also the section on [versioning](versioning-scheme).
 
 - Add `cjdk clear-cache` and `clear_cache()`.
 - Environment variables set to empty are now treated as unset.
+- Improve handling of temporary file cleanup on Windows.
 
 ## [0.4.1] - 2025-05-01
 
