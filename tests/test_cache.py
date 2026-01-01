@@ -81,6 +81,39 @@ def test_swap_in_fetched_file(tmp_path):
             _cache._swap_in_fetched_file(dest, src, timeout=0.1)
 
 
+def test_rmtree_with_retry(tmp_path):
+    path = tmp_path / "testdir"
+    path.mkdir()
+    (path / "file").touch()
+    _cache._rmtree_with_retry(path)
+    assert not path.exists()
+
+    # With file inside initially open
+    exec = ThreadPoolExecutor()
+
+    def close_after_delay(f):
+        time.sleep(0.1)
+        f.close()
+
+    path.mkdir()
+    file = path / "file"
+    file.touch()
+    with open(file) as fp:
+        exec.submit(close_after_delay, fp)
+        _cache._rmtree_with_retry(path, timeout=10)
+        assert not path.exists()
+
+    exec.shutdown()
+
+    # With file inside left open
+    if sys.platform == "win32":
+        path.mkdir()
+        file = path / "file"
+        file.touch()
+        with open(file) as fp, pytest.raises(OSError):
+            _cache._rmtree_with_retry(path, timeout=0.1)
+
+
 def test_move_in_fetched_directory(tmp_path):
     dest = tmp_path / "a" / "b" / "target"
     src = tmp_path / "tmpdir"

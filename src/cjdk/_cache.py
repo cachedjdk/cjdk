@@ -164,6 +164,37 @@ def _file_exists_and_is_fresh(file, ttl) -> bool:
     return now + 1.0 < expiration
 
 
+def _rmtree_with_retry(path, timeout=2.5):
+    # Guard against momentary inaccessibility on Windows, sometimes caused by
+    # Antivirus scanning the just-downloaded-and-closed file.
+    # There is theoretically a better way: delete the file by calling
+    # CreateFile(..., FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+    # ..., FILE_FLAG_DELETE_ON_CLOSE) + CloseHandle(), because Windows
+    # Antivirus does open files with FILE_SHARE_DELETE. (os.unlink() fails
+    # because it calls DeleteFile(), which doe not use FILE_SHARE_DELETE.) But
+    # here we just use a retry loop, which is simpler and may also cover other
+    # unexpected cases.
+
+    # ERROR_ACCESS_DENIED (5) and ERROR_SHARING_VIOLATION (32)
+    WIN_OPEN_FILE_ERRS = (5, 32)
+
+    # No progress bar since we're likely erroring out.
+    for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
+        try:
+            shutil.rmtree(path)
+        except OSError as e:
+            if (
+                hasattr(e, "winerror")
+                and e.winerror in WIN_OPEN_FILE_ERRS
+                and wait_seconds > 0
+            ):
+                time.sleep(wait_seconds)
+                continue
+            raise
+        else:
+            return
+
+
 @contextmanager
 def _create_key_tmpdir(cache_dir, key):
     tmpdir = _key_tmpdir(cache_dir, key)
@@ -185,7 +216,7 @@ def _create_key_tmpdir(cache_dir, key):
             yield tmpdir
         finally:
             if tmpdir.is_dir():
-                shutil.rmtree(tmpdir)
+                _rmtree_with_retry(tmpdir)
 
 
 def _key_directory(cache_dir: Path, key) -> Path:
@@ -202,15 +233,17 @@ def _swap_in_fetched_file(target, tmpfile, timeout, progress=False):
     # insufficient permissions) is permanent.
     # On Windows, there is the case where the file is open by others (busy); we
     # should wait a little and retry in this case. It is not possible to do
-    # this cleanly, because the error we get when the target is busy is "Access
-    # is denied" (PermissionError, a subclass of OSError, with .winerror = 5),
-    # which is indistinguishable from the case where target permanently has bad
-    # permissions.
+    # this cleanly, because the error we get when the target is busy is often
+    # "Access is denied" (PermissionError, a subclass of OSError, with
+    # .winerror = 5), which is indistinguishable from the case where target
+    # permanently has bad permissions.
     # But because this implementation is only intended for small files that
     # will not be kept open for long, and because permanent bad permissions is
     # not expected in the typical use case, we can do something that almost
     # always results in the intended behavior.
-    WINDOWS_ERROR_ACCESS_DENIED = 5
+
+    # ERROR_ACCESS_DENIED (5) and ERROR_SHARING_VIOLATION (32)
+    WIN_OPEN_FILE_ERRS = (5, 32)
 
     target.parent.mkdir(parents=True, exist_ok=True)
     with _progress.indefinite(
@@ -222,7 +255,7 @@ def _swap_in_fetched_file(target, tmpfile, timeout, progress=False):
             except OSError as e:
                 if (
                     hasattr(e, "winerror")
-                    and e.winerror == WINDOWS_ERROR_ACCESS_DENIED
+                    and e.winerror in WIN_OPEN_FILE_ERRS
                     and wait_seconds > 0
                 ):
                     time.sleep(wait_seconds)
