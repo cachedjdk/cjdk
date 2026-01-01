@@ -11,6 +11,8 @@ Python API and the command-line interface. Since they affect any program that
 uses **cjdk** as a library, they are intended for setting user preferences or
 for testing applications.
 
+Empty environment variables are treated as unset (since version 0.5.0).
+
 ## `CJDK_ARCH`
 
 Set to the name of a CPU architecture to override the default (which is the

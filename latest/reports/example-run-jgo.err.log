@@ -9,13 +9,13 @@ Traceback (most recent call last):
         ^^^^^^^^^
     )
     ^
-  File "/home/runner/work/cjdk/cjdk/.nox/docs/lib/python3.14/site-packages/nbclient/client.py", line 1319, in execute
+  File "/home/runner/work/cjdk/cjdk/.nox/docs/lib/python3.14/site-packages/nbclient/client.py", line 1323, in execute
     return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
   File "/home/runner/work/cjdk/cjdk/.nox/docs/lib/python3.14/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
     return loop.run_until_complete(inner)
            ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.14.0/x64/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+  File "/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
     return future.result()
            ~~~~~~~~~~~~~^^
   File "/home/runner/work/cjdk/cjdk/.nox/docs/lib/python3.14/site-packages/nbclient/client.py", line 709, in async_execute
