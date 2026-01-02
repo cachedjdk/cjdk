@@ -3,18 +3,15 @@
 # SPDX-License-Identifier: MIT
 
 [build-system]
-requires = [
-    "setuptools>=43",
-    "setuptools_scm[toml]>=6.2",
-]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
 [project]
 name = "cjdk"
 dynamic = ["version"]
 description = "Auto-download JDK or JRE and run Java apps from Python or CLI"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = "MIT"
 license-files = ["LICENSE.txt"]
 keywords = ["Java", "JDK", "JRE", "JVM"]
@@ -23,6 +20,11 @@ authors = [
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Java",
     "Topic :: Software Development",
 ]
@@ -33,13 +35,6 @@ dependencies = [
     "requests >= 2.24",
 ]
 
-[project.optional-dependencies]
-testing = [
-    "flask >= 2.0",
-    "pytest >= 7.0",
-    "werkzeug >= 2.0",
-]
-
 [project.urls]
 Documentation = "https://cachedjdk.github.io/cjdk/latest"
 Repository = "https://github.com/cachedjdk/cjdk"
@@ -47,8 +42,48 @@ Repository = "https://github.com/cachedjdk/cjdk"
 [project.scripts]
 cjdk = "cjdk.__main__:main"
 
-[tool.setuptools_scm]
-write_to = "src/cjdk/_version.py"
+[dependency-groups]
+test = [
+    "flask >= 2.0",
+    "pytest >= 7.0",
+    "werkzeug >= 2.0",
+]
+dev = [
+    {include-group = "test"},
+]
+docs = [
+    "jgo >= 1.0",
+    "jupyter-book >= 0.13, < 2.0",
+    "jupyterlab >= 3.4",
+    "jupytext >= 1.13",
+    "sphinxcontrib-programoutput >= 0.17",
+]
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/cjdk/_version.py"
+
+[tool.hatch.envs.default]
+installer = "uv"
+
+[tool.hatch.envs.hatch-test]
+installer = "uv"
+dependency-groups = ["test"]
+
+[[tool.hatch.envs.hatch-test.matrix]]
+python = ["3.10", "3.11", "3.12", "3.13", "3.14"]
+
+[tool.hatch.envs.docs]
+installer = "uv"
+dependency-groups = ["docs"]
+
+[tool.hatch.envs.docs.scripts]
+build = "jb build docs/"
+
+[tool.hatch.envs.docs.env-vars]
+CJDK_HIDE_PROGRESS_BARS = "1"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -62,5 +97,5 @@ select = ["E", "F", "UP", "B", "SIM", "I"]
 ignore = ["B006", "B007", "B011", "B017", "E501"]
 
 [tool.uv]
-# setuptools_scm compatibility
+# hatch-vcs compatibility
 cache-keys = [{file = "pyproject.toml"}, {git = {commit = true, tags = true}}]

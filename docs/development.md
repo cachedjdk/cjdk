@@ -13,41 +13,37 @@ git clone https://github.com/cachedjdk/cjdk.git
 cd cjdk
 ```
 
-As usual, it is best to do all development in a virtual environment:
+Install [Hatch](https://hatch.pypa.io/):
 
 ```sh
-python -m venv venv
-echo '*' >venv/.gitignore  # Make Git ignore your venv directory
-source venv/bin/activate   # Use venv/Scripts/activate on Windows
-python -m pip install --upgrade pip setuptools
+uv tool install hatch
+# Or: pipx install hatch
 ```
 
 Make sure to enable the [pre-commit](https://pre-commit.com/) Git hooks:
 
 ```sh
-pip install pre-commit
+uv tool install pre-commit
+# Or: pipx install pre-commit
 pre-commit install
 ```
 
-To run the tests using an editable install:
+To run the tests:
 
 ```sh
-pip install -e .[testing]
-pytest
+hatch test
 ```
 
-To run the tests as they are run by CI, use [Nox](https://nox.thea.codes/):
+To run the tests as they are run by CI (all supported Python versions):
 
 ```sh
-pip install nox
-nox
+hatch test --all
 ```
 
 To build the documentation with [Jupyter Book](https://jupyterbook.org/):
 
 ```sh
-pip install -r docs/requirements.txt
-CJDK_HIDE_PROGRESS_BARS=1 jb build docs
+hatch run docs:build
 # Now view docs/_build/html/index.html
 ```
 
@@ -61,13 +57,6 @@ Markdown file that is not a notebook).
 New notebook pages can be added by first creating the notebook (`.ipynb`) in
 Jupyter Lab, then running `jupytext mypage.ipynb --to myst`. Delete the
 `.ipynb` file so that the MyST (`.md`) file is the single source of truth.
-
-To build the documentation as done by CI:
-
-```sh
-rm -rf docs/_build
-nox -s docs
-```
 
 (versioning-scheme)=
 

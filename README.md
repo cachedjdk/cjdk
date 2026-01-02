@@ -41,7 +41,7 @@ does not require a Java runtime to bootstrap.
 
 ## Installing
 
-**cjdk** requires Python 3.9.
+**cjdk** requires Python 3.10.
 
 ```sh
 pip install cjdk
