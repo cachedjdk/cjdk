@@ -429,31 +429,18 @@ SPDX-License-Identifier: MIT
 <span class="nb">cd</span><span class="w"> </span>cjdk
 </pre></div>
 </div>
-<p>As usual, it is best to do all development in a virtual environment:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
-<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;*&#39;</span><span class="w"> </span>&gt;venv/.gitignore<span class="w">  </span><span class="c1"># Make Git ignore your venv directory</span>
-<span class="nb">source</span><span class="w"> </span>venv/bin/activate<span class="w">   </span><span class="c1"># Use venv/Scripts/activate on Windows</span>
-python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip<span class="w"> </span>setuptools
-</pre></div>
-</div>
 <p>Make sure to enable the <a class="reference external" href="https://pre-commit.com/">pre-commit</a> Git hooks:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pre-commit
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>pre-commit
+<span class="c1"># Or: pipx install pre-commit</span>
 pre-commit<span class="w"> </span>install
 </pre></div>
 </div>
-<p>To run the tests using an editable install:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>testing<span class="o">]</span>
-pytest
-</pre></div>
-</div>
-<p>To run the tests as they are run by CI, use <a class="reference external" href="https://nox.thea.codes/">Nox</a>:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>nox
-nox
+<p>To run the tests:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span><span class="nb">test</span><span class="w"> </span>pytest
 </pre></div>
 </div>
 <p>To build the documentation with <a class="reference external" href="https://jupyterbook.org/">Jupyter Book</a>:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>docs/requirements.txt
-<span class="nv">CJDK_HIDE_PROGRESS_BARS</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>jb<span class="w"> </span>build<span class="w"> </span>docs
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">CJDK_HIDE_PROGRESS_BARS</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>--group<span class="w"> </span>docs<span class="w"> </span>jb<span class="w"> </span>build<span class="w"> </span>docs/
 <span class="c1"># Now view docs/_build/html/index.html</span>
 </pre></div>
 </div>
@@ -466,11 +453,6 @@ Markdown file that is not a notebook).</p>
 <p>New notebook pages can be added by first creating the notebook (<code class="docutils literal notranslate"><span class="pre">.ipynb</span></code>) in
 Jupyter Lab, then running <code class="docutils literal notranslate"><span class="pre">jupytext</span> <span class="pre">mypage.ipynb</span> <span class="pre">--to</span> <span class="pre">myst</span></code>. Delete the
 <code class="docutils literal notranslate"><span class="pre">.ipynb</span></code> file so that the MyST (<code class="docutils literal notranslate"><span class="pre">.md</span></code>) file is the single source of truth.</p>
-<p>To build the documentation as done by CI:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>rm<span class="w"> </span>-rf<span class="w"> </span>docs/_build
-nox<span class="w"> </span>-s<span class="w"> </span>docs
-</pre></div>
-</div>
 <section id="versioning">
 <span id="versioning-scheme"></span><h2>Versioning<a class="headerlink" href="#versioning" title="Link to this heading">#</a></h2>
 <p><strong>cjdk</strong> uses <a class="reference external" href="https://semver.org/#semantic-versioning-200">SemVer 2</a>, with the
