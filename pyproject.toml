@@ -65,26 +65,6 @@ source = "vcs"
 [tool.hatch.build.hooks.vcs]
 version-file = "src/cjdk/_version.py"
 
-[tool.hatch.envs.default]
-installer = "uv"
-
-[tool.hatch.envs.hatch-test]
-installer = "uv"
-dependency-groups = ["test"]
-
-[[tool.hatch.envs.hatch-test.matrix]]
-python = ["3.10", "3.11", "3.12", "3.13", "3.14"]
-
-[tool.hatch.envs.docs]
-installer = "uv"
-dependency-groups = ["docs"]
-
-[tool.hatch.envs.docs.scripts]
-build = "jb build docs/"
-
-[tool.hatch.envs.docs.env-vars]
-CJDK_HIDE_PROGRESS_BARS = "1"
-
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 

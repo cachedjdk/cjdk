@@ -13,13 +13,6 @@ git clone https://github.com/cachedjdk/cjdk.git
 cd cjdk
 ```
 
-Install [Hatch](https://hatch.pypa.io/):
-
-```sh
-uv tool install hatch
-# Or: pipx install hatch
-```
-
 Make sure to enable the [pre-commit](https://pre-commit.com/) Git hooks:
 
 ```sh
@@ -31,19 +24,13 @@ pre-commit install
 To run the tests:
 
 ```sh
-hatch test
-```
-
-To run the tests as they are run by CI (all supported Python versions):
-
-```sh
-hatch test --all
+uv run test pytest
 ```
 
 To build the documentation with [Jupyter Book](https://jupyterbook.org/):
 
 ```sh
-hatch run docs:build
+CJDK_HIDE_PROGRESS_BARS=1 uv run --group docs jb build docs/
 # Now view docs/_build/html/index.html
 ```
 
