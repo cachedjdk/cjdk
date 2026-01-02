@@ -12,9 +12,9 @@ from typing import TYPE_CHECKING
 from . import _cache, _conf, _index, _install, _jdk
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Callable, Iterator
     from pathlib import Path
-    from typing import Any, Callable, Unpack
+    from typing import Any, Unpack
 
     from ._conf import ConfigKwargs
 
