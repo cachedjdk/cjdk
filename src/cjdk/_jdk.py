@@ -62,7 +62,10 @@ def _looks_like_java_home(path):
 
 
 def _contains_single_subdir(path):
-    items = list(i for i in path.iterdir() if i.is_dir())
+    try:
+        items = list(i for i in path.iterdir() if i.is_dir())
+    except OSError as e:
+        raise InstallError(f"Cannot read directory {path}: {e}") from e
     if len(items) == 1:
         return items[0]
     return None

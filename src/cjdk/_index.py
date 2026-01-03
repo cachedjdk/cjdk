@@ -10,7 +10,7 @@ import warnings
 from typing import TYPE_CHECKING
 
 from . import _install
-from ._exceptions import JdkNotFoundError
+from ._exceptions import DownloadError, JdkNotFoundError
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -94,7 +94,12 @@ def jdk_url(
     """
     if exact_version is None:
         exact_version = resolve_jdk_version(index, conf)
-    return index[conf.os][conf.arch][f"jdk@{conf.vendor}"][exact_version]
+    try:
+        return index[conf.os][conf.arch][f"jdk@{conf.vendor}"][exact_version]
+    except KeyError as e:
+        raise JdkNotFoundError(
+            f"No URL found for {conf.vendor}:{exact_version} on {conf.os}-{conf.arch}"
+        ) from e
 
 
 def _cached_index_path(conf: Configuration) -> Path:
@@ -117,8 +122,13 @@ def _cached_index_path(conf: Configuration) -> Path:
 
 
 def _read_index(path: Path) -> Index:
-    with open(path, encoding="ascii") as infile:
-        index = json.load(infile)
+    try:
+        with open(path, encoding="ascii") as infile:
+            index = json.load(infile)
+    except OSError as e:
+        raise DownloadError(f"Failed to read index file {path}: {e}") from e
+    except json.JSONDecodeError as e:
+        raise DownloadError(f"Invalid JSON in index file {path}: {e}") from e
 
     return _postprocess_index(index)
 

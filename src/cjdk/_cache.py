@@ -40,8 +40,13 @@ def _key_for_url(url):
     # In practice, this usually serves only to normalize '+' and the case of
     # percent encoding hex digits.
     def percent_reencode(item):
-        decoded = urllib.parse.unquote(item, errors="strict")
-        return urllib.parse.quote(decoded, safe="+-._", errors="strict")
+        try:
+            decoded = urllib.parse.unquote(item, errors="strict")
+            return urllib.parse.quote(decoded, safe="+-._", errors="strict")
+        except UnicodeDecodeError as e:
+            raise ConfigError(
+                f"Invalid percent encoding in URL component '{item}': {e}"
+            ) from e
 
     normalized = "/".join(percent_reencode(i) for i in items)
 
@@ -80,7 +85,12 @@ def atomic_file(
         cache_dir = Path(cache_dir)
 
     key = (prefix, _key_for_url(key_url))
-    cache_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        cache_dir.mkdir(parents=True, exist_ok=True)
+    except OSError as e:
+        raise InstallError(
+            f"Failed to create cache directory {cache_dir}: {e}"
+        ) from e
 
     keydir = _key_directory(cache_dir, key)
     target = keydir / filename
@@ -135,7 +145,12 @@ def permanent_directory(
         cache_dir = Path(cache_dir)
 
     key = (prefix, _key_for_url(key_url))
-    cache_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        cache_dir.mkdir(parents=True, exist_ok=True)
+    except OSError as e:
+        raise InstallError(
+            f"Failed to create cache directory {cache_dir}: {e}"
+        ) from e
 
     keydir = _key_directory(cache_dir, key)
     if not keydir.is_dir():
@@ -164,7 +179,10 @@ def _file_exists_and_is_fresh(file, ttl) -> bool:
     if not file.is_file():
         return False
     now = time.time()
-    mtime = file.stat().st_mtime
+    try:
+        mtime = file.stat().st_mtime
+    except OSError:
+        return False
     expiration = mtime + ttl
     # To avoid all possibilities of races, err on the side of considering the
     # file stale when the difference is less than 1 second.
@@ -174,7 +192,12 @@ def _file_exists_and_is_fresh(file, ttl) -> bool:
 @contextmanager
 def _create_key_tmpdir(cache_dir, key):
     tmpdir = _key_tmpdir(cache_dir, key)
-    tmpdir.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        tmpdir.parent.mkdir(parents=True, exist_ok=True)
+    except OSError as e:
+        raise InstallError(
+            f"Failed to create cache directory {tmpdir.parent}: {e}"
+        ) from e
 
     already_exists = False
     try:
@@ -203,13 +226,25 @@ def _key_tmpdir(cache_dir: Path, key) -> Path:
 
 
 def _move_in_fetched_directory(target, tmpdir):
-    target.parent.mkdir(parents=True, exist_ok=True)
-    tmpdir.replace(target)
+    try:
+        target.parent.mkdir(parents=True, exist_ok=True)
+    except OSError as e:
+        raise InstallError(
+            f"Failed to create cache directory {target.parent}: {e}"
+        ) from e
+    try:
+        tmpdir.replace(target)
+    except OSError as e:
+        raise InstallError(f"Failed to move {tmpdir} to {target}: {e}") from e
 
 
 def _add_url_file(keydir, key_url):
-    with open(keydir.parent / (keydir.name + ".url"), "w") as f:
-        f.write(key_url)
+    url_file = keydir.parent / (keydir.name + ".url")
+    try:
+        with open(url_file, "w") as f:
+            f.write(key_url)
+    except OSError as e:
+        raise InstallError(f"Failed to write URL file {url_file}: {e}") from e
 
 
 def _wait_for_dir_to_vanish(directory, timeout, progress=True):

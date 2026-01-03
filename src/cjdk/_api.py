@@ -139,7 +139,12 @@ def clear_cache(**kwargs: Unpack[ConfigKwargs]) -> Path:
     conf = _conf.configure(**kwargs)
     cache_path = conf.cache_dir
     if cache_path.exists():
-        shutil.rmtree(cache_path)
+        try:
+            shutil.rmtree(cache_path)
+        except OSError as e:
+            raise ConfigError(
+                f"Failed to remove cache directory {cache_path}: {e}"
+            ) from e
     return cache_path
 
 
@@ -502,12 +507,17 @@ def _make_hash_checker(hashes: dict) -> Callable[[Any], None]:
         for hash, hasher in checks:
             if hash:
                 _hasher = hasher()
-                with open(filepath, "rb") as infile:
-                    while True:
-                        bytes = infile.read(16384)
-                        if not len(bytes):
-                            break
-                        _hasher.update(bytes)
+                try:
+                    with open(filepath, "rb") as infile:
+                        while True:
+                            bytes = infile.read(16384)
+                            if not len(bytes):
+                                break
+                            _hasher.update(bytes)
+                except OSError as e:
+                    raise DownloadError(
+                        f"Failed to read file for hash verification: {e}"
+                    ) from e
                 if _hasher.hexdigest().lower() != hash.lower():
                     raise DownloadError("Hash does not match")
 

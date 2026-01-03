@@ -133,7 +133,12 @@ def _default_cachedir():
 def _windows_cachedir(*, create=True):
     cjdk_cache = _local_app_data(create=create) / "cjdk"
     if create:
-        cjdk_cache.mkdir(mode=0o700, exist_ok=True)
+        try:
+            cjdk_cache.mkdir(mode=0o700, exist_ok=True)
+        except OSError as e:
+            raise ConfigError(
+                f"Failed to create cache directory {cjdk_cache}: {e}"
+            ) from e
     return cjdk_cache / "cache"
 
 
@@ -144,16 +149,27 @@ def _local_app_data(*, create=True):
     # directory exists.
     if v := os.environ.get("LOCALAPPDATA"):
         return Path(v)
-    return Path.home() / "AppData" / "Local"
+    try:
+        return Path.home() / "AppData" / "Local"
+    except RuntimeError as e:
+        raise ConfigError(f"Cannot determine home directory: {e}") from e
 
 
 def _macos_cachedir(*, create=True):
     # ~/Library/Caches almost always already exists, and both dirs are 0o700.
     # Create them here if they don't exist to ensure correct permissions.
-    caches = Path.home() / "Library" / "Caches"
+    try:
+        caches = Path.home() / "Library" / "Caches"
+    except RuntimeError as e:
+        raise ConfigError(f"Cannot determine home directory: {e}") from e
     if create:
-        caches.parent.mkdir(mode=0o700, exist_ok=True)
-        caches.mkdir(mode=0o700, exist_ok=True)
+        try:
+            caches.parent.mkdir(mode=0o700, exist_ok=True)
+            caches.mkdir(mode=0o700, exist_ok=True)
+        except OSError as e:
+            raise ConfigError(
+                f"Failed to create cache directory {caches}: {e}"
+            ) from e
     return caches / "cjdk"
 
 
@@ -162,11 +178,19 @@ def _xdg_cachedir(*, create=True):
     if v := os.environ.get("XDG_CACHE_HOME"):
         caches = Path(v)
     else:
-        caches = Path.home() / ".cache"
+        try:
+            caches = Path.home() / ".cache"
+        except RuntimeError as e:
+            raise ConfigError(f"Cannot determine home directory: {e}") from e
     # The spec says that if the directory does not exist, it should be created
     # with 0o700; if it exists, permissions should not be changed.
     if create:
-        caches.mkdir(mode=0o700, exist_ok=True)
+        try:
+            caches.mkdir(mode=0o700, exist_ok=True)
+        except OSError as e:
+            raise ConfigError(
+                f"Failed to create cache directory {caches}: {e}"
+            ) from e
     return caches / "cjdk"
 
 
@@ -183,7 +207,13 @@ def _default_index_url():
 
 
 def _default_index_ttl():
-    return int(os.environ.get("CJDK_INDEX_TTL") or "86400")
+    ttl_str = os.environ.get("CJDK_INDEX_TTL") or "86400"
+    try:
+        return int(ttl_str)
+    except ValueError as e:
+        raise ConfigError(
+            f"Invalid value for CJDK_INDEX_TTL: '{ttl_str}' (must be an integer)"
+        ) from e
 
 
 def _canonicalize_os(osname):

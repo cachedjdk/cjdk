@@ -7,6 +7,7 @@ import shutil
 import time
 
 from . import _progress
+from ._exceptions import InstallError
 
 __all__ = [
     "backoff_seconds",
@@ -62,7 +63,9 @@ def rmtree_tempdir(path, timeout=2.5):
             ):
                 time.sleep(wait_seconds)
                 continue
-            raise
+            raise InstallError(
+                f"Failed to remove directory {path}: {e}"
+            ) from e
         else:
             return
 
@@ -102,7 +105,7 @@ def unlink_tempfile(path, timeout=2.5):
             ):
                 time.sleep(wait_seconds)
                 continue
-            raise
+            raise InstallError(f"Failed to delete file {path}: {e}") from e
         else:
             return
 
@@ -125,7 +128,12 @@ def swap_in_file(target, tmpfile, timeout, progress=False):
     # in that it is adding robustness to the case of cached files being
     # accessed by other programs, as opposed to cleaning up internal cjdk
     # files.
-    target.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        target.parent.mkdir(parents=True, exist_ok=True)
+    except OSError as e:
+        raise InstallError(
+            f"Failed to create directory {target.parent}: {e}"
+        ) from e
     with _progress.indefinite(
         enabled=progress, text="File busy; waiting"
     ) as update_pbar:
@@ -141,6 +149,8 @@ def swap_in_file(target, tmpfile, timeout, progress=False):
                     time.sleep(wait_seconds)
                     update_pbar()
                     continue
-                raise
+                raise InstallError(
+                    f"Failed to move {tmpfile} to {target}: {e}"
+                ) from e
             else:
                 return
