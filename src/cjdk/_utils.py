@@ -10,9 +10,9 @@ from . import _progress
 
 __all__ = [
     "backoff_seconds",
-    "rmtree",
+    "rmtree_tempdir",
     "swap_in_file",
-    "unlink_file",
+    "unlink_tempfile",
 ]
 
 # ERROR_ACCESS_DENIED (5) and ERROR_SHARING_VIOLATION (32)
@@ -46,13 +46,14 @@ def backoff_seconds(initial_interval, max_interval, max_total, factor=1.5):
     yield -1
 
 
-def rmtree(path, timeout=2.5):
+def rmtree_tempdir(path, timeout=2.5):
     # Try extra hard to clean up a temporary directory. See comment in
-    # unlink_file() for why.
+    # unlink_tempfile() for why.
 
     for wait_seconds in backoff_seconds(0.001, 0.5, timeout):
         try:
-            shutil.rmtree(path)
+            if os.path.isdir(path):
+                shutil.rmtree(path)
         except OSError as e:
             if (
                 hasattr(e, "winerror")
@@ -66,7 +67,7 @@ def rmtree(path, timeout=2.5):
             return
 
 
-def unlink_file(path, timeout=2.5):
+def unlink_tempfile(path, timeout=2.5):
     # On Windows, we may encounter errors when trying to delete a file that we
     # just closed after writing, due to Antivirus opening the file to scan it.
     # Microsoft Defender Antivirus is said to use FILE_SHARE_DELETE, but
@@ -91,7 +92,8 @@ def unlink_file(path, timeout=2.5):
 
     for wait_seconds in backoff_seconds(0.001, 0.5, timeout):
         try:
-            os.unlink(path)
+            if os.path.exists(path):
+                os.unlink(path)
         except OSError as e:
             if (
                 hasattr(e, "winerror")

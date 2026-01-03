@@ -20,12 +20,18 @@ def test_backoff_seconds():
     assert list(f(1, 2, 10, factor=2)) == [1, 2, 2, 2, 2, 1, -1]
 
 
-def test_rmtree_with_retry(tmp_path):
+def test_rmtree_tempdir(tmp_path):
     path = tmp_path / "testdir"
     path.mkdir()
     (path / "file").touch()
-    _utils.rmtree(path)
+    _utils.rmtree_tempdir(path)
     assert not path.exists()
+
+    # Non-dir is ignored
+    _utils.rmtree_tempdir(tmp_path / "nonexistent")
+    (tmp_path / "a_file").touch()
+    _utils.rmtree_tempdir(tmp_path / "a_file")
+    assert (tmp_path / "a_file").exists()
 
     # With file inside initially open
     exec = ThreadPoolExecutor()
@@ -39,7 +45,7 @@ def test_rmtree_with_retry(tmp_path):
     file.touch()
     with open(file) as fp:
         exec.submit(close_after_delay, fp)
-        _utils.rmtree(path, timeout=10)
+        _utils.rmtree_tempdir(path, timeout=10)
         assert not path.exists()
 
     exec.shutdown()
@@ -50,18 +56,17 @@ def test_rmtree_with_retry(tmp_path):
         file = path / "file"
         file.touch()
         with open(file) as fp, pytest.raises(OSError):
-            _utils.rmtree(path, timeout=0.1)
+            _utils.rmtree_tempdir(path, timeout=0.1)
 
 
-def test_unlink_file(tmp_path):
+def test_unlink_tempfile(tmp_path):
     file = tmp_path / "test.txt"
     file.touch()
-    _utils.unlink_file(file)
+    _utils.unlink_tempfile(file)
     assert not file.exists()
 
-    # Non-existent file raises
-    with pytest.raises(OSError):
-        _utils.unlink_file(tmp_path / "nonexistent")
+    # Non-existent file is ignored
+    _utils.unlink_tempfile(tmp_path / "nonexistent")
 
 
 def test_swap_in_file(tmp_path):

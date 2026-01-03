@@ -2,7 +2,6 @@
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-import contextlib
 import sys
 import tarfile
 import tempfile
@@ -50,15 +49,17 @@ def download_and_extract(
     url = http + url.removeprefix(scheme)
     with tempfile.TemporaryDirectory(prefix="cjdk-") as tempd:
         file = Path(tempd) / f"archive.{ext}"
-        download_file(
-            file,
-            url,
-            checkfunc=checkfunc,
-            progress=progress,
-            _allow_insecure_for_testing=_allow_insecure_for_testing,
-        )
-        extract(destdir, file, progress)
-        _utils.unlink_file(file)
+        try:
+            download_file(
+                file,
+                url,
+                checkfunc=checkfunc,
+                progress=progress,
+                _allow_insecure_for_testing=_allow_insecure_for_testing,
+            )
+            extract(destdir, file, progress)
+        finally:
+            _utils.unlink_tempfile(file)
 
 
 def download_file(
@@ -81,26 +82,21 @@ def download_file(
                 f"Cannot handle {scheme} (must be https)"
             )
 
-    try:
-        with requests.get(url, stream=True) as response:
-            response.raise_for_status()
-            total = response.headers.get("content-length", None)
-            total = int(total) if total else None
-            with open(dest, "wb") as outfile:
-                for chunk in _progress.data_transfer(
-                    total,
-                    response.iter_content(chunk_size=16384),
-                    enabled=progress,
-                    text="Download",
-                ):
-                    outfile.write(chunk)
+    with requests.get(url, stream=True) as response:
+        response.raise_for_status()
+        total = response.headers.get("content-length", None)
+        total = int(total) if total else None
+        with open(dest, "wb") as outfile:
+            for chunk in _progress.data_transfer(
+                total,
+                response.iter_content(chunk_size=16384),
+                enabled=progress,
+                text="Download",
+            ):
+                outfile.write(chunk)
 
-        if checkfunc:
-            checkfunc(dest)
-    except BaseException:
-        with contextlib.suppress(OSError):
-            _utils.unlink_file(dest)
-        raise
+    if checkfunc:
+        checkfunc(dest)
 
 
 def _extract_zip(destdir, srcfile, progress=True):

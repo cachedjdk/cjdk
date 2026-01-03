@@ -86,13 +86,17 @@ def atomic_file(
     if not _file_exists_and_is_fresh(target, ttl):
         with _create_key_tmpdir(cache_dir, key) as tmpdir:
             if tmpdir:
-                fetchfunc(tmpdir / filename)
-                _utils.swap_in_file(
-                    target,
-                    tmpdir / filename,
-                    timeout=timeout_for_read_elsewhere,
-                )
-                _add_url_file(keydir, key_url)
+                filepath = tmpdir / filename
+                try:
+                    fetchfunc(filepath)
+                    _utils.swap_in_file(
+                        target,
+                        filepath,
+                        timeout=timeout_for_read_elsewhere,
+                    )
+                    _add_url_file(keydir, key_url)
+                finally:
+                    _utils.unlink_tempfile(filepath)
             else:  # Somebody else is currently fetching
                 _wait_for_dir_to_vanish(
                     _key_tmpdir(cache_dir, key),
@@ -136,9 +140,12 @@ def permanent_directory(
     if not keydir.is_dir():
         with _create_key_tmpdir(cache_dir, key) as tmpdir:
             if tmpdir:
-                fetchfunc(tmpdir)
-                _move_in_fetched_directory(keydir, tmpdir)
-                _add_url_file(keydir, key_url)
+                try:
+                    fetchfunc(tmpdir)
+                    _move_in_fetched_directory(keydir, tmpdir)
+                    _add_url_file(keydir, key_url)
+                finally:
+                    _utils.rmtree_tempdir(tmpdir)
             else:  # Somebody else is currently fetching
                 _wait_for_dir_to_vanish(
                     _key_tmpdir(cache_dir, key),
@@ -183,8 +190,7 @@ def _create_key_tmpdir(cache_dir, key):
         try:
             yield tmpdir
         finally:
-            if tmpdir.is_dir():
-                _utils.rmtree(tmpdir)
+            _utils.rmtree_tempdir(tmpdir)
 
 
 def _key_directory(cache_dir: Path, key) -> Path:
