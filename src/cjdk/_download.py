@@ -2,6 +2,7 @@
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
+import contextlib
 import sys
 import tarfile
 import tempfile
@@ -11,7 +12,7 @@ from urllib.parse import urlparse
 
 import requests
 
-from . import _progress
+from . import _progress, _utils
 
 __all__ = [
     "download_and_extract",
@@ -57,6 +58,7 @@ def download_and_extract(
             _allow_insecure_for_testing=_allow_insecure_for_testing,
         )
         extract(destdir, file, progress)
+        _utils.unlink_file(file)
 
 
 def download_file(
@@ -79,21 +81,26 @@ def download_file(
                 f"Cannot handle {scheme} (must be https)"
             )
 
-    response = requests.get(url, stream=True)
-    response.raise_for_status()
-    total = response.headers.get("content-length", None)
-    total = int(total) if total else None
-    with open(dest, "wb") as outfile:
-        for chunk in _progress.data_transfer(
-            total,
-            response.iter_content(chunk_size=16384),
-            enabled=progress,
-            text="Download",
-        ):
-            outfile.write(chunk)
+    try:
+        with requests.get(url, stream=True) as response:
+            response.raise_for_status()
+            total = response.headers.get("content-length", None)
+            total = int(total) if total else None
+            with open(dest, "wb") as outfile:
+                for chunk in _progress.data_transfer(
+                    total,
+                    response.iter_content(chunk_size=16384),
+                    enabled=progress,
+                    text="Download",
+                ):
+                    outfile.write(chunk)
 
-    if checkfunc:
-        checkfunc(dest)
+        if checkfunc:
+            checkfunc(dest)
+    except BaseException:
+        with contextlib.suppress(OSError):
+            _utils.unlink_file(dest)
+        raise
 
 
 def _extract_zip(destdir, srcfile, progress=True):
