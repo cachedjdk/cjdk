@@ -4,7 +4,6 @@
 
 import os
 import shutil
-import sys
 import time
 
 from . import _progress
@@ -48,30 +47,12 @@ def backoff_seconds(initial_interval, max_interval, max_total, factor=1.5):
 
 
 def rmtree(path, timeout=2.5):
-    # Try extra hard to clean up a temporary directory.
-
-    if sys.version_info >= (3, 12):
-
-        def retry_unlink(func, path, exc):
-            if func is os.unlink:
-                unlink_file(path, timeout=0)
-            else:
-                raise exc
-
-        rmtree_kwargs = {"onexc": retry_unlink}
-    else:
-
-        def retry_unlink(func, path, exc_info):
-            if func is os.unlink:
-                unlink_file(path, timeout=0)
-            else:
-                raise exc_info[1].with_traceback(exc_info[2])
-
-        rmtree_kwargs = {"onerror": retry_unlink}
+    # Try extra hard to clean up a temporary directory. See comment in
+    # unlink_file() for why.
 
     for wait_seconds in backoff_seconds(0.001, 0.5, timeout):
         try:
-            shutil.rmtree(path, **rmtree_kwargs)
+            shutil.rmtree(path)
         except OSError as e:
             if (
                 hasattr(e, "winerror")
@@ -86,51 +67,31 @@ def rmtree(path, timeout=2.5):
 
 
 def unlink_file(path, timeout=2.5):
-    if sys.platform != "win32":
-        return os.unlink(path)
-
-    # On Windows, we sometimes encounter errors when trying to delete a file
-    # that we just closed after writing. This is due to Antivirus opening the
-    # file to scan it. Microsoft Defender Antivirus is said to use
-    # FILE_SHARE_DELETE, but os.unlink() calls DeleteFileW(), which does not
-    # use FILE_SHARE_DELETE; since the check is bidirectional, it fails.
-    # So use Win32 API calls that will not have this problem.
-
-    import ctypes
-    from ctypes import wintypes
-
-    kernel32 = ctypes.windll.kernel32
-    kernel32.CreateFileW.restype = wintypes.HANDLE
-
-    DELETE = 0x00010000
-    FILE_SHARE_READ = 0x01
-    FILE_SHARE_WRITE = 0x02
-    FILE_SHARE_DELETE = 0x04
-    OPEN_EXISTING = 3
-    FILE_FLAG_DELETE_ON_CLOSE = 0x04000000
-    INVALID_HANDLE_VALUE = wintypes.HANDLE(-1).value
-
-    def do_unlink(path):
-        handle = INVALID_HANDLE_VALUE
-        try:
-            handle = kernel32.CreateFileW(
-                str(path),
-                DELETE,
-                FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-                None,
-                OPEN_EXISTING,
-                FILE_FLAG_DELETE_ON_CLOSE,
-                None,
-            )
-            if handle == INVALID_HANDLE_VALUE:
-                os.unlink(path)  # Let it raise an appropriate error.
-        finally:
-            if handle != INVALID_HANDLE_VALUE:
-                kernel32.CloseHandle(handle)
+    # On Windows, we may encounter errors when trying to delete a file that we
+    # just closed after writing, due to Antivirus opening the file to scan it.
+    # Microsoft Defender Antivirus is said to use FILE_SHARE_DELETE, but
+    # os.unlink() calls DeleteFileW(), which does not use FILE_SHARE_DELETE;
+    # since the check is bidirectional, it fails.
+    #
+    # (To be clear, this is probably rare and the exact conditions are unknown;
+    # Also I have not actually observed it happening.)
+    #
+    # So we could use different Win32 API calls, namely CreateFile(path,
+    # DELETE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL,
+    # OPEN_EXISTING, FILE_FLAG_DELETE_ON_CLOSE, NULL) and then CloseHandle().
+    # This should succeed on files being scanned.
+    #
+    # However, that method only marks the file for deleteion; actual deletion
+    # happens once all processes close the file. This is a problem, because we
+    # need to do the next thing, which is often to delete the parent directory
+    # of the file. So we need to wait for the file to go away.
+    #
+    # And as long as we're waiting anyway, we can wait for regular deletion to
+    # succeed, so we don't need to use Win32 API calls directly.
 
     for wait_seconds in backoff_seconds(0.001, 0.5, timeout):
         try:
-            do_unlink(path)
+            os.unlink(path)
         except OSError as e:
             if (
                 hasattr(e, "winerror")
