@@ -60,3 +60,30 @@ install an application JAR.
 .. autofunction:: cjdk.clear_cache
 .. versionadded:: 0.5.0
 ```
+
+## Exceptions
+
+```{eval-rst}
+.. autoexception:: cjdk.CjdkError
+.. versionadded:: 0.5.0
+```
+
+```{eval-rst}
+.. autoexception:: cjdk.ConfigError
+.. versionadded:: 0.5.0
+```
+
+```{eval-rst}
+.. autoexception:: cjdk.JdkNotFoundError
+.. versionadded:: 0.5.0
+```
+
+```{eval-rst}
+.. autoexception:: cjdk.DownloadError
+.. versionadded:: 0.5.0
+```
+
+```{eval-rst}
+.. autoexception:: cjdk.InstallError
+.. versionadded:: 0.5.0
+```

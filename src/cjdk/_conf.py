@@ -11,6 +11,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from ._exceptions import ConfigError
+
 if TYPE_CHECKING:
     from typing import TypedDict, Unpack
 
@@ -53,9 +55,9 @@ def configure(**kwargs: Unpack[ConfigKwargs]) -> Configuration:
     jdk = kwargs.pop("jdk", None)
     if jdk:
         if kwargs.get("vendor"):
-            raise ValueError("Cannot specify jdk= together with vendor=")
+            raise ConfigError("Cannot specify jdk= together with vendor=")
         if kwargs.get("version"):
-            raise ValueError("Cannot specify jdk= together with version=")
+            raise ConfigError("Cannot specify jdk= together with version=")
         kwargs["vendor"], kwargs["version"] = _parse_vendor_version(jdk)
 
     default_vendor = (
@@ -84,7 +86,7 @@ def configure(**kwargs: Unpack[ConfigKwargs]) -> Configuration:
         conf.index_ttl = _default_index_ttl()
 
     if kwargs:
-        raise ValueError(f"Unrecognized kwargs: {tuple(kwargs.keys())}")
+        raise ConfigError(f"Unrecognized kwargs: {tuple(kwargs.keys())}")
     return conf
 
 
@@ -94,7 +96,7 @@ def _parse_vendor_version(spec):
     if ":" in spec:
         parts = spec.split(":")
         if len(parts) != 2:
-            raise ValueError(f"Cannot parse JDK spec '{spec}'")
+            raise ConfigError(f"Cannot parse JDK spec '{spec}'")
         return tuple(parts)
     if len(spec) == 0:
         return "", ""
@@ -102,7 +104,7 @@ def _parse_vendor_version(spec):
         return spec, ""
     if re.fullmatch(r"[0-9+.-]*", spec):
         return "", spec
-    raise ValueError(f"Cannot parse JDK spec '{spec}'")
+    raise ConfigError(f"Cannot parse JDK spec '{spec}'")
 
 
 def _default_cachedir():
@@ -115,7 +117,7 @@ def _default_cachedir():
     if v := os.environ.get("CJDK_CACHE_DIR"):
         ret = Path(v)
         if not ret.is_absolute():
-            raise ValueError(
+            raise ConfigError(
                 f"CJDK_CACHE_DIR must be an absolute path (found '{ret}')"
             )
         return ret

@@ -12,6 +12,7 @@ from urllib.parse import urlparse
 import requests
 
 from . import _progress, _utils
+from ._exceptions import DownloadError, UnsupportedFormatError
 
 __all__ = [
     "download_and_extract",
@@ -36,13 +37,13 @@ def download_and_extract(
     try:
         ext, http = scheme.split("+")
     except ValueError as err:
-        raise NotImplementedError(f"Cannot handle {scheme} URL") from err
+        raise UnsupportedFormatError(f"Cannot handle {scheme} URL") from err
     if http != "https" and not _allow_insecure_for_testing:
-        raise NotImplementedError(f"Cannot handle {http} (must be https)")
+        raise UnsupportedFormatError(f"Cannot handle {http} (must be https)")
     try:
         extract = {"zip": _extract_zip, "tgz": _extract_tgz}[ext]
     except KeyError as err:
-        raise NotImplementedError(
+        raise UnsupportedFormatError(
             f"Cannot handle compression type {ext}"
         ) from err
 
@@ -78,22 +79,25 @@ def download_file(
     if not _allow_insecure_for_testing:
         scheme = urlparse(url).scheme
         if scheme != "https":
-            raise NotImplementedError(
+            raise UnsupportedFormatError(
                 f"Cannot handle {scheme} (must be https)"
             )
 
-    with requests.get(url, stream=True) as response:
-        response.raise_for_status()
-        total = response.headers.get("content-length", None)
-        total = int(total) if total else None
-        with open(dest, "wb") as outfile:
-            for chunk in _progress.data_transfer(
-                total,
-                response.iter_content(chunk_size=16384),
-                enabled=progress,
-                text="Download",
-            ):
-                outfile.write(chunk)
+    try:
+        with requests.get(url, stream=True) as response:
+            response.raise_for_status()
+            total = response.headers.get("content-length", None)
+            total = int(total) if total else None
+            with open(dest, "wb") as outfile:
+                for chunk in _progress.data_transfer(
+                    total,
+                    response.iter_content(chunk_size=16384),
+                    enabled=progress,
+                    text="Download",
+                ):
+                    outfile.write(chunk)
+    except requests.RequestException as e:
+        raise DownloadError(f"Download failed: {e}") from e
 
     if checkfunc:
         checkfunc(dest)

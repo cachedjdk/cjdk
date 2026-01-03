@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 
 from cjdk import _cache
+from cjdk._exceptions import InstallError
 
 
 def test_key_for_url():
@@ -66,5 +67,5 @@ def test_wait_for_dir_to_vanish(tmp_path):
     exec.shutdown()
 
     path.mkdir()
-    with pytest.raises(Exception):
+    with pytest.raises(InstallError):
         _cache._wait_for_dir_to_vanish(path, 0.1)

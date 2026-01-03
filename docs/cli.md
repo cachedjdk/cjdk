@@ -24,6 +24,16 @@ More details about the choices and defaults for [`VENDOR`](./vendors.md),
 [`VERSION`](./versions.md), and [`--cache_dir`](./cachedir.md) are available on
 separate pages.
 
+All subcommands return 0 on success, 1 on general/unknown errors, 2 on
+configuration error (e.g., invalid arguments), 3 if a matching JDK is not
+available, 4 if download fails, 5 if unpacking fails. However, the `exec`
+subcommand, if successful, returns the exit code of the launched program.
+
+```{eval-rst}
+.. versionchanged:: 0.5.0
+   Specific exit codes were added.
+```
+
 ## Querying the JDK index
 
 ### `ls`

@@ -10,6 +10,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from . import _progress, _utils
+from ._exceptions import ConfigError, InstallError
 
 __all__ = [
     "atomic_file",
@@ -24,7 +25,7 @@ def _key_for_url(url):
     if not isinstance(url, tuple):
         url = urllib.parse.urlparse(url, allow_fragments=False)
     if url.params or url.query or url.fragment:
-        raise ValueError(
+        raise ConfigError(
             f"URL should not have parameters, query, or fragment: {url}"
         )
     items = (url.netloc,) + tuple(url.path.strip("/").split("/"))
@@ -103,7 +104,7 @@ def atomic_file(
                     timeout=timeout_for_fetch_elsewhere,
                 )
                 if not _file_exists_and_is_fresh(target, ttl=2**63):
-                    raise Exception(
+                    raise InstallError(
                         f"Another process was fetching {target} but the file is not present; "
                         f"the other process may have failed or been interrupted."
                     )
@@ -152,7 +153,7 @@ def permanent_directory(
                     timeout=timeout_for_fetch_elsewhere,
                 )
                 if not keydir.is_dir():
-                    raise Exception(
+                    raise InstallError(
                         f"Another process was fetching {keydir} but the directory is not present; "
                         f"the other process may have failed or been interrupted"
                     )
@@ -227,7 +228,7 @@ def _wait_for_dir_to_vanish(directory, timeout, progress=True):
             if not directory.is_dir():
                 return
             if wait_seconds < 0:
-                raise Exception(
+                raise InstallError(
                     f"Timeout while waiting for directory {directory} to disappear"
                 )
             time.sleep(wait_seconds)

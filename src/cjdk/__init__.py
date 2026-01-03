@@ -12,15 +12,27 @@ from ._api import (
     list_jdks,
     list_vendors,
 )
+from ._exceptions import (
+    CjdkError,
+    ConfigError,
+    DownloadError,
+    InstallError,
+    JdkNotFoundError,
+)
 from ._version import __version__ as __version__
 
 __all__ = [
     "cache_file",
     "cache_jdk",
     "cache_package",
+    "CjdkError",
     "clear_cache",
+    "ConfigError",
+    "DownloadError",
+    "InstallError",
     "java_env",
     "java_home",
+    "JdkNotFoundError",
     "list_jdks",
     "list_vendors",
 ]

@@ -9,6 +9,7 @@ import pytest
 
 from cjdk import _cache, _index
 from cjdk._conf import configure
+from cjdk._exceptions import JdkNotFoundError
 
 
 def test_jdk_index(tmp_path):
@@ -224,7 +225,7 @@ def test_match_version():
     assert f("graalvm", ["10", "11.0", "11.1", "1.12.0"], "1") == "1.12.0"
     assert f("temurin", ["11.0", "17.0", "18.0"], "") == "18.0"
     assert f("temurin", ["11.0", "17.0", "18.0"], "17+") == "18.0"
-    with pytest.raises(LookupError):
+    with pytest.raises(JdkNotFoundError):
         f("temurin", ["11.0", "17.0", "18.0"], "19+")
 
 

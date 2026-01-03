@@ -6,6 +6,7 @@ from pathlib import Path
 
 from . import _index, _install
 from ._conf import Configuration
+from ._exceptions import InstallError, JdkNotFoundError, UnsupportedFormatError
 
 __all__ = [
     "install_jdk",
@@ -25,7 +26,12 @@ def install_jdk(conf: Configuration):
     name = f"JDK {conf.vendor}:{conf.version}"
     url = _index.jdk_url(index, conf)
 
-    return _install.install_dir(_JDK_KEY_PREFIX, name, url, conf)
+    try:
+        return _install.install_dir(_JDK_KEY_PREFIX, name, url, conf)
+    except UnsupportedFormatError as e:
+        raise JdkNotFoundError(
+            f"Unsupported archive format for {name}: {e}"
+        ) from e
 
 
 def find_home(path, _recursion_depth=2):
@@ -45,7 +51,7 @@ def find_home(path, _recursion_depth=2):
         subdir = _contains_single_subdir(path)
         if subdir:
             return find_home(subdir, _recursion_depth=_recursion_depth - 1)
-    raise RuntimeError(f"{path} does not look like it contains a JDK or JRE")
+    raise InstallError(f"{path} does not look like it contains a JDK or JRE")
 
 
 def _looks_like_java_home(path):

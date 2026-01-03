@@ -10,6 +10,7 @@ import warnings
 from typing import TYPE_CHECKING
 
 from . import _install
+from ._exceptions import JdkNotFoundError
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -73,7 +74,7 @@ def resolve_jdk_version(index: Index, conf: Configuration) -> str:
     jdks = available_jdks(index, conf)
     versions = _get_versions(jdks, conf)
     if not versions:
-        raise KeyError(
+        raise JdkNotFoundError(
             f"No {conf.vendor} JDK is available for {conf.os}-{conf.arch}"
         )
     return _match_version(conf.vendor, versions, conf.version)
@@ -195,7 +196,9 @@ def _match_version(vendor, candidates: list[str], requested) -> str:
     matched = _match_versions(vendor, candidates, requested)
 
     if len(matched) == 0:
-        raise LookupError(f"No matching version for '{vendor}:{requested}'")
+        raise JdkNotFoundError(
+            f"No matching version for '{vendor}:{requested}'"
+        )
 
     return matched[max(matched)]
 

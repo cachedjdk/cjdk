@@ -10,6 +10,7 @@ import mock_server
 import pytest
 
 from cjdk import _api, _cache, _index, _jdk
+from cjdk._exceptions import DownloadError
 
 
 def test_cache_jdk():
@@ -137,7 +138,7 @@ def test_make_hash_checker(tmp_path):
     not_empty_file = tmp_path / "not_empty"
     with open(not_empty_file, "w") as fp:
         fp.write("hello")
-    with pytest.raises(ValueError):
+    with pytest.raises(DownloadError):
         check(not_empty_file)
 
 
