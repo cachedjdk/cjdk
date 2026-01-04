@@ -20,11 +20,10 @@ if TYPE_CHECKING:
 
     class ConfigKwargs(TypedDict, total=False):
         jdk: str
-        fallback_to_default_vendor: bool
         os: str
         arch: str
-        vendor: str | None
-        version: str | None
+        vendor: str
+        version: str
         cache_dir: Path
         index_url: str
         index_ttl: int
@@ -35,6 +34,7 @@ if TYPE_CHECKING:
 __all__ = [
     "Configuration",
     "configure",
+    "parse_vendor_version",
 ]
 
 
@@ -42,7 +42,7 @@ __all__ = [
 class Configuration:
     os: str
     arch: str
-    vendor: str | None
+    vendor: str
     version: str
     cache_dir: Path
     index_url: str
@@ -60,17 +60,12 @@ def configure(**kwargs: Unpack[ConfigKwargs]) -> Configuration:
             raise ConfigError("Cannot specify jdk= together with vendor=")
         if kwargs.get("version"):
             raise ConfigError("Cannot specify jdk= together with version=")
-        kwargs["vendor"], kwargs["version"] = _parse_vendor_version(jdk)
+        kwargs["vendor"], kwargs["version"] = parse_vendor_version(jdk)
 
-    default_vendor = (
-        _default_vendor()
-        if kwargs.pop("fallback_to_default_vendor", True)
-        else None
-    )
     conf = Configuration(
         os=_canonicalize_os(kwargs.pop("os", None)),
         arch=_canonicalize_arch(kwargs.pop("arch", None)),
-        vendor=kwargs.pop("vendor", None) or default_vendor,
+        vendor=kwargs.pop("vendor", None) or _default_vendor(),
         version=kwargs.pop("version", "") or "",
         cache_dir=kwargs.pop("cache_dir", None) or _default_cachedir(),
         index_url=kwargs.pop("index_url", None) or _default_index_url(),
@@ -92,7 +87,7 @@ def configure(**kwargs: Unpack[ConfigKwargs]) -> Configuration:
     return conf
 
 
-def _parse_vendor_version(spec: str) -> tuple[str, str]:
+def parse_vendor_version(spec: str) -> tuple[str, str]:
     # Actually we don't fully parse here; we only disambiguate between vendor
     # and version when only one is given.
     if ":" in spec:

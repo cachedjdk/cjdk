@@ -437,26 +437,26 @@ def _get_jdks(
     cached_only: bool = True,
     **kwargs: Unpack[ConfigKwargs],
 ) -> list[str]:
-    conf = _conf.configure(
-        vendor=vendor,
-        version=version,
-        fallback_to_default_vendor=False,
-        **kwargs,
-    )
-    if conf.vendor is None:
-        # Search across all vendors.
-        kwargs.pop("jdk", None)  # It was already parsed.
+    jdk = kwargs.pop("jdk", None)
+    if jdk:
+        parsed_vendor, parsed_version = _conf.parse_vendor_version(jdk)
+        vendor = vendor or parsed_vendor or None
+        version = version or parsed_version or None
+
+    # Handle "all vendors" before creating Configuration.
+    if vendor is None:
         return [
             jdk
             for v in sorted(_get_vendors())
             for jdk in _get_jdks(
                 vendor=v,
-                version=conf.version,
+                version=version,
                 cached_only=cached_only,
                 **kwargs,
             )
         ]
-    assert conf.vendor is not None
+
+    conf = _conf.configure(vendor=vendor, version=version, **kwargs)
     index = _index.jdk_index(conf)
     jdks = _index.available_jdks(index, conf)
     versions = _index._get_versions(jdks, conf)

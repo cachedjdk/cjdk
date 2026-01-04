@@ -71,7 +71,6 @@ def resolve_jdk_version(index: Index, conf: Configuration) -> str:
     Arguments:
     index -- The JDK index (nested dict)
     """
-    assert conf.vendor is not None
     jdks = available_jdks(index, conf)
     versions = _get_versions(jdks, conf)
     if not versions:
