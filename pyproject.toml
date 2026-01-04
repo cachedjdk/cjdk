@@ -33,6 +33,7 @@ dependencies = [
     "click >= 8.0",
     "progressbar2 >= 4.0",
     "requests >= 2.24",
+    "typing-extensions>=4.15.0",
 ]
 
 [project.urls]

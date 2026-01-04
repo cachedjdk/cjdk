@@ -43,7 +43,7 @@ def jdk_index(conf: Configuration) -> Index:
     return _read_index(_cached_index_path(conf))
 
 
-def available_jdks(index: Index, conf: Configuration) -> tuple[str, str]:
+def available_jdks(index: Index, conf: Configuration) -> list[tuple[str, str]]:
     """
     Find in index the available JDK vendor-version combinations.
 
@@ -71,6 +71,7 @@ def resolve_jdk_version(index: Index, conf: Configuration) -> str:
     Arguments:
     index -- The JDK index (nested dict)
     """
+    assert conf.vendor is not None
     jdks = available_jdks(index, conf)
     versions = _get_versions(jdks, conf)
     if not versions:
@@ -171,13 +172,15 @@ def _postprocess_index(index: Index) -> Index:
     return index
 
 
-def _get_versions(jdks: tuple[str, str], conf) -> list[str]:
+def _get_versions(
+    jdks: list[tuple[str, str]], conf: Configuration
+) -> list[str]:
     return [i[1] for i in jdks if i[0] == conf.vendor]
 
 
 def _match_versions(
-    vendor, candidates: list[str], requested
-) -> dict[tuple[int], str]:
+    vendor: str, candidates: list[str], requested: str
+) -> dict[tuple[int | str, ...], str]:
     # Find all candidates compatible with the request
     is_graal = "graalvm" in vendor.lower()
     normreq = _normalize_version(requested, remove_prefix_1=not is_graal)
@@ -202,7 +205,7 @@ def _match_versions(
     }
 
 
-def _match_version(vendor, candidates: list[str], requested) -> str:
+def _match_version(vendor: str, candidates: list[str], requested: str) -> str:
     matched = _match_versions(vendor, candidates, requested)
 
     if len(matched) == 0:
@@ -216,7 +219,9 @@ def _match_version(vendor, candidates: list[str], requested) -> str:
 _VER_SEPS = re.compile(r"[.+_-]")
 
 
-def _normalize_version(ver, *, remove_prefix_1=False):
+def _normalize_version(
+    ver: str, *, remove_prefix_1: bool = False
+) -> tuple[int | str, ...]:
     # Normalize requested version and candidates:
     # - Split at dots and dashes (so we don't distinguish between '.' and '-')
     # - Try to convert elements to integers (so that we can compare elements
@@ -241,14 +246,16 @@ def _normalize_version(ver, *, remove_prefix_1=False):
     return norm + plus
 
 
-def _intify(s: str):
+def _intify(s: str) -> int | str:
     try:
         return int(s)
     except ValueError:
         return s
 
 
-def _is_version_compatible_with_spec(version, spec):
+def _is_version_compatible_with_spec(
+    version: tuple[int | str, ...], spec: tuple[int | str, ...]
+) -> bool:
     assert "+" not in version
     is_plus = spec and spec[-1] == "+"
     if is_plus:

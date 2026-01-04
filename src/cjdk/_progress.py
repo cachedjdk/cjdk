@@ -1,13 +1,20 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+from __future__ import annotations
 
 import os
 import sys
 import time
 from contextlib import contextmanager
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 import progressbar
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable, Iterator, Sized
+
+_T = TypeVar("_T")
 
 __all__ = [
     "indefinite",
@@ -17,7 +24,7 @@ __all__ = [
 
 
 @contextmanager
-def indefinite(*, enabled, text):
+def indefinite(*, enabled: bool, text: str) -> Iterator[Callable[[], None]]:
     """
     Context manager optionally displaying indefinite progress bar.
 
@@ -36,7 +43,9 @@ def indefinite(*, enabled, text):
         yield lambda: pbar.update()
 
 
-def data_transfer(total_bytes, iter, *, enabled, text):
+def data_transfer(
+    total_bytes: int | None, iter: Iterable[bytes], *, enabled: bool, text: str
+) -> Iterator[bytes]:
     """
     Wrap bytes iterator with optional progress bar.
 
@@ -49,9 +58,10 @@ def data_transfer(total_bytes, iter, *, enabled, text):
     enabled = _bar_enabled(enabled)
     barclass = progressbar.DataTransferBar if enabled else progressbar.NullBar
     size = 0
-    if total_bytes is None:
-        total_bytes = progressbar.UnknownLength
-    with barclass(max_value=total_bytes, prefix=f"{text} ") as pbar:
+    max_val: Any = (
+        total_bytes if total_bytes is not None else progressbar.UnknownLength
+    )
+    with barclass(max_value=max_val, prefix=f"{text} ") as pbar:
         pbar.start()
         for chunk in iter:
             yield chunk
@@ -59,7 +69,9 @@ def data_transfer(total_bytes, iter, *, enabled, text):
             pbar.update(size)
 
 
-def iterate(iter, *, enabled, text, total=None):
+def iterate(
+    iter: Iterable[_T], *, enabled: bool, text: str, total: int | None = None
+) -> Iterator[_T]:
     """
     Wrap iterator with optional progress bar.
 
@@ -71,16 +83,18 @@ def iterate(iter, *, enabled, text, total=None):
     """
     enabled = _bar_enabled(enabled)
     barclass = progressbar.ProgressBar if enabled else progressbar.NullBar
-    if total is None:
-        if hasattr(iter, "__len__"):
-            total = len(iter)
-        else:
-            total = progressbar.UnknownLength
-    bar = barclass(prefix=f"{text} ", max_value=total)
+    max_val: Any
+    if total is not None:
+        max_val = total
+    elif hasattr(iter, "__len__"):
+        max_val = len(cast("Sized", iter))
+    else:
+        max_val = progressbar.UnknownLength
+    bar = barclass(prefix=f"{text} ", max_value=max_val)
     yield from bar(iter)
 
 
-def _bar_enabled(enabled):
+def _bar_enabled(enabled: bool) -> bool:
     if os.environ.get("CJDK_HIDE_PROGRESS_BARS", "").lower() in (
         "1",
         "true",

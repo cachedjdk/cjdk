@@ -1,15 +1,20 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+from __future__ import annotations
 
 import sys
 import tarfile
 import tempfile
 import zipfile
 from pathlib import Path
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 import requests
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 from . import _progress, _utils
 from ._exceptions import InstallError, UnsupportedFormatError
@@ -21,13 +26,13 @@ __all__ = [
 
 
 def download_and_extract(
-    destdir,
-    url,
+    destdir: Path,
+    url: str,
     *,
-    checkfunc=None,
-    progress=True,
-    _allow_insecure_for_testing=False,
-):
+    checkfunc: Callable[[Path], None] | None = None,
+    progress: bool = True,
+    _allow_insecure_for_testing: bool = False,
+) -> None:
     """
     Download zip or tgz archive and extract to destdir.
 
@@ -64,13 +69,13 @@ def download_and_extract(
 
 
 def download_file(
-    dest,
-    url,
+    dest: Path,
+    url: str,
     *,
-    checkfunc=None,
-    progress=False,
-    _allow_insecure_for_testing=False,
-):
+    checkfunc: Callable[[Path], None] | None = None,
+    progress: bool = False,
+    _allow_insecure_for_testing: bool = False,
+) -> None:
     """
     Download any file at URL and place at dest.
 
@@ -111,7 +116,7 @@ def download_file(
         checkfunc(dest)
 
 
-def _extract_zip(destdir, srcfile, progress=True):
+def _extract_zip(destdir: Path, srcfile: Path, progress: bool = True) -> None:
     try:
         with zipfile.ZipFile(srcfile) as zf:
             infolist = zf.infolist()
@@ -130,7 +135,7 @@ def _extract_zip(destdir, srcfile, progress=True):
         raise InstallError(f"Failed to extract zip archive: {e}") from e
 
 
-def _extract_tgz(destdir, srcfile, progress=True):
+def _extract_tgz(destdir: Path, srcfile: Path, progress: bool = True) -> None:
     filter_kwargs = {} if sys.version_info < (3, 12) else {"filter": "tar"}
     try:
         with tarfile.open(srcfile, "r:gz", bufsize=65536) as tf:

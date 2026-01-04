@@ -14,7 +14,9 @@ from typing import TYPE_CHECKING
 from ._exceptions import ConfigError
 
 if TYPE_CHECKING:
-    from typing import TypedDict, Unpack
+    from typing import TypedDict
+
+    from typing_extensions import Unpack
 
     class ConfigKwargs(TypedDict, total=False):
         jdk: str
@@ -40,7 +42,7 @@ __all__ = [
 class Configuration:
     os: str
     arch: str
-    vendor: str
+    vendor: str | None
     version: str
     cache_dir: Path
     index_url: str
@@ -90,14 +92,15 @@ def configure(**kwargs: Unpack[ConfigKwargs]) -> Configuration:
     return conf
 
 
-def _parse_vendor_version(spec):
+def _parse_vendor_version(spec: str) -> tuple[str, str]:
     # Actually we don't fully parse here; we only disambiguate between vendor
     # and version when only one is given.
     if ":" in spec:
         parts = spec.split(":")
         if len(parts) != 2:
             raise ConfigError(f"Cannot parse JDK spec '{spec}'")
-        return tuple(parts)
+        vendor, version = parts
+        return (vendor, version)
     if len(spec) == 0:
         return "", ""
     if re.fullmatch(r"[a-z][a-z0-9-]*", spec):
@@ -107,7 +110,7 @@ def _parse_vendor_version(spec):
     raise ConfigError(f"Cannot parse JDK spec '{spec}'")
 
 
-def _default_cachedir():
+def _default_cachedir() -> Path:
     """
     Return the cache directory path to be used by default.
 
@@ -130,7 +133,7 @@ def _default_cachedir():
         return _xdg_cachedir()
 
 
-def _windows_cachedir(*, create=True):
+def _windows_cachedir(*, create: bool = True) -> Path:
     cjdk_cache = _local_app_data(create=create) / "cjdk"
     if create:
         try:
@@ -142,7 +145,7 @@ def _windows_cachedir(*, create=True):
     return cjdk_cache / "cache"
 
 
-def _local_app_data(*, create=True):
+def _local_app_data(*, create: bool = True) -> Path:
     # https://docs.microsoft.com/en-us/windows/win32/shell/knownfolderid#FOLDERID_LocalAppData
     # https://docs.microsoft.com/en-us/windows/win32/msi/localappdatafolder
     # It is not clear, but I'm pretty sure it's safe to assume that the
@@ -155,7 +158,7 @@ def _local_app_data(*, create=True):
         raise ConfigError(f"Cannot determine home directory: {e}") from e
 
 
-def _macos_cachedir(*, create=True):
+def _macos_cachedir(*, create: bool = True) -> Path:
     # ~/Library/Caches almost always already exists, and both dirs are 0o700.
     # Create them here if they don't exist to ensure correct permissions.
     try:
@@ -173,7 +176,7 @@ def _macos_cachedir(*, create=True):
     return caches / "cjdk"
 
 
-def _xdg_cachedir(*, create=True):
+def _xdg_cachedir(*, create: bool = True) -> Path:
     # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
     if v := os.environ.get("XDG_CACHE_HOME"):
         caches = Path(v)
@@ -194,7 +197,7 @@ def _xdg_cachedir(*, create=True):
     return caches / "cjdk"
 
 
-def _default_index_url():
+def _default_index_url() -> str:
     # The Coursier JDK index is auto-generated, well curated, and clean.
     coursier_index_url = "https://raw.githubusercontent.com/coursier/jvm-index/master/index.json"
     return os.environ.get("CJDK_INDEX_URL") or coursier_index_url
@@ -206,7 +209,7 @@ def _default_index_url():
     # "https://raw.githubusercontent.com/shyiko/jabba/master/index.json"
 
 
-def _default_index_ttl():
+def _default_index_ttl() -> int:
     ttl_str = os.environ.get("CJDK_INDEX_TTL") or "86400"
     try:
         return int(ttl_str)
@@ -216,7 +219,7 @@ def _default_index_ttl():
         ) from e
 
 
-def _canonicalize_os(osname):
+def _canonicalize_os(osname: str | None) -> str:
     if not osname:
         osname = os.environ.get("CJDK_OS") or sys.platform
     osname = osname.lower()
@@ -233,7 +236,7 @@ def _canonicalize_os(osname):
     return osname
 
 
-def _canonicalize_arch(arch):
+def _canonicalize_arch(arch: str | None) -> str:
     if not arch:
         arch = os.environ.get("CJDK_ARCH") or platform.machine()
     arch = arch.lower()
@@ -248,7 +251,7 @@ def _canonicalize_arch(arch):
     return arch
 
 
-def _default_vendor():
+def _default_vendor() -> str:
     """
     Return the default vendor.
 

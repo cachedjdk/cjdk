@@ -20,7 +20,9 @@ from ._exceptions import (
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
     from pathlib import Path
-    from typing import Any, Unpack
+    from typing import Any
+
+    from typing_extensions import Unpack
 
     from ._conf import ConfigKwargs
 
@@ -428,7 +430,13 @@ def _get_vendors(**kwargs: Unpack[ConfigKwargs]) -> set[str]:
     }
 
 
-def _get_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
+def _get_jdks(
+    *,
+    vendor: str | None = None,
+    version: str | None = None,
+    cached_only: bool = True,
+    **kwargs: Unpack[ConfigKwargs],
+) -> list[str]:
     conf = _conf.configure(
         vendor=vendor,
         version=version,
@@ -448,6 +456,7 @@ def _get_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
                 **kwargs,
             )
         ]
+    assert conf.vendor is not None
     index = _index.jdk_index(conf)
     jdks = _index.available_jdks(index, conf)
     versions = _index._get_versions(jdks, conf)
@@ -464,17 +473,16 @@ def _get_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
         matched = {k: v for k, v in matched.items() if is_cached(v)}
 
     class VersionElement:
-        def __init__(self, value):
+        def __init__(self, value: int | str) -> None:
             self.value = value
-            self.is_int = isinstance(value, int)
 
-        def __eq__(self, other):
-            if self.is_int and other.is_int:
+        def __eq__(self, other: Any) -> bool:
+            if isinstance(self.value, int) and isinstance(other.value, int):
                 return self.value == other.value
             return str(self.value) == str(other.value)
 
-        def __lt__(self, other):
-            if self.is_int and other.is_int:
+        def __lt__(self, other: VersionElement) -> bool:
+            if isinstance(self.value, int) and isinstance(other.value, int):
                 return self.value < other.value
             return str(self.value) < str(other.value)
 
@@ -516,7 +524,7 @@ def _make_hash_checker(hashes: dict) -> Callable[[Any], None]:
 
 
 @contextmanager
-def _env_var_set(name, value):
+def _env_var_set(name: str, value: str) -> Iterator[None]:
     old_value = os.environ.get(name, None)
     os.environ[name] = value
     try:
