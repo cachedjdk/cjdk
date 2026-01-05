@@ -483,6 +483,13 @@ Commands:
 <p>More details about the choices and defaults for <a class="reference internal" href="vendors.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">VENDOR</span></code></span></a>,
 <a class="reference internal" href="versions.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">VERSION</span></code></span></a>, and <a class="reference internal" href="cachedir.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">--cache_dir</span></code></span></a> are available on
 separate pages.</p>
+<p>All subcommands return 0 on success, 1 on general/unknown errors, 2 on
+configuration error (e.g., invalid arguments), 3 if a matching JDK is not
+available, 4 if download or unpacking fails. However, the <code class="docutils literal notranslate"><span class="pre">exec</span></code> subcommand, if
+successful, returns the exit code of the launched program.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.5.0: </span>Specific exit codes were added.</p>
+</div>
 </section>
 <section id="querying-the-jdk-index">
 <h2>Querying the JDK index<a class="headerlink" href="#querying-the-jdk-index" title="Link to this heading">#</a></h2>

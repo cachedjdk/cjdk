@@ -27,17 +27,33 @@ cjdk: Installing Maven to /home/runner/.cache/cjdk
 
 [31m---------------------------------------------------------------------------[39m
 [31mHTTPError[39m                                 Traceback (most recent call last)
+[36mFile [39m[32m~/work/cjdk/cjdk/src/cjdk/_download.py:88[39m, in [36mdownload_file[39m[34m(dest, url, checkfunc, progress, _allow_insecure_for_testing)[39m
+[32m     87[39m [38;5;28;01mwith[39;00m requests.get(url, stream=[38;5;28;01mTrue[39;00m) [38;5;28;01mas[39;00m response:
+[32m---> [39m[32m88[39m     [43mresponse[49m[43m.[49m[43mraise_for_status[49m[43m([49m[43m)[49m
+[32m     89[39m     total = response.headers.get([33m"[39m[33mcontent-length[39m[33m"[39m, [38;5;28;01mNone[39;00m)
+
+[36mFile [39m[32m~/work/cjdk/cjdk/.venv/lib/python3.12/site-packages/requests/models.py:1026[39m, in [36mResponse.raise_for_status[39m[34m(self)[39m
+[32m   1025[39m [38;5;28;01mif[39;00m http_error_msg:
+[32m-> [39m[32m1026[39m     [38;5;28;01mraise[39;00m HTTPError(http_error_msg, response=[38;5;28mself[39m)
+
+[31mHTTPError[39m: 404 Client Error: Not Found for url: https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
+
+The above exception was the direct cause of the following exception:
+
+[31mInstallError[39m                              Traceback (most recent call last)
 [36mCell[39m[36m [39m[32mIn[3][39m[32m, line 1[39m
 [32m----> [39m[32m1[39m maven_dir = [43mcjdk[49m[43m.[49m[43mcache_package[49m[43m([49m[33;43m"[39;49m[33;43mMaven[39;49m[33;43m"[39;49m[43m,[49m[43m [49m[43mmaven_url[49m[43m,[49m[43m [49m[43msha512[49m[43m=[49m[43mmaven_sha512[49m[43m)[49m
 
-[36mFile [39m[32m~/work/cjdk/cjdk/src/cjdk/_api.py:341[39m, in [36mcache_package[39m[34m(name, url, sha1, sha256, sha512, **kwargs)[39m
-[32m    336[39m     [38;5;28;01melse[39;00m:
-[32m    337[39m         [38;5;28;01mraise[39;00m [38;5;167;01mValueError[39;00m(
-[32m    338[39m             [33mf[39m[33m"[39m[33mCannot handle [39m[38;5;132;01m{[39;00murl[38;5;132;01m!r}[39;00m[33m URL (must be tgz+https or zip+https)[39m[33m"[39m
-[32m    339[39m         )
-[32m--> [39m[32m341[39m [38;5;28;01mreturn[39;00m [43m_install[49m[43m.[49m[43minstall_dir[49m[43m([49m
-[32m    342[39m [43m    [49m[33;43m"[39;49m[33;43mmisc-dirs[39;49m[33;43m"[39;49m[43m,[49m[43m [49m[43mname[49m[43m,[49m[43m [49m[43murl[49m[43m,[49m[43m [49m[43mconf[49m[43m,[49m[43m [49m[43mcheckfunc[49m[43m=[49m[43mcheck_hashes[49m
-[32m    343[39m [43m[49m[43m)[49m
+[36mFile [39m[32m~/work/cjdk/cjdk/src/cjdk/_api.py:413[39m, in [36mcache_package[39m[34m(name, url, sha1, sha256, sha512, **kwargs)[39m
+[32m    408[39m         [38;5;28;01mraise[39;00m ConfigError(
+[32m    409[39m             [33mf[39m[33m"[39m[33mCannot handle [39m[38;5;132;01m{[39;00murl[38;5;132;01m!r}[39;00m[33m URL (must be tgz+https or zip+https)[39m[33m"[39m
+[32m    410[39m         )
+[32m    412[39m [38;5;28;01mtry[39;00m:
+[32m--> [39m[32m413[39m     [38;5;28;01mreturn[39;00m [43m_install[49m[43m.[49m[43minstall_dir[49m[43m([49m
+[32m    414[39m [43m        [49m[33;43m"[39;49m[33;43mmisc-dirs[39;49m[33;43m"[39;49m[43m,[49m[43m [49m[43mname[49m[43m,[49m[43m [49m[43murl[49m[43m,[49m[43m [49m[43mconf[49m[43m,[49m[43m [49m[43mcheckfunc[49m[43m=[49m[43mcheck_hashes[49m
+[32m    415[39m [43m    [49m[43m)[49m
+[32m    416[39m [38;5;28;01mexcept[39;00m UnsupportedFormatError [38;5;28;01mas[39;00m e:
+[32m    417[39m     [38;5;28;01mraise[39;00m ConfigError([38;5;28mstr[39m(e)) [38;5;28;01mfrom[39;00m[38;5;250m [39m[34;01me[39;00m
 
 [36mFile [39m[32m~/work/cjdk/cjdk/src/cjdk/_install.py:50[39m, in [36minstall_dir[39m[34m(prefix, name, url, conf, checkfunc)[39m
 [32m     41[39m     _print_progress_header(conf, name)
@@ -54,12 +70,12 @@ cjdk: Installing Maven to /home/runner/.cache/cjdk
 [32m     55[39m [43m    [49m[43mtimeout_for_fetch_elsewhere[49m[43m=[49m[32;43m300[39;49m[43m,[49m
 [32m     56[39m [43m[49m[43m)[49m
 
-[36mFile [39m[32m~/work/cjdk/cjdk/src/cjdk/_cache.py:144[39m, in [36mpermanent_directory[39m[34m(prefix, key_url, fetchfunc, cache_dir, timeout_for_fetch_elsewhere)[39m
-[32m    142[39m [38;5;28;01mif[39;00m tmpdir:
-[32m    143[39m     [38;5;28;01mtry[39;00m:
-[32m--> [39m[32m144[39m         [43mfetchfunc[49m[43m([49m[43mtmpdir[49m[43m)[49m
-[32m    145[39m         _move_in_fetched_directory(keydir, tmpdir)
-[32m    146[39m         _add_url_file(keydir, key_url)
+[36mFile [39m[32m~/work/cjdk/cjdk/src/cjdk/_cache.py:160[39m, in [36mpermanent_directory[39m[34m(prefix, key_url, fetchfunc, cache_dir, timeout_for_fetch_elsewhere)[39m
+[32m    158[39m [38;5;28;01mif[39;00m tmpdir:
+[32m    159[39m     [38;5;28;01mtry[39;00m:
+[32m--> [39m[32m160[39m         [43mfetchfunc[49m[43m([49m[43mtmpdir[49m[43m)[49m
+[32m    161[39m         _move_in_fetched_directory(keydir, tmpdir)
+[32m    162[39m         _add_url_file(keydir, key_url)
 
 [36mFile [39m[32m~/work/cjdk/cjdk/src/cjdk/_install.py:42[39m, in [36minstall_dir.<locals>.fetch[39m[34m(destdir)[39m
 [32m     40[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mfetch[39m(destdir):
@@ -72,34 +88,27 @@ cjdk: Installing Maven to /home/runner/.cache/cjdk
 [32m     47[39m [43m        [49m[43m_allow_insecure_for_testing[49m[43m=[49m[43mconf[49m[43m.[49m[43m_allow_insecure_for_testing[49m[43m,[49m
 [32m     48[39m [43m    [49m[43m)[49m
 
-[36mFile [39m[32m~/work/cjdk/cjdk/src/cjdk/_download.py:53[39m, in [36mdownload_and_extract[39m[34m(destdir, url, checkfunc, progress, _allow_insecure_for_testing)[39m
-[32m     51[39m file = Path(tempd) / [33mf[39m[33m"[39m[33marchive.[39m[38;5;132;01m{[39;00mext[38;5;132;01m}[39;00m[33m"[39m
-[32m     52[39m [38;5;28;01mtry[39;00m:
-[32m---> [39m[32m53[39m     [43mdownload_file[49m[43m([49m
-[32m     54[39m [43m        [49m[43mfile[49m[43m,[49m
-[32m     55[39m [43m        [49m[43murl[49m[43m,[49m
-[32m     56[39m [43m        [49m[43mcheckfunc[49m[43m=[49m[43mcheckfunc[49m[43m,[49m
-[32m     57[39m [43m        [49m[43mprogress[49m[43m=[49m[43mprogress[49m[43m,[49m
-[32m     58[39m [43m        [49m[43m_allow_insecure_for_testing[49m[43m=[49m[43m_allow_insecure_for_testing[49m[43m,[49m
-[32m     59[39m [43m    [49m[43m)[49m
-[32m     60[39m     extract(destdir, file, progress)
-[32m     61[39m [38;5;28;01mfinally[39;00m:
+[36mFile [39m[32m~/work/cjdk/cjdk/src/cjdk/_download.py:54[39m, in [36mdownload_and_extract[39m[34m(destdir, url, checkfunc, progress, _allow_insecure_for_testing)[39m
+[32m     52[39m file = Path(tempd) / [33mf[39m[33m"[39m[33marchive.[39m[38;5;132;01m{[39;00mext[38;5;132;01m}[39;00m[33m"[39m
+[32m     53[39m [38;5;28;01mtry[39;00m:
+[32m---> [39m[32m54[39m     [43mdownload_file[49m[43m([49m
+[32m     55[39m [43m        [49m[43mfile[49m[43m,[49m
+[32m     56[39m [43m        [49m[43murl[49m[43m,[49m
+[32m     57[39m [43m        [49m[43mcheckfunc[49m[43m=[49m[43mcheckfunc[49m[43m,[49m
+[32m     58[39m [43m        [49m[43mprogress[49m[43m=[49m[43mprogress[49m[43m,[49m
+[32m     59[39m [43m        [49m[43m_allow_insecure_for_testing[49m[43m=[49m[43m_allow_insecure_for_testing[49m[43m,[49m
+[32m     60[39m [43m    [49m[43m)[49m
+[32m     61[39m     extract(destdir, file, progress)
+[32m     62[39m [38;5;28;01mfinally[39;00m:
 
-[36mFile [39m[32m~/work/cjdk/cjdk/src/cjdk/_download.py:86[39m, in [36mdownload_file[39m[34m(dest, url, checkfunc, progress, _allow_insecure_for_testing)[39m
-[32m     81[39m         [38;5;28;01mraise[39;00m [38;5;167;01mNotImplementedError[39;00m(
-[32m     82[39m             [33mf[39m[33m"[39m[33mCannot handle [39m[38;5;132;01m{[39;00mscheme[38;5;132;01m}[39;00m[33m (must be https)[39m[33m"[39m
-[32m     83[39m         )
-[32m     85[39m [38;5;28;01mwith[39;00m requests.get(url, stream=[38;5;28;01mTrue[39;00m) [38;5;28;01mas[39;00m response:
-[32m---> [39m[32m86[39m     [43mresponse[49m[43m.[49m[43mraise_for_status[49m[43m([49m[43m)[49m
-[32m     87[39m     total = response.headers.get([33m"[39m[33mcontent-length[39m[33m"[39m, [38;5;28;01mNone[39;00m)
-[32m     88[39m     total = [38;5;28mint[39m(total) [38;5;28;01mif[39;00m total [38;5;28;01melse[39;00m [38;5;28;01mNone[39;00m
+[36mFile [39m[32m~/work/cjdk/cjdk/src/cjdk/_download.py:108[39m, in [36mdownload_file[39m[34m(dest, url, checkfunc, progress, _allow_insecure_for_testing)[39m
+[32m    104[39m             [38;5;28;01mraise[39;00m InstallError(
+[32m    105[39m                 [33mf[39m[33m"[39m[33mFailed to write download to [39m[38;5;132;01m{[39;00mdest[38;5;132;01m}[39;00m[33m: [39m[38;5;132;01m{[39;00me[38;5;132;01m}[39;00m[33m"[39m
+[32m    106[39m             ) [38;5;28;01mfrom[39;00m[38;5;250m [39m[34;01me[39;00m
+[32m    107[39m [38;5;28;01mexcept[39;00m requests.RequestException [38;5;28;01mas[39;00m e:
+[32m--> [39m[32m108[39m     [38;5;28;01mraise[39;00m InstallError([33mf[39m[33m"[39m[33mDownload failed: [39m[38;5;132;01m{[39;00me[38;5;132;01m}[39;00m[33m"[39m) [38;5;28;01mfrom[39;00m[38;5;250m [39m[34;01me[39;00m
+[32m    110[39m [38;5;28;01mif[39;00m checkfunc:
+[32m    111[39m     checkfunc(dest)
 
-[36mFile [39m[32m~/work/cjdk/cjdk/.venv/lib/python3.12/site-packages/requests/models.py:1026[39m, in [36mResponse.raise_for_status[39m[34m(self)[39m
-[32m   1021[39m     http_error_msg = (
-[32m   1022[39m         [33mf[39m[33m"[39m[38;5;132;01m{[39;00m[38;5;28mself[39m.status_code[38;5;132;01m}[39;00m[33m Server Error: [39m[38;5;132;01m{[39;00mreason[38;5;132;01m}[39;00m[33m for url: [39m[38;5;132;01m{[39;00m[38;5;28mself[39m.url[38;5;132;01m}[39;00m[33m"[39m
-[32m   1023[39m     )
-[32m   1025[39m [38;5;28;01mif[39;00m http_error_msg:
-[32m-> [39m[32m1026[39m     [38;5;28;01mraise[39;00m HTTPError(http_error_msg, response=[38;5;28mself[39m)
-
-[31mHTTPError[39m: 404 Client Error: Not Found for url: https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
+[31mInstallError[39m: Download failed: 404 Client Error: Not Found for url: https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
 

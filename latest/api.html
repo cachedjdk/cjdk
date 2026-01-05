@@ -423,6 +423,13 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cjdk.clear_cache"><code class="docutils literal notranslate"><span class="pre">clear_cache()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exceptions">Exceptions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cjdk.CjdkError"><code class="docutils literal notranslate"><span class="pre">CjdkError</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cjdk.ConfigError"><code class="docutils literal notranslate"><span class="pre">ConfigError</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cjdk.JdkNotFoundError"><code class="docutils literal notranslate"><span class="pre">JdkNotFoundError</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cjdk.InstallError"><code class="docutils literal notranslate"><span class="pre">InstallError</span></code></a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -460,6 +467,12 @@ SPDX-License-Identifier: MIT
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list[str]</p>
 </dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#cjdk.ConfigError" title="cjdk.ConfigError"><strong>ConfigError</strong></a> – If configuration is invalid.</p></li>
+<li><p><a class="reference internal" href="#cjdk.InstallError" title="cjdk.InstallError"><strong>InstallError</strong></a> – If fetching the index fails.</p></li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
@@ -491,6 +504,12 @@ together with <cite>vendor</cite> or <cite>version</cite>.</p></li>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list[str]</p>
 </dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#cjdk.ConfigError" title="cjdk.ConfigError"><strong>ConfigError</strong></a> – If configuration is invalid.</p></li>
+<li><p><a class="reference internal" href="#cjdk.InstallError" title="cjdk.InstallError"><strong>InstallError</strong></a> – If fetching the index fails.</p></li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
@@ -511,6 +530,13 @@ together with <cite>vendor</cite> or <cite>version</cite>.</p></li>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>pathlib.Path</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#cjdk.ConfigError" title="cjdk.ConfigError"><strong>ConfigError</strong></a> – If configuration is invalid.</p></li>
+<li><p><a class="reference internal" href="#cjdk.JdkNotFoundError" title="cjdk.JdkNotFoundError"><strong>JdkNotFoundError</strong></a> – If no matching JDK is available.</p></li>
+<li><p><a class="reference internal" href="#cjdk.InstallError" title="cjdk.InstallError"><strong>InstallError</strong></a> – If download or extraction fails.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -533,6 +559,13 @@ parameters. Its value is the JDK home directory.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>ContextManager[pathlib.Path]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#cjdk.ConfigError" title="cjdk.ConfigError"><strong>ConfigError</strong></a> – If configuration is invalid.</p></li>
+<li><p><a class="reference internal" href="#cjdk.JdkNotFoundError" title="cjdk.JdkNotFoundError"><strong>JdkNotFoundError</strong></a> – If no matching JDK is available.</p></li>
+<li><p><a class="reference internal" href="#cjdk.InstallError" title="cjdk.InstallError"><strong>InstallError</strong></a> – If download or extraction fails.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -558,6 +591,13 @@ together with <cite>vendor</cite> or <cite>version</cite>.</p></li>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#cjdk.ConfigError" title="cjdk.ConfigError"><strong>ConfigError</strong></a> – If configuration is invalid.</p></li>
+<li><p><a class="reference internal" href="#cjdk.JdkNotFoundError" title="cjdk.JdkNotFoundError"><strong>JdkNotFoundError</strong></a> – If no matching JDK is available.</p></li>
+<li><p><a class="reference internal" href="#cjdk.InstallError" title="cjdk.InstallError"><strong>InstallError</strong></a> – If download or extraction fails.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -600,6 +640,12 @@ filename.</p>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pathlib.Path</p>
 </dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#cjdk.ConfigError" title="cjdk.ConfigError"><strong>ConfigError</strong></a> – If configuration or URL is invalid.</p></li>
+<li><p><a class="reference internal" href="#cjdk.InstallError" title="cjdk.InstallError"><strong>InstallError</strong></a> – If download or hash check fails.</p></li>
+</ul>
+</dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>The check for SHA-1/SHA-256/SHA-512 hashes is only performed after a
@@ -633,6 +679,12 @@ zip+https.</p></li>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pathlib.Path</p>
 </dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#cjdk.ConfigError" title="cjdk.ConfigError"><strong>ConfigError</strong></a> – If configuration or URL is invalid.</p></li>
+<li><p><a class="reference internal" href="#cjdk.InstallError" title="cjdk.InstallError"><strong>InstallError</strong></a> – If download, hash check, or extraction fails.</p></li>
+</ul>
+</dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>The check for SHA-1/SHA-256/SHA-512 hashes is only performed (on the
@@ -662,7 +714,49 @@ JDKs and files installed by cjdk.</p>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pathlib.Path</p>
 </dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#cjdk.CjdkError" title="cjdk.CjdkError"><strong>CjdkError</strong></a> – If the cache directory could not be removed.</p>
+</dd>
 </dl>
+</dd></dl>
+
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.5.0.</span></p>
+</div>
+</section>
+<section id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Link to this heading">#</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="cjdk.CjdkError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cjdk.</span></span><span class="sig-name descname"><span class="pre">CjdkError</span></span><a class="headerlink" href="#cjdk.CjdkError" title="Link to this definition">#</a></dt>
+<dd><p>Base class for all cjdk exceptions.</p>
+</dd></dl>
+
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.5.0.</span></p>
+</div>
+<dl class="py exception">
+<dt class="sig sig-object py" id="cjdk.ConfigError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cjdk.</span></span><span class="sig-name descname"><span class="pre">ConfigError</span></span><a class="headerlink" href="#cjdk.ConfigError" title="Link to this definition">#</a></dt>
+<dd><p>Invalid configuration, conflicting options, or malformed input.</p>
+</dd></dl>
+
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.5.0.</span></p>
+</div>
+<dl class="py exception">
+<dt class="sig sig-object py" id="cjdk.JdkNotFoundError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cjdk.</span></span><span class="sig-name descname"><span class="pre">JdkNotFoundError</span></span><a class="headerlink" href="#cjdk.JdkNotFoundError" title="Link to this definition">#</a></dt>
+<dd><p>Requested JDK not available in the index.</p>
+</dd></dl>
+
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.5.0.</span></p>
+</div>
+<dl class="py exception">
+<dt class="sig sig-object py" id="cjdk.InstallError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cjdk.</span></span><span class="sig-name descname"><span class="pre">InstallError</span></span><a class="headerlink" href="#cjdk.InstallError" title="Link to this definition">#</a></dt>
+<dd><p>Download, extraction, or cache failure.</p>
 </dd></dl>
 
 <div class="versionadded">
@@ -753,6 +847,13 @@ JDKs and files installed by cjdk.</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#managing-the-cache">Managing the cache</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cjdk.clear_cache"><code class="docutils literal notranslate"><span class="pre">clear_cache()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exceptions">Exceptions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cjdk.CjdkError"><code class="docutils literal notranslate"><span class="pre">CjdkError</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cjdk.ConfigError"><code class="docutils literal notranslate"><span class="pre">ConfigError</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cjdk.JdkNotFoundError"><code class="docutils literal notranslate"><span class="pre">JdkNotFoundError</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cjdk.InstallError"><code class="docutils literal notranslate"><span class="pre">InstallError</span></code></a></li>
 </ul>
 </li>
 </ul>
