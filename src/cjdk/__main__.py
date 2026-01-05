@@ -9,6 +9,7 @@ import sys
 import click
 
 from . import __version__, _api
+from ._exceptions import CjdkError
 
 __all__ = [
     "main",
@@ -43,7 +44,7 @@ __all__ = [
     help="Show or do not show progress bars.",
 )
 @click.version_option(version=__version__)
-def main(ctx, jdk, cache_dir, index_url, index_ttl, os, arch, progress):
+def _cli(ctx, jdk, cache_dir, index_url, index_ttl, os, arch, progress):
     """
     Download, cache, and run JDK or JRE distributions.
 
@@ -278,17 +279,26 @@ def clear_cache(ctx):
 
 
 # Register current commands.
-main.add_command(java_home)
-main.add_command(exec)
-main.add_command(ls_vendors)
-main.add_command(ls)
-main.add_command(cache)
-main.add_command(cache_file)
-main.add_command(cache_package)
-main.add_command(clear_cache)
+_cli.add_command(java_home)
+_cli.add_command(exec)
+_cli.add_command(ls_vendors)
+_cli.add_command(ls)
+_cli.add_command(cache)
+_cli.add_command(cache_file)
+_cli.add_command(cache_package)
+_cli.add_command(clear_cache)
 
 # Register hidden/deprecated commands, for backwards compatibility.
-main.add_command(cache_jdk)
+_cli.add_command(cache_jdk)
+
+
+def main():
+    try:
+        _cli()
+    except CjdkError as e:
+        print(f"cjdk: Error: {e}", file=sys.stderr)
+        sys.exit(e.exit_code)
+
 
 if __name__ == "__main__":
     main()

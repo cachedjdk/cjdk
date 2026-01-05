@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 import pytest
 
 from cjdk import _utils
+from cjdk._exceptions import InstallError
 
 
 def test_backoff_seconds():
@@ -55,7 +56,7 @@ def test_rmtree_tempdir(tmp_path):
         path.mkdir()
         file = path / "file"
         file.touch()
-        with open(file) as fp, pytest.raises(OSError):
+        with open(file) as fp, pytest.raises(InstallError):
             _utils.rmtree_tempdir(path, timeout=0.1)
 
 
@@ -102,5 +103,5 @@ def test_swap_in_file(tmp_path):
     # With dest left open
     if sys.platform == "win32":
         src.touch()
-        with open(dest) as fp, pytest.raises(OSError):
+        with open(dest) as fp, pytest.raises(InstallError):
             _utils.swap_in_file(dest, src, timeout=0.1)

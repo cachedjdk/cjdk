@@ -12,6 +12,7 @@ from urllib.parse import urlparse
 import requests
 
 from . import _progress, _utils
+from ._exceptions import InstallError, UnsupportedFormatError
 
 __all__ = [
     "download_and_extract",
@@ -36,13 +37,13 @@ def download_and_extract(
     try:
         ext, http = scheme.split("+")
     except ValueError as err:
-        raise NotImplementedError(f"Cannot handle {scheme} URL") from err
+        raise UnsupportedFormatError(f"Cannot handle {scheme} URL") from err
     if http != "https" and not _allow_insecure_for_testing:
-        raise NotImplementedError(f"Cannot handle {http} (must be https)")
+        raise UnsupportedFormatError(f"Cannot handle {http} (must be https)")
     try:
         extract = {"zip": _extract_zip, "tgz": _extract_tgz}[ext]
     except KeyError as err:
-        raise NotImplementedError(
+        raise UnsupportedFormatError(
             f"Cannot handle compression type {ext}"
         ) from err
 
@@ -78,43 +79,66 @@ def download_file(
     if not _allow_insecure_for_testing:
         scheme = urlparse(url).scheme
         if scheme != "https":
-            raise NotImplementedError(
+            raise UnsupportedFormatError(
                 f"Cannot handle {scheme} (must be https)"
             )
 
-    with requests.get(url, stream=True) as response:
-        response.raise_for_status()
-        total = response.headers.get("content-length", None)
-        total = int(total) if total else None
-        with open(dest, "wb") as outfile:
-            for chunk in _progress.data_transfer(
-                total,
-                response.iter_content(chunk_size=16384),
-                enabled=progress,
-                text="Download",
-            ):
-                outfile.write(chunk)
+    try:
+        with requests.get(url, stream=True) as response:
+            response.raise_for_status()
+            total = response.headers.get("content-length", None)
+            try:
+                total = int(total) if total else None
+            except ValueError:
+                total = None
+            try:
+                with open(dest, "wb") as outfile:
+                    for chunk in _progress.data_transfer(
+                        total,
+                        response.iter_content(chunk_size=16384),
+                        enabled=progress,
+                        text="Download",
+                    ):
+                        outfile.write(chunk)
+            except OSError as e:
+                raise InstallError(
+                    f"Failed to write download to {dest}: {e}"
+                ) from e
+    except requests.RequestException as e:
+        raise InstallError(f"Download failed: {e}") from e
 
     if checkfunc:
         checkfunc(dest)
 
 
 def _extract_zip(destdir, srcfile, progress=True):
-    with zipfile.ZipFile(srcfile) as zf:
-        infolist = zf.infolist()
-        for member in _progress.iterate(
-            infolist, enabled=progress, text="Extract"
-        ):
-            extracted = Path(zf.extract(member, destdir))
+    try:
+        with zipfile.ZipFile(srcfile) as zf:
+            infolist = zf.infolist()
+            for member in _progress.iterate(
+                infolist, enabled=progress, text="Extract"
+            ):
+                extracted = Path(zf.extract(member, destdir))
 
-            # Recover executable bits; see https://stackoverflow.com/a/46837272
-            if member.create_system == 3 and extracted.is_file():
-                mode = (member.external_attr >> 16) & 0o111
-                extracted.chmod(extracted.stat().st_mode | mode)
+                # Recover executable bits; see https://stackoverflow.com/a/46837272
+                if member.create_system == 3 and extracted.is_file():
+                    mode = (member.external_attr >> 16) & 0o111
+                    extracted.chmod(extracted.stat().st_mode | mode)
+    except zipfile.BadZipFile as e:
+        raise InstallError(f"Invalid or corrupted zip archive: {e}") from e
+    except OSError as e:
+        raise InstallError(f"Failed to extract zip archive: {e}") from e
 
 
 def _extract_tgz(destdir, srcfile, progress=True):
     filter_kwargs = {} if sys.version_info < (3, 12) else {"filter": "tar"}
-    with tarfile.open(srcfile, "r:gz", bufsize=65536) as tf:
-        for member in _progress.iterate(tf, enabled=progress, text="Extract"):
-            tf.extract(member, destdir, **filter_kwargs)
+    try:
+        with tarfile.open(srcfile, "r:gz", bufsize=65536) as tf:
+            for member in _progress.iterate(
+                tf, enabled=progress, text="Extract"
+            ):
+                tf.extract(member, destdir, **filter_kwargs)
+    except tarfile.TarError as e:
+        raise InstallError(f"Invalid or corrupted tar archive: {e}") from e
+    except OSError as e:
+        raise InstallError(f"Failed to extract tar archive: {e}") from e

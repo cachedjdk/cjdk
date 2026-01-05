@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from cjdk import _conf
+from cjdk._exceptions import ConfigError
 
 
 def test_configure():
@@ -18,9 +19,9 @@ def test_configure():
     assert conf.version == "17"
     assert conf.cache_dir == _conf._default_cachedir()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ConfigError):
         f(vendor="temurin", jdk="temurin:17")
-    with pytest.raises(ValueError):
+    with pytest.raises(ConfigError):
         f(version="17", jdk="temurin:17")
 
     conf = f(jdk="temurin:17")

@@ -14,6 +14,9 @@ See also the section on [versioning](versioning-scheme).
 - Environment variables set to empty are now treated as unset.
 - Improve cleanup of temporary files and directories.
 - Better message when a leftover directory blocks a download.
+- Add API exception hierarchy (`CjdkError`, `ConfigError`, `JdkNotFoundError`,
+  `InstallError`).
+- Command line exit codes by error category.
 
 ## [0.4.1] - 2025-05-01
 

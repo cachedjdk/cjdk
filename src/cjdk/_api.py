@@ -10,6 +10,12 @@ from contextlib import contextmanager
 from typing import TYPE_CHECKING
 
 from . import _cache, _conf, _index, _install, _jdk
+from ._exceptions import (
+    CjdkError,
+    ConfigError,
+    InstallError,
+    UnsupportedFormatError,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
@@ -47,6 +53,13 @@ def list_vendors(**kwargs: Unpack[ConfigKwargs]) -> list[str]:
     -------
     list[str]
         The available JDK vendors.
+
+    Raises
+    ------
+    ConfigError
+        If configuration is invalid.
+    InstallError
+        If fetching the index fails.
     """
     return sorted(_get_vendors(**kwargs))
 
@@ -89,6 +102,13 @@ def list_jdks(  # type: ignore [misc]  # overlap with kwargs
     -------
     list[str]
         JDKs (vendor:version) matching the criteria.
+
+    Raises
+    ------
+    ConfigError
+        If configuration is invalid.
+    InstallError
+        If fetching the index fails.
     """
     return _get_jdks(
         vendor=vendor, version=version, cached_only=cached_only, **kwargs
@@ -111,11 +131,21 @@ def clear_cache(**kwargs: Unpack[ConfigKwargs]) -> Path:
     -------
     pathlib.Path
         The cache directory that was cleared.
+
+    Raises
+    ------
+    CjdkError
+        If the cache directory could not be removed.
     """
     conf = _conf.configure(**kwargs)
     cache_path = conf.cache_dir
     if cache_path.exists():
-        shutil.rmtree(cache_path)
+        try:
+            shutil.rmtree(cache_path)
+        except OSError as e:
+            raise CjdkError(
+                f"Failed to remove cache directory {cache_path}: {e}"
+            ) from e
     return cache_path
 
 
@@ -156,6 +186,15 @@ def cache_jdk(  # type: ignore [misc]  # overlap with kwargs
     Returns
     -------
     None
+
+    Raises
+    ------
+    ConfigError
+        If configuration is invalid.
+    JdkNotFoundError
+        If no matching JDK is available.
+    InstallError
+        If download or extraction fails.
     """
     conf = _conf.configure(vendor=vendor, version=version, **kwargs)
     _jdk.install_jdk(conf)
@@ -176,6 +215,15 @@ def java_home(  # type: ignore [misc]  # overlap with kwargs
     -------
     pathlib.Path
         The JDK home directory satisfying the requested parameters.
+
+    Raises
+    ------
+    ConfigError
+        If configuration is invalid.
+    JdkNotFoundError
+        If no matching JDK is available.
+    InstallError
+        If download or extraction fails.
     """
     conf = _conf.configure(vendor=vendor, version=version, **kwargs)
     path = _jdk.install_jdk(conf)
@@ -208,6 +256,15 @@ def java_env(  # type: ignore [misc]  # overlap with kwargs
         Context manager that temporarily sets the `JAVA_HOME` and (optionally)
         `PATH` environment variables for the JDK satisfying the requested
         parameters. Its value is the JDK home directory.
+
+    Raises
+    ------
+    ConfigError
+        If configuration is invalid.
+    JdkNotFoundError
+        If no matching JDK is available.
+    InstallError
+        If download or extraction fails.
     """
     home = java_home(vendor=vendor, version=version, **kwargs)
     with _env_var_set("JAVA_HOME", str(home)):
@@ -258,6 +315,13 @@ def cache_file(
     pathlib.Path
         Path to the cached file resource, whose final component is the given
         filename.
+
+    Raises
+    ------
+    ConfigError
+        If configuration or URL is invalid.
+    InstallError
+        If download or hash check fails.
 
     Notes
     -----
@@ -317,6 +381,13 @@ def cache_package(
     pathlib.Path
         Path to the cached directory into which the package was extracted.
 
+    Raises
+    ------
+    ConfigError
+        If configuration or URL is invalid.
+    InstallError
+        If download, hash check, or extraction fails.
+
     Notes
     -----
     The check for SHA-1/SHA-256/SHA-512 hashes is only performed (on the
@@ -334,13 +405,16 @@ def cache_package(
         elif url.endswith(".zip"):
             url = "zip+http" + url.removeprefix("http")
         else:
-            raise ValueError(
+            raise ConfigError(
                 f"Cannot handle {url!r} URL (must be tgz+https or zip+https)"
             )
 
-    return _install.install_dir(
-        "misc-dirs", name, url, conf, checkfunc=check_hashes
-    )
+    try:
+        return _install.install_dir(
+            "misc-dirs", name, url, conf, checkfunc=check_hashes
+        )
+    except UnsupportedFormatError as e:
+        raise ConfigError(str(e)) from e
 
 
 def _get_vendors(**kwargs: Unpack[ConfigKwargs]) -> set[str]:
@@ -424,14 +498,19 @@ def _make_hash_checker(hashes: dict) -> Callable[[Any], None]:
         for hash, hasher in checks:
             if hash:
                 _hasher = hasher()
-                with open(filepath, "rb") as infile:
-                    while True:
-                        bytes = infile.read(16384)
-                        if not len(bytes):
-                            break
-                        _hasher.update(bytes)
+                try:
+                    with open(filepath, "rb") as infile:
+                        while True:
+                            bytes = infile.read(16384)
+                            if not len(bytes):
+                                break
+                            _hasher.update(bytes)
+                except OSError as e:
+                    raise InstallError(
+                        f"Failed to read file for hash verification: {e}"
+                    ) from e
                 if _hasher.hexdigest().lower() != hash.lower():
-                    raise ValueError("Hash does not match")
+                    raise InstallError("Hash does not match")
 
     return check
 
