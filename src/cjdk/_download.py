@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 
 import requests
 
-from . import _progress
+from . import _progress, _utils
 
 __all__ = [
     "download_and_extract",
@@ -49,14 +49,17 @@ def download_and_extract(
     url = http + url.removeprefix(scheme)
     with tempfile.TemporaryDirectory(prefix="cjdk-") as tempd:
         file = Path(tempd) / f"archive.{ext}"
-        download_file(
-            file,
-            url,
-            checkfunc=checkfunc,
-            progress=progress,
-            _allow_insecure_for_testing=_allow_insecure_for_testing,
-        )
-        extract(destdir, file, progress)
+        try:
+            download_file(
+                file,
+                url,
+                checkfunc=checkfunc,
+                progress=progress,
+                _allow_insecure_for_testing=_allow_insecure_for_testing,
+            )
+            extract(destdir, file, progress)
+        finally:
+            _utils.unlink_tempfile(file)
 
 
 def download_file(
@@ -79,18 +82,18 @@ def download_file(
                 f"Cannot handle {scheme} (must be https)"
             )
 
-    response = requests.get(url, stream=True)
-    response.raise_for_status()
-    total = response.headers.get("content-length", None)
-    total = int(total) if total else None
-    with open(dest, "wb") as outfile:
-        for chunk in _progress.data_transfer(
-            total,
-            response.iter_content(chunk_size=16384),
-            enabled=progress,
-            text="Download",
-        ):
-            outfile.write(chunk)
+    with requests.get(url, stream=True) as response:
+        response.raise_for_status()
+        total = response.headers.get("content-length", None)
+        total = int(total) if total else None
+        with open(dest, "wb") as outfile:
+            for chunk in _progress.data_transfer(
+                total,
+                response.iter_content(chunk_size=16384),
+                enabled=progress,
+                text="Download",
+            ):
+                outfile.write(chunk)
 
     if checkfunc:
         checkfunc(dest)

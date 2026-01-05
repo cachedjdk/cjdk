@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: MIT
 
 import hashlib
-import shutil
+import sys
 import time
 import urllib
 from contextlib import contextmanager
 from pathlib import Path
 
-from . import _progress
+from . import _progress, _utils
 
 __all__ = [
     "atomic_file",
@@ -86,13 +86,17 @@ def atomic_file(
     if not _file_exists_and_is_fresh(target, ttl):
         with _create_key_tmpdir(cache_dir, key) as tmpdir:
             if tmpdir:
-                fetchfunc(tmpdir / filename)
-                _swap_in_fetched_file(
-                    target,
-                    tmpdir / filename,
-                    timeout=timeout_for_read_elsewhere,
-                )
-                _add_url_file(keydir, key_url)
+                filepath = tmpdir / filename
+                try:
+                    fetchfunc(filepath)
+                    _utils.swap_in_file(
+                        target,
+                        filepath,
+                        timeout=timeout_for_read_elsewhere,
+                    )
+                    _add_url_file(keydir, key_url)
+                finally:
+                    _utils.unlink_tempfile(filepath)
             else:  # Somebody else is currently fetching
                 _wait_for_dir_to_vanish(
                     _key_tmpdir(cache_dir, key),
@@ -100,7 +104,8 @@ def atomic_file(
                 )
                 if not _file_exists_and_is_fresh(target, ttl=2**63):
                     raise Exception(
-                        f"Fetching of file {target} appears to have been completed elsewhere, but file does not exist"
+                        f"Another process was fetching {target} but the file is not present; "
+                        f"the other process may have failed or been interrupted."
                     )
     return target
 
@@ -135,9 +140,12 @@ def permanent_directory(
     if not keydir.is_dir():
         with _create_key_tmpdir(cache_dir, key) as tmpdir:
             if tmpdir:
-                fetchfunc(tmpdir)
-                _move_in_fetched_directory(keydir, tmpdir)
-                _add_url_file(keydir, key_url)
+                try:
+                    fetchfunc(tmpdir)
+                    _move_in_fetched_directory(keydir, tmpdir)
+                    _add_url_file(keydir, key_url)
+                finally:
+                    _utils.rmtree_tempdir(tmpdir)
             else:  # Somebody else is currently fetching
                 _wait_for_dir_to_vanish(
                     _key_tmpdir(cache_dir, key),
@@ -145,7 +153,8 @@ def permanent_directory(
                 )
                 if not keydir.is_dir():
                     raise Exception(
-                        f"Fetching of directory {keydir} appears to have been completed elsewhere, but directory does not exist"
+                        f"Another process was fetching {keydir} but the directory is not present; "
+                        f"the other process may have failed or been interrupted"
                     )
     return keydir
 
@@ -181,8 +190,7 @@ def _create_key_tmpdir(cache_dir, key):
         try:
             yield tmpdir
         finally:
-            if tmpdir.is_dir():
-                shutil.rmtree(tmpdir)
+            _utils.rmtree_tempdir(tmpdir)
 
 
 def _key_directory(cache_dir: Path, key) -> Path:
@@ -191,43 +199,6 @@ def _key_directory(cache_dir: Path, key) -> Path:
 
 def _key_tmpdir(cache_dir: Path, key) -> Path:
     return cache_dir / "v0" / Path("fetching", *key)
-
-
-def _swap_in_fetched_file(target, tmpfile, timeout, progress=False):
-    # On POSIX, we only need to try once to move tmpfile to target; this will
-    # work even if target is opened by others, and any failure (e.g.
-    # insufficient permissions) is permanent.
-    # On Windows, there is the case where the file is open by others (busy); we
-    # should wait a little and retry in this case. It is not possible to do
-    # this cleanly, because the error we get when the target is busy is "Access
-    # is denied" (PermissionError, a subclass of OSError, with .winerror = 5),
-    # which is indistinguishable from the case where target permanently has bad
-    # permissions.
-    # But because this implementation is only intended for small files that
-    # will not be kept open for long, and because permanent bad permissions is
-    # not expected in the typical use case, we can do something that almost
-    # always results in the intended behavior.
-    WINDOWS_ERROR_ACCESS_DENIED = 5
-
-    target.parent.mkdir(parents=True, exist_ok=True)
-    with _progress.indefinite(
-        enabled=progress, text="File busy; waiting"
-    ) as update_pbar:
-        for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
-            try:
-                tmpfile.replace(target)
-            except OSError as e:
-                if (
-                    hasattr(e, "winerror")
-                    and e.winerror == WINDOWS_ERROR_ACCESS_DENIED
-                    and wait_seconds > 0
-                ):
-                    time.sleep(wait_seconds)
-                    update_pbar()
-                    continue
-                raise
-            else:
-                return
 
 
 def _move_in_fetched_directory(target, tmpdir):
@@ -241,10 +212,18 @@ def _add_url_file(keydir, key_url):
 
 
 def _wait_for_dir_to_vanish(directory, timeout, progress=True):
+    print(
+        "cjdk: Another process is currently downloading the same file",
+        file=sys.stderr,
+    )
+    print(
+        f"cjdk: If you are sure this is not the case (e.g., previous download crashed), try again after deleting the directory {directory}",
+        file=sys.stderr,
+    )
     with _progress.indefinite(
         enabled=progress, text="Already downloading; waiting"
     ) as update_pbar:
-        for wait_seconds in _backoff_seconds(0.001, 0.5, timeout):
+        for wait_seconds in _utils.backoff_seconds(0.001, 0.5, timeout):
             if not directory.is_dir():
                 return
             if wait_seconds < 0:
@@ -253,30 +232,3 @@ def _wait_for_dir_to_vanish(directory, timeout, progress=True):
                 )
             time.sleep(wait_seconds)
             update_pbar()
-
-
-def _backoff_seconds(initial_interval, max_interval, max_total, factor=1.5):
-    """
-    Yield intervals to sleep after repeated attempts with exponential backoff.
-
-    The last-yielded value is -1. When -1 is received, the caller should make
-    the final attempt before giving up.
-    """
-    assert initial_interval > 0
-    assert max_total >= 0
-    assert factor > 1
-    total = 0
-    next_interval = initial_interval
-    while max_total > 0:
-        next_total = total + next_interval
-        if next_total > max_total:
-            remaining = max_total - total
-            if remaining > 0.01:
-                yield remaining
-            break
-        yield next_interval
-        total = next_total
-        next_interval *= factor
-        if next_interval > max_interval:
-            next_interval = max_interval
-    yield -1

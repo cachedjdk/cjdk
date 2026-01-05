@@ -12,6 +12,8 @@ See also the section on [versioning](versioning-scheme).
 
 - Add `cjdk clear-cache` and `clear_cache()`.
 - Environment variables set to empty are now treated as unset.
+- Improve cleanup of temporary files and directories.
+- Better message when a leftover directory blocks a download.
 
 ## [0.4.1] - 2025-05-01
 
