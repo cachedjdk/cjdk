@@ -10,7 +10,7 @@ from contextlib import contextmanager
 from typing import TYPE_CHECKING
 
 from . import _cache, _conf, _index, _install, _jdk
-from ._exceptions import ConfigError, DownloadError, UnsupportedFormatError
+from ._exceptions import ConfigError, InstallError, UnsupportedFormatError
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
@@ -53,10 +53,8 @@ def list_vendors(**kwargs: Unpack[ConfigKwargs]) -> list[str]:
     ------
     ConfigError
         If configuration is invalid.
-    DownloadError
-        If fetching the index fails.
     InstallError
-        If a concurrent fetch of the index failed.
+        If fetching the index fails.
     """
     return sorted(_get_vendors(**kwargs))
 
@@ -104,10 +102,8 @@ def list_jdks(  # type: ignore [misc]  # overlap with kwargs
     ------
     ConfigError
         If configuration is invalid.
-    DownloadError
-        If fetching the index fails.
     InstallError
-        If a concurrent fetch of the index failed.
+        If fetching the index fails.
     """
     return _get_jdks(
         vendor=vendor, version=version, cached_only=cached_only, **kwargs
@@ -192,10 +188,8 @@ def cache_jdk(  # type: ignore [misc]  # overlap with kwargs
         If configuration is invalid.
     JdkNotFoundError
         If no matching JDK is available.
-    DownloadError
-        If download fails.
     InstallError
-        If extraction fails or a concurrent install failed.
+        If download or extraction fails.
     """
     conf = _conf.configure(vendor=vendor, version=version, **kwargs)
     _jdk.install_jdk(conf)
@@ -223,10 +217,8 @@ def java_home(  # type: ignore [misc]  # overlap with kwargs
         If configuration is invalid.
     JdkNotFoundError
         If no matching JDK is available.
-    DownloadError
-        If download fails.
     InstallError
-        If extraction fails or a concurrent install failed.
+        If download or extraction fails.
     """
     conf = _conf.configure(vendor=vendor, version=version, **kwargs)
     path = _jdk.install_jdk(conf)
@@ -266,10 +258,8 @@ def java_env(  # type: ignore [misc]  # overlap with kwargs
         If configuration is invalid.
     JdkNotFoundError
         If no matching JDK is available.
-    DownloadError
-        If download fails.
     InstallError
-        If extraction fails or a concurrent install failed.
+        If download or extraction fails.
     """
     home = java_home(vendor=vendor, version=version, **kwargs)
     with _env_var_set("JAVA_HOME", str(home)):
@@ -325,10 +315,8 @@ def cache_file(
     ------
     ConfigError
         If configuration or URL is invalid.
-    DownloadError
-        If download or hash check fails.
     InstallError
-        If a concurrent install failed.
+        If download or hash check fails.
 
     Notes
     -----
@@ -392,10 +380,8 @@ def cache_package(
     ------
     ConfigError
         If configuration or URL is invalid.
-    DownloadError
-        If download or hash check fails.
     InstallError
-        If extraction fails or a concurrent install failed.
+        If download, hash check, or extraction fails.
 
     Notes
     -----
@@ -515,11 +501,11 @@ def _make_hash_checker(hashes: dict) -> Callable[[Any], None]:
                                 break
                             _hasher.update(bytes)
                 except OSError as e:
-                    raise DownloadError(
+                    raise InstallError(
                         f"Failed to read file for hash verification: {e}"
                     ) from e
                 if _hasher.hexdigest().lower() != hash.lower():
-                    raise DownloadError("Hash does not match")
+                    raise InstallError("Hash does not match")
 
     return check
 

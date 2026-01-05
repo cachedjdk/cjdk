@@ -10,7 +10,7 @@ import warnings
 from typing import TYPE_CHECKING
 
 from . import _install
-from ._exceptions import DownloadError, JdkNotFoundError
+from ._exceptions import InstallError, JdkNotFoundError
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -126,9 +126,9 @@ def _read_index(path: Path) -> Index:
         with open(path, encoding="ascii") as infile:
             index = json.load(infile)
     except OSError as e:
-        raise DownloadError(f"Failed to read index file {path}: {e}") from e
+        raise InstallError(f"Failed to read index file {path}: {e}") from e
     except json.JSONDecodeError as e:
-        raise DownloadError(f"Invalid JSON in index file {path}: {e}") from e
+        raise InstallError(f"Invalid JSON in index file {path}: {e}") from e
 
     return _postprocess_index(index)
 

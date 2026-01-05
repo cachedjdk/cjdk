@@ -15,7 +15,6 @@ from ._api import (
 from ._exceptions import (
     CjdkError,
     ConfigError,
-    DownloadError,
     InstallError,
     JdkNotFoundError,
 )
@@ -28,7 +27,6 @@ __all__ = [
     "CjdkError",
     "clear_cache",
     "ConfigError",
-    "DownloadError",
     "InstallError",
     "java_env",
     "java_home",

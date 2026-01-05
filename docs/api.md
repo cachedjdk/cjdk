@@ -79,11 +79,6 @@ install an application JAR.
 ```
 
 ```{eval-rst}
-.. autoexception:: cjdk.DownloadError
-.. versionadded:: 0.5.0
-```
-
-```{eval-rst}
 .. autoexception:: cjdk.InstallError
 .. versionadded:: 0.5.0
 ```

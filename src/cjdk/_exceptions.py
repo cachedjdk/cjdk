@@ -5,7 +5,6 @@
 __all__ = [
     "CjdkError",
     "ConfigError",
-    "DownloadError",
     "InstallError",
     "JdkNotFoundError",
     "UnsupportedFormatError",
@@ -30,16 +29,10 @@ class JdkNotFoundError(CjdkError, LookupError):
     exit_code = 3
 
 
-class DownloadError(CjdkError, RuntimeError):
-    """Download failure, HTTP error, or hash mismatch."""
+class InstallError(CjdkError, RuntimeError):
+    """Download, extraction, or cache failure."""
 
     exit_code = 4
-
-
-class InstallError(CjdkError, RuntimeError):
-    """Extraction failure, JDK validation error, or cache timeout."""
-
-    exit_code = 5
 
 
 class UnsupportedFormatError(Exception):

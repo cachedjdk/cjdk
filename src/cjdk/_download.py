@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 import requests
 
 from . import _progress, _utils
-from ._exceptions import DownloadError, InstallError, UnsupportedFormatError
+from ._exceptions import InstallError, UnsupportedFormatError
 
 __all__ = [
     "download_and_extract",
@@ -101,11 +101,11 @@ def download_file(
                     ):
                         outfile.write(chunk)
             except OSError as e:
-                raise DownloadError(
+                raise InstallError(
                     f"Failed to write download to {dest}: {e}"
                 ) from e
     except requests.RequestException as e:
-        raise DownloadError(f"Download failed: {e}") from e
+        raise InstallError(f"Download failed: {e}") from e
 
     if checkfunc:
         checkfunc(dest)

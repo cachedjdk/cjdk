@@ -26,8 +26,8 @@ separate pages.
 
 All subcommands return 0 on success, 1 on general/unknown errors, 2 on
 configuration error (e.g., invalid arguments), 3 if a matching JDK is not
-available, 4 if download fails, 5 if unpacking fails. However, the `exec`
-subcommand, if successful, returns the exit code of the launched program.
+available, 4 if download or unpacking fails. However, the `exec` subcommand, if
+successful, returns the exit code of the launched program.
 
 ```{eval-rst}
 .. versionchanged:: 0.5.0
