@@ -10,7 +10,12 @@ from contextlib import contextmanager
 from typing import TYPE_CHECKING
 
 from . import _cache, _conf, _index, _install, _jdk
-from ._exceptions import ConfigError, InstallError, UnsupportedFormatError
+from ._exceptions import (
+    CjdkError,
+    ConfigError,
+    InstallError,
+    UnsupportedFormatError,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
@@ -129,8 +134,8 @@ def clear_cache(**kwargs: Unpack[ConfigKwargs]) -> Path:
 
     Raises
     ------
-    ConfigError
-        If configuration is invalid.
+    CjdkError
+        If the cache directory could not be removed.
     """
     conf = _conf.configure(**kwargs)
     cache_path = conf.cache_dir
@@ -138,7 +143,7 @@ def clear_cache(**kwargs: Unpack[ConfigKwargs]) -> Path:
         try:
             shutil.rmtree(cache_path)
         except OSError as e:
-            raise ConfigError(
+            raise CjdkError(
                 f"Failed to remove cache directory {cache_path}: {e}"
             ) from e
     return cache_path
