@@ -19,5 +19,5 @@ variable [`CJDK_CACHE_DIR`](environ-cjdk-cache-dir).
 
 You can safely delete the cache directory at any time, provided that **cjdk**
 and the JDKs installed by it are not in use. You can use the
-[`cjdk clear-cache`](cli.md#clear-cache) command or the
-[`cjdk.clear_cache()`](api.md#cjdk.clear_cache) function to do this.
+[`cjdk clear-cache`](cli-clear-cache) command or the
+[`cjdk.clear_cache()`](cjdk.clear_cache) function to do this.
