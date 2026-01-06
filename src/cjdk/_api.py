@@ -47,6 +47,8 @@ def list_vendors(**kwargs: Unpack[ConfigKwargs]) -> list[str]:
 
     Other Parameters
     ----------------
+    cache_dir : pathlib.Path or str, optional
+        Override the root cache directory.
     index_url : str, optional
         Alternative URL for the JDK index.
 
@@ -123,8 +125,8 @@ def clear_cache(**kwargs: Unpack[ConfigKwargs]) -> Path:
     This should not be called when other processes may be using cjdk or the
     JDKs and files installed by cjdk.
 
-    Parameters
-    ----------
+    Other Parameters
+    ----------------
     cache_dir : pathlib.Path or str, optional
         Override the root cache directory.
 
@@ -370,11 +372,11 @@ def cache_package(
     url : str
         The URL of the file resource. The scheme must be tgz+https or
         zip+https.
-    sha1 : str
+    sha1 : str, optional
         SHA-1 hash that the downloaded file must match.
-    sha256 : str
+    sha256 : str, optional
         SHA-256 hash that the downloaded file must match.
-    sha512 : str
+    sha512 : str, optional
         SHA-512 hash that the downloaded file must match.
 
     Returns
