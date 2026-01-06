@@ -51,8 +51,28 @@ class Configuration:
     _allow_insecure_for_testing: bool
 
 
+def check_str(
+    name: str,
+    value: object,
+    *,
+    allow_none: bool = False,
+    allow_empty: bool = True,
+) -> None:
+    if value is None:
+        if allow_none:
+            return
+        raise TypeError(f"{name} must be a string, got None")
+    if not isinstance(value, str):
+        raise TypeError(f"{name} must be a string, got {type(value).__name__}")
+    if not allow_empty and value == "":
+        raise ConfigError(f"{name} must not be empty")
+
+
 def configure(**kwargs: Unpack[ConfigKwargs]) -> Configuration:
     # kwargs must have API-specific items removed before passing here.
+
+    for name in ("jdk", "os", "arch", "vendor", "version"):
+        check_str(name, kwargs.get(name), allow_none=True)
 
     jdk = kwargs.pop("jdk", None)
     if jdk:

@@ -331,6 +331,9 @@ def cache_file(
     The check for SHA-1/SHA-256/SHA-512 hashes is only performed after a
     download; it is not performed if the file already exists in the cache.
     """
+    _conf.check_str("name", name)
+    _conf.check_str("url", url, allow_empty=False)
+    _conf.check_str("filename", filename, allow_empty=False)
     if ttl is None:
         ttl = 2**63
     check_hashes = _make_hash_checker(
@@ -397,6 +400,8 @@ def cache_package(
     unextracted archive) after a download; it is not performed if the directory
     already exists in the cache.
     """
+    _conf.check_str("name", name)
+    _conf.check_str("url", url, allow_empty=False)
     check_hashes = _make_hash_checker(
         dict(sha1=sha1, sha256=sha256, sha512=sha512)
     )
