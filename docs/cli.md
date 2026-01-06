@@ -115,6 +115,8 @@ shown was on macOS.)
 
 ## Managing the cache
 
+(cli-clear-cache)=
+
 ### `clear-cache`
 
 ```{command-output} cjdk clear-cache --help
