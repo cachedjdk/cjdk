@@ -20,7 +20,6 @@ from ._exceptions import (
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
     from pathlib import Path
-    from typing import Any
 
     from typing_extensions import Unpack
 
@@ -282,7 +281,7 @@ def cache_file(
     name: str,
     url: str,
     filename: str,
-    ttl: int | None = None,
+    ttl: float | None = None,
     *,
     sha1: str | None = None,
     sha256: str | None = None,
@@ -303,13 +302,13 @@ def cache_file(
         The URL of the file resource. The scheme must be https.
     filename : str
         The filename under which the file will be stored.
-    ttl : int
+    ttl : int or float, optional
         Time to live (in seconds) for the cached file resource.
-    sha1 : str
+    sha1 : str, optional
         SHA-1 hash that the downloaded file must match.
-    sha256 : str
+    sha256 : str, optional
         SHA-256 hash that the downloaded file must match.
-    sha512 : str
+    sha512 : str, optional
         SHA-512 hash that the downloaded file must match.
 
     Returns
@@ -464,7 +463,7 @@ def _get_jdks(
 
     if cached_only:
         # Filter matches by existing key directories.
-        def is_cached(v):
+        def is_cached(v: str) -> bool:
             url = _index.jdk_url(index, conf, v)
             key = (_jdk._JDK_KEY_PREFIX, _cache._key_for_url(url))
             keydir = _cache._key_directory(conf.cache_dir, key)
@@ -476,7 +475,7 @@ def _get_jdks(
         def __init__(self, value: int | str) -> None:
             self.value = value
 
-        def __eq__(self, other: Any) -> bool:
+        def __eq__(self, other: VersionElement) -> bool:  # type: ignore[override]
             if isinstance(self.value, int) and isinstance(other.value, int):
                 return self.value == other.value
             return str(self.value) == str(other.value)
@@ -486,7 +485,9 @@ def _get_jdks(
                 return self.value < other.value
             return str(self.value) < str(other.value)
 
-    def version_key(version_tuple):
+    def version_key(
+        version_tuple: tuple[tuple[int | str, ...], str],
+    ) -> tuple[VersionElement, ...]:
         return tuple(VersionElement(elem) for elem in version_tuple[0])
 
     return [
@@ -495,24 +496,26 @@ def _get_jdks(
     ]
 
 
-def _make_hash_checker(hashes: dict) -> Callable[[Any], None]:
+def _make_hash_checker(
+    hashes: dict[str, str | None],
+) -> Callable[[Path], None]:
     checks = [
         (hashes.pop("sha1", None), hashlib.sha1),
         (hashes.pop("sha256", None), hashlib.sha256),
         (hashes.pop("sha512", None), hashlib.sha512),
     ]
 
-    def check(filepath: Any) -> None:
+    def check(filepath: Path) -> None:
         for hash, hasher in checks:
             if hash:
                 _hasher = hasher()
                 try:
                     with open(filepath, "rb") as infile:
                         while True:
-                            bytes = infile.read(16384)
-                            if not len(bytes):
+                            chunk = infile.read(16384)
+                            if not len(chunk):
                                 break
-                            _hasher.update(bytes)
+                            _hasher.update(chunk)
                 except OSError as e:
                     raise InstallError(
                         f"Failed to read file for hash verification: {e}"

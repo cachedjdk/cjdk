@@ -10,7 +10,6 @@ import urllib.parse
 from contextlib import contextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING
-from urllib.parse import ParseResult
 
 from . import _progress, _utils
 
@@ -24,7 +23,7 @@ __all__ = [
 ]
 
 
-def _key_for_url(url: str | ParseResult) -> str:
+def _key_for_url(url: str | urllib.parse.ParseResult) -> str:
     """
     Return a cache key suitable to cache content retrieved from the given URL.
     """
@@ -45,7 +44,7 @@ def _key_for_url(url: str | ParseResult) -> str:
     # And urllib never encodes - . _ ~
     # In practice, this usually serves only to normalize '+' and the case of
     # percent encoding hex digits.
-    def percent_reencode(item):
+    def percent_reencode(item: str) -> str:
         try:
             decoded = urllib.parse.unquote(item, errors="strict")
             return urllib.parse.quote(decoded, safe="+-._", errors="strict")
@@ -181,7 +180,7 @@ def permanent_directory(
     return keydir
 
 
-def _file_exists_and_is_fresh(file: Path, ttl: int | float) -> bool:
+def _file_exists_and_is_fresh(file: Path, ttl: float) -> bool:
     if not file.is_file():
         return False
     now = time.time()

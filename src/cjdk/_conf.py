@@ -19,14 +19,14 @@ if TYPE_CHECKING:
     from typing_extensions import Unpack
 
     class ConfigKwargs(TypedDict, total=False):
-        jdk: str
-        os: str
-        arch: str
-        vendor: str
-        version: str
-        cache_dir: Path
-        index_url: str
-        index_ttl: int
+        jdk: str | None
+        os: str | None
+        arch: str | None
+        vendor: str | None
+        version: str | None
+        cache_dir: str | Path | None
+        index_url: str | None
+        index_ttl: float | None
         progress: bool
         _allow_insecure_for_testing: bool
 
@@ -46,7 +46,7 @@ class Configuration:
     version: str
     cache_dir: Path
     index_url: str
-    index_ttl: int
+    index_ttl: float
     progress: bool
     _allow_insecure_for_testing: bool
 
@@ -62,25 +62,27 @@ def configure(**kwargs: Unpack[ConfigKwargs]) -> Configuration:
             raise ConfigError("Cannot specify jdk= together with version=")
         kwargs["vendor"], kwargs["version"] = parse_vendor_version(jdk)
 
+    index_ttl = kwargs.pop("index_ttl", None)
+    if not index_ttl and index_ttl != 0:
+        index_ttl = _default_index_ttl()
+
+    cache_dir = kwargs.pop("cache_dir", None) or _default_cachedir()
+    if not isinstance(cache_dir, Path):
+        cache_dir = Path(cache_dir)
+
     conf = Configuration(
         os=_canonicalize_os(kwargs.pop("os", None)),
         arch=_canonicalize_arch(kwargs.pop("arch", None)),
         vendor=kwargs.pop("vendor", None) or _default_vendor(),
         version=kwargs.pop("version", "") or "",
-        cache_dir=kwargs.pop("cache_dir", None) or _default_cachedir(),
+        cache_dir=cache_dir,
         index_url=kwargs.pop("index_url", None) or _default_index_url(),
-        index_ttl=kwargs.pop("index_ttl", None),
+        index_ttl=index_ttl,
         progress=kwargs.pop("progress", True),
         _allow_insecure_for_testing=kwargs.pop(
             "_allow_insecure_for_testing", False
         ),
     )
-
-    if not isinstance(conf.cache_dir, Path):
-        conf.cache_dir = Path(conf.cache_dir)
-
-    if conf.index_ttl is None:
-        conf.index_ttl = _default_index_ttl()
 
     if kwargs:
         raise ConfigError(f"Unrecognized kwargs: {tuple(kwargs.keys())}")
@@ -204,13 +206,13 @@ def _default_index_url() -> str:
     # "https://raw.githubusercontent.com/shyiko/jabba/master/index.json"
 
 
-def _default_index_ttl() -> int:
+def _default_index_ttl() -> float:
     ttl_str = os.environ.get("CJDK_INDEX_TTL") or "86400"
     try:
-        return int(ttl_str)
+        return float(ttl_str)
     except ValueError as e:
         raise ConfigError(
-            f"Invalid value for CJDK_INDEX_TTL: '{ttl_str}' (must be an integer)"
+            f"Invalid value for CJDK_INDEX_TTL: '{ttl_str}' (must be a number)"
         ) from e
 
 

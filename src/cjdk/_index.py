@@ -7,7 +7,7 @@ import copy
 import json
 import re
 import warnings
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeAlias
 
 from . import _install
 from ._exceptions import InstallError, JdkNotFoundError
@@ -30,10 +30,10 @@ _INDEX_FILENAME = "jdk-index.json"
 
 
 # Type alias declarations.
-Versions = dict[str, str]  # key = version, value = archive URL
-Vendors = dict[str, Versions]  # key = vendor name
-Arches = dict[str, Vendors]  # key = arch name
-Index = dict[str, Arches]  # key = os name
+Versions: TypeAlias = dict[str, str]  # key = version, value = archive URL
+Vendors: TypeAlias = dict[str, Versions]  # key = vendor name
+Arches: TypeAlias = dict[str, Vendors]  # key = arch name
+Index: TypeAlias = dict[str, Arches]  # key = os name
 
 
 def jdk_index(conf: Configuration) -> Index:
@@ -103,8 +103,7 @@ def jdk_url(
 
 
 def _cached_index_path(conf: Configuration) -> Path:
-    def check_index(path):
-        # Ensure valid JSON.
+    def check_index(path: Path) -> None:
         _read_index(path)
 
     conf_no_progress = copy.deepcopy(conf)

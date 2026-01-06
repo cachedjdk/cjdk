@@ -27,10 +27,10 @@ def install_file(
     filename: str,
     conf: Configuration,
     *,
-    ttl: int,
+    ttl: float,
     checkfunc: Callable[[Path], None] | None = None,
 ) -> Path:
-    def fetch(dest):
+    def fetch(dest: Path) -> None:
         _print_progress_header(conf, name)
         _download.download_file(
             dest,
@@ -58,7 +58,7 @@ def install_dir(
     *,
     checkfunc: Callable[[Path], None] | None = None,
 ) -> Path:
-    def fetch(destdir):
+    def fetch(destdir: Path) -> None:
         _print_progress_header(conf, name)
         _download.download_and_extract(
             destdir,

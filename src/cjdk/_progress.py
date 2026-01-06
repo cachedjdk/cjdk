@@ -7,7 +7,7 @@ import os
 import sys
 import time
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, TypeVar, cast
 
 import progressbar
 
@@ -58,7 +58,7 @@ def data_transfer(
     enabled = _bar_enabled(enabled)
     barclass = progressbar.DataTransferBar if enabled else progressbar.NullBar
     size = 0
-    max_val: Any = (
+    max_val: int | type[progressbar.UnknownLength] = (
         total_bytes if total_bytes is not None else progressbar.UnknownLength
     )
     with barclass(max_value=max_val, prefix=f"{text} ") as pbar:
@@ -83,7 +83,7 @@ def iterate(
     """
     enabled = _bar_enabled(enabled)
     barclass = progressbar.ProgressBar if enabled else progressbar.NullBar
-    max_val: Any
+    max_val: int | type[progressbar.UnknownLength]
     if total is not None:
         max_val = total
     elif hasattr(iter, "__len__"):

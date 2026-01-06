@@ -1,6 +1,7 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+from __future__ import annotations
 
 import os
 import subprocess
@@ -44,7 +45,16 @@ __all__ = [
     help="Show or do not show progress bars.",
 )
 @click.version_option(version=__version__)
-def _cli(ctx, jdk, cache_dir, index_url, index_ttl, os, arch, progress):
+def _cli(
+    ctx: click.Context,
+    jdk: str | None,
+    cache_dir: str | None,
+    index_url: str | None,
+    index_ttl: int | None,
+    os: str | None,
+    arch: str | None,
+    progress: bool,
+) -> None:
     """
     Download, cache, and run JDK or JRE distributions.
 
@@ -67,7 +77,7 @@ def _cli(ctx, jdk, cache_dir, index_url, index_ttl, os, arch, progress):
 
 @click.command(short_help="List available JDK vendors.")
 @click.pass_context
-def ls_vendors(ctx):
+def ls_vendors(ctx: click.Context) -> None:
     """
     Print the list of available JDK vendors.
     """
@@ -83,7 +93,7 @@ def ls_vendors(ctx):
     default=True,
     help="Show only already-cached JDKs, or show all available JDKs from the index (default cached only).",
 )
-def ls(ctx, cached: bool = False):
+def ls(ctx: click.Context, cached: bool) -> None:
     """
     Print the list of JDKs matching the given criteria.
 
@@ -96,7 +106,7 @@ def ls(ctx, cached: bool = False):
 
 @click.command(short_help="Ensure the requested JDK is cached.")
 @click.pass_context
-def cache(ctx):
+def cache(ctx: click.Context) -> None:
     """
     Download and extract the requested JDK if it is not already cached.
 
@@ -112,7 +122,7 @@ def cache(ctx):
 
 @click.command(hidden=True)
 @click.pass_context
-def cache_jdk(ctx):
+def cache_jdk(ctx: click.Context) -> None:
     """
     Deprecated. Use cache function instead.
     """
@@ -123,7 +133,7 @@ def cache_jdk(ctx):
     short_help="Print the Java home directory for the requested JDK."
 )
 @click.pass_context
-def java_home(ctx):
+def java_home(ctx: click.Context) -> None:
     """
     Print the path that is suitable as the value of JAVA_HOME for the requested
     JDK.
@@ -143,7 +153,7 @@ def java_home(ctx):
 @click.pass_context
 @click.argument("prog", nargs=1)
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
-def exec(ctx, prog, args):
+def exec(ctx: click.Context, prog: str, args: tuple[str, ...]) -> None:
     """
     Run PROG with the environment variables set for the requested JDK.
 
@@ -191,7 +201,16 @@ def exec(ctx, prog, args):
     metavar="HASH",
     help="Check the downloaded file against the given SHA-512 hash.",
 )
-def cache_file(ctx, url, filename, name, ttl, sha1, sha256, sha512):
+def cache_file(
+    ctx: click.Context,
+    url: str,
+    filename: str,
+    name: str | None,
+    ttl: int | None,
+    sha1: str | None,
+    sha256: str | None,
+    sha512: str | None,
+) -> None:
     """
     Download and store an arbitrary file if it is not already cached.
 
@@ -236,7 +255,14 @@ def cache_file(ctx, url, filename, name, ttl, sha1, sha256, sha512):
     metavar="HASH",
     help="Check the downloaded file against the given SHA-512 hash.",
 )
-def cache_package(ctx, url, name, sha1, sha256, sha512):
+def cache_package(
+    ctx: click.Context,
+    url: str,
+    name: str | None,
+    sha1: str | None,
+    sha256: str | None,
+    sha512: str | None,
+) -> None:
     """
     Download, extract, and store an arbitrary .zip or .tar.gz package if it is
     not already cached.
@@ -262,7 +288,7 @@ def cache_package(ctx, url, name, sha1, sha256, sha512):
 
 @click.command(short_help="Remove all cached files.")
 @click.pass_context
-def clear_cache(ctx):
+def clear_cache(ctx: click.Context) -> None:
     """
     Remove all cached JDKs, files, and packages from the cache directory.
 
@@ -292,7 +318,7 @@ _cli.add_command(clear_cache)
 _cli.add_command(cache_jdk)
 
 
-def main():
+def main() -> None:
     try:
         _cli()
     except CjdkError as e:
