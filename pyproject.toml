@@ -51,6 +51,7 @@ test = [
 ]
 dev = [
     {include-group = "test"},
+    "ty >= 0.0.9",
 ]
 docs = [
     "jgo >= 1.0",

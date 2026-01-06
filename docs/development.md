@@ -26,7 +26,7 @@ to the pre-commit hook in the future (when an official ty hook is available),
 but for now, you can run it manually:
 
 ```sh
-uvx ty check
+uv run ty check
 ```
 
 To run the tests:

@@ -23,7 +23,7 @@ jobs:
           python-version: "3.x"
       - uses: pre-commit/action@v3.0.0
       - uses: astral-sh/setup-uv@v5
-      - run: uvx ty check  # Until they add a pre-commit hook
+      - run: uv run ty check  # Until they add a pre-commit hook
 
   test:
     strategy:
