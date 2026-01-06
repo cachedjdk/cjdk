@@ -21,6 +21,14 @@ uv tool install pre-commit
 pre-commit install
 ```
 
+We use [ty](https://docs.astral.sh/ty/) for type checking. This will be added
+to the pre-commit hook in the future (when an official ty hook is available),
+but for now, you can run it manually:
+
+```sh
+uvx ty check
+```
+
 To run the tests:
 
 ```sh
