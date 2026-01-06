@@ -1,13 +1,19 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+from __future__ import annotations
 
 import os
 import shutil
 import time
+from typing import TYPE_CHECKING
 
 from . import _progress
 from ._exceptions import InstallError
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+    from pathlib import Path
 
 __all__ = [
     "backoff_seconds",
@@ -20,7 +26,12 @@ __all__ = [
 _WIN_OPEN_FILE_ERRS = (5, 32)
 
 
-def backoff_seconds(initial_interval, max_interval, max_total, factor=1.5):
+def backoff_seconds(
+    initial_interval: float,
+    max_interval: float,
+    max_total: float,
+    factor: float = 1.5,
+) -> Iterator[float]:
     """
     Yield intervals to sleep after repeated attempts with exponential backoff.
 
@@ -47,7 +58,7 @@ def backoff_seconds(initial_interval, max_interval, max_total, factor=1.5):
     yield -1
 
 
-def rmtree_tempdir(path, timeout=2.5):
+def rmtree_tempdir(path: Path, timeout: float = 2.5) -> None:
     # Try extra hard to clean up a temporary directory. See comment in
     # unlink_tempfile() for why.
 
@@ -70,7 +81,7 @@ def rmtree_tempdir(path, timeout=2.5):
             return
 
 
-def unlink_tempfile(path, timeout=2.5):
+def unlink_tempfile(path: Path, timeout: float = 2.5) -> None:
     # On Windows, we may encounter errors when trying to delete a file that we
     # just closed after writing, due to Antivirus opening the file to scan it.
     # Microsoft Defender Antivirus is said to use FILE_SHARE_DELETE, but
@@ -110,7 +121,9 @@ def unlink_tempfile(path, timeout=2.5):
             return
 
 
-def swap_in_file(target, tmpfile, timeout, progress=False):
+def swap_in_file(
+    target: Path, tmpfile: Path, timeout: float, progress: bool = False
+) -> None:
     # On POSIX, we only need to try once to move tmpfile to target; this will
     # work even if target is opened by others, and any failure (e.g.
     # insufficient permissions) is permanent.

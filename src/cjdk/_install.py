@@ -1,11 +1,18 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from . import _cache, _download
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from ._conf import Configuration
 
 __all__ = [
     "install_file",
@@ -14,9 +21,16 @@ __all__ = [
 
 
 def install_file(
-    prefix, name, url, filename, conf, *, ttl, checkfunc=None
+    prefix: str,
+    name: str,
+    url: str,
+    filename: str,
+    conf: Configuration,
+    *,
+    ttl: float,
+    checkfunc: Callable[[Path], None] | None = None,
 ) -> Path:
-    def fetch(dest):
+    def fetch(dest: Path) -> None:
         _print_progress_header(conf, name)
         _download.download_file(
             dest,
@@ -36,8 +50,15 @@ def install_file(
     )
 
 
-def install_dir(prefix, name, url, conf, *, checkfunc=None) -> Path:
-    def fetch(destdir):
+def install_dir(
+    prefix: str,
+    name: str,
+    url: str,
+    conf: Configuration,
+    *,
+    checkfunc: Callable[[Path], None] | None = None,
+) -> Path:
+    def fetch(destdir: Path) -> None:
         _print_progress_header(conf, name)
         _download.download_and_extract(
             destdir,
@@ -56,7 +77,7 @@ def install_dir(prefix, name, url, conf, *, checkfunc=None) -> Path:
     )
 
 
-def _print_progress_header(conf, name):
+def _print_progress_header(conf: Configuration, name: str) -> None:
     if conf.progress:
         print(
             f"cjdk: Installing {name} to {conf.cache_dir}",

@@ -1,15 +1,20 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+from __future__ import annotations
 
 import hashlib
 import sys
 import time
-import urllib
+import urllib.parse
 from contextlib import contextmanager
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from . import _progress, _utils
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterator
 from ._exceptions import ConfigError, InstallError
 
 __all__ = [
@@ -18,7 +23,7 @@ __all__ = [
 ]
 
 
-def _key_for_url(url):
+def _key_for_url(url: str | urllib.parse.ParseResult) -> str:
     """
     Return a cache key suitable to cache content retrieved from the given URL.
     """
@@ -39,7 +44,7 @@ def _key_for_url(url):
     # And urllib never encodes - . _ ~
     # In practice, this usually serves only to normalize '+' and the case of
     # percent encoding hex digits.
-    def percent_reencode(item):
+    def percent_reencode(item: str) -> str:
         try:
             decoded = urllib.parse.unquote(item, errors="strict")
             return urllib.parse.quote(decoded, safe="+-._", errors="strict")
@@ -56,15 +61,15 @@ def _key_for_url(url):
 
 
 def atomic_file(
-    prefix,
-    key_url,
-    filename,
-    fetchfunc,
+    prefix: str,
+    key_url: str,
+    filename: str,
+    fetchfunc: Callable[[Path], None],
     *,
-    cache_dir,
-    ttl,
-    timeout_for_fetch_elsewhere=10,
-    timeout_for_read_elsewhere=2.5,
+    cache_dir: Path,
+    ttl: float,
+    timeout_for_fetch_elsewhere: float = 10,
+    timeout_for_read_elsewhere: float = 2.5,
 ) -> Path:
     """
     Retrieve cached file for key, fetching with fetchfunc if necessary.
@@ -122,13 +127,13 @@ def atomic_file(
 
 
 def permanent_directory(
-    prefix,
-    key_url,
-    fetchfunc,
+    prefix: str,
+    key_url: str,
+    fetchfunc: Callable[[Path], None],
     *,
-    cache_dir,
-    timeout_for_fetch_elsewhere=60,
-):
+    cache_dir: Path,
+    timeout_for_fetch_elsewhere: float = 60,
+) -> Path:
     """
     Retrieve cached directory for key, fetching with fetchfunc if necessary.
 
@@ -175,7 +180,7 @@ def permanent_directory(
     return keydir
 
 
-def _file_exists_and_is_fresh(file, ttl) -> bool:
+def _file_exists_and_is_fresh(file: Path, ttl: float) -> bool:
     if not file.is_file():
         return False
     now = time.time()
@@ -190,7 +195,9 @@ def _file_exists_and_is_fresh(file, ttl) -> bool:
 
 
 @contextmanager
-def _create_key_tmpdir(cache_dir, key):
+def _create_key_tmpdir(
+    cache_dir: Path, key: tuple[str, str]
+) -> Iterator[Path | None]:
     tmpdir = _key_tmpdir(cache_dir, key)
     try:
         tmpdir.parent.mkdir(parents=True, exist_ok=True)
@@ -217,15 +224,15 @@ def _create_key_tmpdir(cache_dir, key):
             _utils.rmtree_tempdir(tmpdir)
 
 
-def _key_directory(cache_dir: Path, key) -> Path:
+def _key_directory(cache_dir: Path, key: tuple[str, str]) -> Path:
     return cache_dir / "v0" / Path(*key)
 
 
-def _key_tmpdir(cache_dir: Path, key) -> Path:
+def _key_tmpdir(cache_dir: Path, key: tuple[str, str]) -> Path:
     return cache_dir / "v0" / Path("fetching", *key)
 
 
-def _move_in_fetched_directory(target, tmpdir):
+def _move_in_fetched_directory(target: Path, tmpdir: Path) -> None:
     try:
         target.parent.mkdir(parents=True, exist_ok=True)
     except OSError as e:
@@ -238,7 +245,7 @@ def _move_in_fetched_directory(target, tmpdir):
         raise InstallError(f"Failed to move {tmpdir} to {target}: {e}") from e
 
 
-def _add_url_file(keydir, key_url):
+def _add_url_file(keydir: Path, key_url: str) -> None:
     url_file = keydir.parent / (keydir.name + ".url")
     try:
         with open(url_file, "w") as f:
@@ -247,7 +254,9 @@ def _add_url_file(keydir, key_url):
         raise InstallError(f"Failed to write URL file {url_file}: {e}") from e
 
 
-def _wait_for_dir_to_vanish(directory, timeout, progress=True):
+def _wait_for_dir_to_vanish(
+    directory: Path, timeout: float, progress: bool = True
+) -> None:
     print(
         "cjdk: Another process is currently downloading the same file",
         file=sys.stderr,

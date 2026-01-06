@@ -36,12 +36,12 @@ def test_file_exists_and_is_fresh(tmp_path):
 
 def test_key_directory():
     f = _cache._key_directory
-    assert f(Path("a"), ("b",)) == Path("a/v0/b")
+    assert f(Path("a"), ("b", "c")) == Path("a/v0/b/c")
 
 
 def test_key_tmpdir():
     f = _cache._key_tmpdir
-    assert f(Path("a"), ("b",)) == Path("a/v0/fetching/b")
+    assert f(Path("a"), ("b", "c")) == Path("a/v0/fetching/b/c")
 
 
 def test_move_in_fetched_directory(tmp_path):

@@ -20,7 +20,8 @@ from ._exceptions import (
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
     from pathlib import Path
-    from typing import Any, Unpack
+
+    from typing_extensions import Unpack
 
     from ._conf import ConfigKwargs
 
@@ -46,6 +47,8 @@ def list_vendors(**kwargs: Unpack[ConfigKwargs]) -> list[str]:
 
     Other Parameters
     ----------------
+    cache_dir : pathlib.Path or str, optional
+        Override the root cache directory.
     index_url : str, optional
         Alternative URL for the JDK index.
 
@@ -122,8 +125,8 @@ def clear_cache(**kwargs: Unpack[ConfigKwargs]) -> Path:
     This should not be called when other processes may be using cjdk or the
     JDKs and files installed by cjdk.
 
-    Parameters
-    ----------
+    Other Parameters
+    ----------------
     cache_dir : pathlib.Path or str, optional
         Override the root cache directory.
 
@@ -280,7 +283,7 @@ def cache_file(
     name: str,
     url: str,
     filename: str,
-    ttl: int | None = None,
+    ttl: float | None = None,
     *,
     sha1: str | None = None,
     sha256: str | None = None,
@@ -301,13 +304,13 @@ def cache_file(
         The URL of the file resource. The scheme must be https.
     filename : str
         The filename under which the file will be stored.
-    ttl : int
+    ttl : int or float, optional
         Time to live (in seconds) for the cached file resource.
-    sha1 : str
+    sha1 : str, optional
         SHA-1 hash that the downloaded file must match.
-    sha256 : str
+    sha256 : str, optional
         SHA-256 hash that the downloaded file must match.
-    sha512 : str
+    sha512 : str, optional
         SHA-512 hash that the downloaded file must match.
 
     Returns
@@ -328,6 +331,9 @@ def cache_file(
     The check for SHA-1/SHA-256/SHA-512 hashes is only performed after a
     download; it is not performed if the file already exists in the cache.
     """
+    _conf.check_str("name", name)
+    _conf.check_str("url", url, allow_empty=False)
+    _conf.check_str("filename", filename, allow_empty=False)
     if ttl is None:
         ttl = 2**63
     check_hashes = _make_hash_checker(
@@ -369,11 +375,11 @@ def cache_package(
     url : str
         The URL of the file resource. The scheme must be tgz+https or
         zip+https.
-    sha1 : str
+    sha1 : str, optional
         SHA-1 hash that the downloaded file must match.
-    sha256 : str
+    sha256 : str, optional
         SHA-256 hash that the downloaded file must match.
-    sha512 : str
+    sha512 : str, optional
         SHA-512 hash that the downloaded file must match.
 
     Returns
@@ -394,6 +400,8 @@ def cache_package(
     unextracted archive) after a download; it is not performed if the directory
     already exists in the cache.
     """
+    _conf.check_str("name", name)
+    _conf.check_str("url", url, allow_empty=False)
     check_hashes = _make_hash_checker(
         dict(sha1=sha1, sha256=sha256, sha512=sha512)
     )
@@ -428,26 +436,33 @@ def _get_vendors(**kwargs: Unpack[ConfigKwargs]) -> set[str]:
     }
 
 
-def _get_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
-    conf = _conf.configure(
-        vendor=vendor,
-        version=version,
-        fallback_to_default_vendor=False,
-        **kwargs,
-    )
-    if conf.vendor is None:
-        # Search across all vendors.
-        kwargs.pop("jdk", None)  # It was already parsed.
+def _get_jdks(
+    *,
+    vendor: str | None = None,
+    version: str | None = None,
+    cached_only: bool = True,
+    **kwargs: Unpack[ConfigKwargs],
+) -> list[str]:
+    jdk = kwargs.pop("jdk", None)
+    if jdk:
+        parsed_vendor, parsed_version = _conf.parse_vendor_version(jdk)
+        vendor = vendor or parsed_vendor or None
+        version = version or parsed_version or None
+
+    # Handle "all vendors" before creating Configuration.
+    if vendor is None:
         return [
             jdk
             for v in sorted(_get_vendors())
             for jdk in _get_jdks(
                 vendor=v,
-                version=conf.version,
+                version=version,
                 cached_only=cached_only,
                 **kwargs,
             )
         ]
+
+    conf = _conf.configure(vendor=vendor, version=version, **kwargs)
     index = _index.jdk_index(conf)
     jdks = _index.available_jdks(index, conf)
     versions = _index._get_versions(jdks, conf)
@@ -455,7 +470,7 @@ def _get_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
 
     if cached_only:
         # Filter matches by existing key directories.
-        def is_cached(v):
+        def is_cached(v: str) -> bool:
             url = _index.jdk_url(index, conf, v)
             key = (_jdk._JDK_KEY_PREFIX, _cache._key_for_url(url))
             keydir = _cache._key_directory(conf.cache_dir, key)
@@ -464,21 +479,22 @@ def _get_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
         matched = {k: v for k, v in matched.items() if is_cached(v)}
 
     class VersionElement:
-        def __init__(self, value):
+        def __init__(self, value: int | str) -> None:
             self.value = value
-            self.is_int = isinstance(value, int)
 
-        def __eq__(self, other):
-            if self.is_int and other.is_int:
+        def __eq__(self, other: VersionElement) -> bool:  # type: ignore[override]
+            if isinstance(self.value, int) and isinstance(other.value, int):
                 return self.value == other.value
             return str(self.value) == str(other.value)
 
-        def __lt__(self, other):
-            if self.is_int and other.is_int:
+        def __lt__(self, other: VersionElement) -> bool:
+            if isinstance(self.value, int) and isinstance(other.value, int):
                 return self.value < other.value
             return str(self.value) < str(other.value)
 
-    def version_key(version_tuple):
+    def version_key(
+        version_tuple: tuple[tuple[int | str, ...], str],
+    ) -> tuple[VersionElement, ...]:
         return tuple(VersionElement(elem) for elem in version_tuple[0])
 
     return [
@@ -487,24 +503,26 @@ def _get_jdks(*, vendor=None, version=None, cached_only=True, **kwargs):
     ]
 
 
-def _make_hash_checker(hashes: dict) -> Callable[[Any], None]:
+def _make_hash_checker(
+    hashes: dict[str, str | None],
+) -> Callable[[Path], None]:
     checks = [
         (hashes.pop("sha1", None), hashlib.sha1),
         (hashes.pop("sha256", None), hashlib.sha256),
         (hashes.pop("sha512", None), hashlib.sha512),
     ]
 
-    def check(filepath: Any) -> None:
+    def check(filepath: Path) -> None:
         for hash, hasher in checks:
             if hash:
                 _hasher = hasher()
                 try:
                     with open(filepath, "rb") as infile:
                         while True:
-                            bytes = infile.read(16384)
-                            if not len(bytes):
+                            chunk = infile.read(16384)
+                            if not len(chunk):
                                 break
-                            _hasher.update(bytes)
+                            _hasher.update(chunk)
                 except OSError as e:
                     raise InstallError(
                         f"Failed to read file for hash verification: {e}"
@@ -516,7 +534,7 @@ def _make_hash_checker(hashes: dict) -> Callable[[Any], None]:
 
 
 @contextmanager
-def _env_var_set(name, value):
+def _env_var_set(name: str, value: str) -> Iterator[None]:
     old_value = os.environ.get(name, None)
     os.environ[name] = value
     try:

@@ -14,18 +14,19 @@ from typing import TYPE_CHECKING
 from ._exceptions import ConfigError
 
 if TYPE_CHECKING:
-    from typing import TypedDict, Unpack
+    from typing import TypedDict
+
+    from typing_extensions import Unpack
 
     class ConfigKwargs(TypedDict, total=False):
-        jdk: str
-        fallback_to_default_vendor: bool
-        os: str
-        arch: str
+        jdk: str | None
+        os: str | None
+        arch: str | None
         vendor: str | None
         version: str | None
-        cache_dir: Path
-        index_url: str
-        index_ttl: int
+        cache_dir: str | Path | None
+        index_url: str | None
+        index_ttl: float | None
         progress: bool
         _allow_insecure_for_testing: bool
 
@@ -33,6 +34,7 @@ if TYPE_CHECKING:
 __all__ = [
     "Configuration",
     "configure",
+    "parse_vendor_version",
 ]
 
 
@@ -44,13 +46,33 @@ class Configuration:
     version: str
     cache_dir: Path
     index_url: str
-    index_ttl: int
+    index_ttl: float
     progress: bool
     _allow_insecure_for_testing: bool
 
 
+def check_str(
+    name: str,
+    value: object,
+    *,
+    allow_none: bool = False,
+    allow_empty: bool = True,
+) -> None:
+    if value is None:
+        if allow_none:
+            return
+        raise TypeError(f"{name} must be a string, got None")
+    if not isinstance(value, str):
+        raise TypeError(f"{name} must be a string, got {type(value).__name__}")
+    if not allow_empty and value == "":
+        raise ConfigError(f"{name} must not be empty")
+
+
 def configure(**kwargs: Unpack[ConfigKwargs]) -> Configuration:
     # kwargs must have API-specific items removed before passing here.
+
+    for name in ("jdk", "os", "arch", "vendor", "version"):
+        check_str(name, kwargs.get(name), allow_none=True)
 
     jdk = kwargs.pop("jdk", None)
     if jdk:
@@ -58,46 +80,44 @@ def configure(**kwargs: Unpack[ConfigKwargs]) -> Configuration:
             raise ConfigError("Cannot specify jdk= together with vendor=")
         if kwargs.get("version"):
             raise ConfigError("Cannot specify jdk= together with version=")
-        kwargs["vendor"], kwargs["version"] = _parse_vendor_version(jdk)
+        kwargs["vendor"], kwargs["version"] = parse_vendor_version(jdk)
 
-    default_vendor = (
-        _default_vendor()
-        if kwargs.pop("fallback_to_default_vendor", True)
-        else None
-    )
+    index_ttl = kwargs.pop("index_ttl", None)
+    if not index_ttl and index_ttl != 0:
+        index_ttl = _default_index_ttl()
+
+    cache_dir = kwargs.pop("cache_dir", None) or _default_cachedir()
+    if not isinstance(cache_dir, Path):
+        cache_dir = Path(cache_dir)
+
     conf = Configuration(
         os=_canonicalize_os(kwargs.pop("os", None)),
         arch=_canonicalize_arch(kwargs.pop("arch", None)),
-        vendor=kwargs.pop("vendor", None) or default_vendor,
+        vendor=kwargs.pop("vendor", None) or _default_vendor(),
         version=kwargs.pop("version", "") or "",
-        cache_dir=kwargs.pop("cache_dir", None) or _default_cachedir(),
+        cache_dir=cache_dir,
         index_url=kwargs.pop("index_url", None) or _default_index_url(),
-        index_ttl=kwargs.pop("index_ttl", None),
+        index_ttl=index_ttl,
         progress=kwargs.pop("progress", True),
         _allow_insecure_for_testing=kwargs.pop(
             "_allow_insecure_for_testing", False
         ),
     )
 
-    if not isinstance(conf.cache_dir, Path):
-        conf.cache_dir = Path(conf.cache_dir)
-
-    if conf.index_ttl is None:
-        conf.index_ttl = _default_index_ttl()
-
     if kwargs:
         raise ConfigError(f"Unrecognized kwargs: {tuple(kwargs.keys())}")
     return conf
 
 
-def _parse_vendor_version(spec):
+def parse_vendor_version(spec: str) -> tuple[str, str]:
     # Actually we don't fully parse here; we only disambiguate between vendor
     # and version when only one is given.
     if ":" in spec:
         parts = spec.split(":")
         if len(parts) != 2:
             raise ConfigError(f"Cannot parse JDK spec '{spec}'")
-        return tuple(parts)
+        vendor, version = parts
+        return (vendor, version)
     if len(spec) == 0:
         return "", ""
     if re.fullmatch(r"[a-z][a-z0-9-]*", spec):
@@ -107,7 +127,7 @@ def _parse_vendor_version(spec):
     raise ConfigError(f"Cannot parse JDK spec '{spec}'")
 
 
-def _default_cachedir():
+def _default_cachedir() -> Path:
     """
     Return the cache directory path to be used by default.
 
@@ -130,7 +150,7 @@ def _default_cachedir():
         return _xdg_cachedir()
 
 
-def _windows_cachedir(*, create=True):
+def _windows_cachedir(*, create: bool = True) -> Path:
     cjdk_cache = _local_app_data(create=create) / "cjdk"
     if create:
         try:
@@ -142,7 +162,7 @@ def _windows_cachedir(*, create=True):
     return cjdk_cache / "cache"
 
 
-def _local_app_data(*, create=True):
+def _local_app_data(*, create: bool = True) -> Path:
     # https://docs.microsoft.com/en-us/windows/win32/shell/knownfolderid#FOLDERID_LocalAppData
     # https://docs.microsoft.com/en-us/windows/win32/msi/localappdatafolder
     # It is not clear, but I'm pretty sure it's safe to assume that the
@@ -155,7 +175,7 @@ def _local_app_data(*, create=True):
         raise ConfigError(f"Cannot determine home directory: {e}") from e
 
 
-def _macos_cachedir(*, create=True):
+def _macos_cachedir(*, create: bool = True) -> Path:
     # ~/Library/Caches almost always already exists, and both dirs are 0o700.
     # Create them here if they don't exist to ensure correct permissions.
     try:
@@ -173,7 +193,7 @@ def _macos_cachedir(*, create=True):
     return caches / "cjdk"
 
 
-def _xdg_cachedir(*, create=True):
+def _xdg_cachedir(*, create: bool = True) -> Path:
     # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
     if v := os.environ.get("XDG_CACHE_HOME"):
         caches = Path(v)
@@ -194,7 +214,7 @@ def _xdg_cachedir(*, create=True):
     return caches / "cjdk"
 
 
-def _default_index_url():
+def _default_index_url() -> str:
     # The Coursier JDK index is auto-generated, well curated, and clean.
     coursier_index_url = "https://raw.githubusercontent.com/coursier/jvm-index/master/index.json"
     return os.environ.get("CJDK_INDEX_URL") or coursier_index_url
@@ -206,17 +226,17 @@ def _default_index_url():
     # "https://raw.githubusercontent.com/shyiko/jabba/master/index.json"
 
 
-def _default_index_ttl():
+def _default_index_ttl() -> float:
     ttl_str = os.environ.get("CJDK_INDEX_TTL") or "86400"
     try:
-        return int(ttl_str)
+        return float(ttl_str)
     except ValueError as e:
         raise ConfigError(
-            f"Invalid value for CJDK_INDEX_TTL: '{ttl_str}' (must be an integer)"
+            f"Invalid value for CJDK_INDEX_TTL: '{ttl_str}' (must be a number)"
         ) from e
 
 
-def _canonicalize_os(osname):
+def _canonicalize_os(osname: str | None) -> str:
     if not osname:
         osname = os.environ.get("CJDK_OS") or sys.platform
     osname = osname.lower()
@@ -233,7 +253,7 @@ def _canonicalize_os(osname):
     return osname
 
 
-def _canonicalize_arch(arch):
+def _canonicalize_arch(arch: str | None) -> str:
     if not arch:
         arch = os.environ.get("CJDK_ARCH") or platform.machine()
     arch = arch.lower()
@@ -248,7 +268,7 @@ def _canonicalize_arch(arch):
     return arch
 
 
-def _default_vendor():
+def _default_vendor() -> str:
     """
     Return the default vendor.
 

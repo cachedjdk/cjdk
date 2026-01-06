@@ -1,6 +1,7 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+from __future__ import annotations
 
 from pathlib import Path
 
@@ -17,7 +18,7 @@ __all__ = [
 _JDK_KEY_PREFIX = "jdks"
 
 
-def install_jdk(conf: Configuration):
+def install_jdk(conf: Configuration) -> Path:
     """
     Install a JDK if it is not already installed.
     """
@@ -34,7 +35,7 @@ def install_jdk(conf: Configuration):
         ) from e
 
 
-def find_home(path, _recursion_depth=2):
+def find_home(path: Path, _recursion_depth: int = 2) -> Path:
     """
     Find the Java home directory within path.
 
@@ -54,14 +55,14 @@ def find_home(path, _recursion_depth=2):
     raise InstallError(f"{path} does not look like it contains a JDK or JRE")
 
 
-def _looks_like_java_home(path):
+def _looks_like_java_home(path: Path) -> bool:
     return (path / "bin").is_dir() and (
         (path / "bin" / "java").is_file()
         or (path / "bin" / "java.exe").is_file()
     )
 
 
-def _contains_single_subdir(path):
+def _contains_single_subdir(path: Path) -> Path | None:
     try:
         items = list(i for i in path.iterdir() if i.is_dir())
     except OSError as e:

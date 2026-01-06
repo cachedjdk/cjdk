@@ -33,6 +33,7 @@ dependencies = [
     "click >= 8.0",
     "progressbar2 >= 4.0",
     "requests >= 2.24",
+    "typing-extensions>=4.15.0",
 ]
 
 [project.urls]
@@ -50,6 +51,7 @@ test = [
 ]
 dev = [
     {include-group = "test"},
+    "ty >= 0.0.9",
 ]
 docs = [
     "jgo >= 1.0",
