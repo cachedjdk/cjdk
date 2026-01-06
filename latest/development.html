@@ -435,8 +435,14 @@ SPDX-License-Identifier: MIT
 pre-commit<span class="w"> </span>install
 </pre></div>
 </div>
+<p>We use <a class="reference external" href="https://docs.astral.sh/ty/">ty</a> for type checking. This will be added
+to the pre-commit hook in the future (when an official ty hook is available),
+but for now, you can run it manually:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>ty<span class="w"> </span>check
+</pre></div>
+</div>
 <p>To run the tests:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span><span class="nb">test</span><span class="w"> </span>pytest
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>pytest
 </pre></div>
 </div>
 <p>To build the documentation with <a class="reference external" href="https://jupyterbook.org/">Jupyter Book</a>:</p>
