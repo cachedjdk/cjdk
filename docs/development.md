@@ -32,7 +32,7 @@ uv run ty check
 To run the tests:
 
 ```sh
-uv run test pytest
+uv run pytest
 ```
 
 To build the documentation with [Jupyter Book](https://jupyterbook.org/):
