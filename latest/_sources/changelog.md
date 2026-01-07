@@ -10,13 +10,24 @@ See also the section on [versioning](versioning-scheme).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-01-07
+
+### Added
+
 - Add `cjdk clear-cache` and `clear_cache()`.
-- Environment variables set to empty are now treated as unset.
-- Improve cleanup of temporary files and directories.
-- Better message when a leftover directory blocks a download.
 - Add API exception hierarchy (`CjdkError`, `ConfigError`, `JdkNotFoundError`,
   `InstallError`).
 - Command line exit codes by error category.
+
+### Changed
+
+- Environment variables set to empty are now treated as unset.
+- API now raises `CjdkError` and subclasses on known errors.
+
+### Fixed
+
+- Improve cleanup of temporary files and directories.
+- Better message when a leftover directory blocks a download.
 
 ## [0.4.1] - 2025-05-01
 
@@ -89,4 +100,5 @@ Tag created but not actually released.
 [0.3.0]: https://github.com/cachedjdk/cjdk/compare/v0.2.0...v0.3.0
 [0.4.0]: https://github.com/cachedjdk/cjdk/compare/v0.3.0...v0.4.0
 [0.4.1]: https://github.com/cachedjdk/cjdk/compare/v0.4.0...v0.4.1
-[unreleased]: https://github.com/cachedjdk/cjdk/compare/v0.4.1...HEAD
+[0.5.0]: https://github.com/cachedjdk/cjdk/compare/v0.4.1...v0.5.0
+[unreleased]: https://github.com/cachedjdk/cjdk/compare/v0.5.0...HEAD
