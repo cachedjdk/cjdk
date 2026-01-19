@@ -404,6 +404,7 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modularity">Modularity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing">Testing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#versioning">Versioning</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#making-api-changes">Making API changes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-procedure">Release procedure</a></li>
@@ -474,6 +475,17 @@ and exposed by <code class="docutils literal notranslate"><span class="pre">__in
 <p>All module-internal names are prefixed with an underscore. Such names should
 not be used from another module. Modules must avoid reaching into each other’s
 internals.</p>
+</section>
+<section id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Link to this heading">#</a></h2>
+<p>Everything should have a unit test. In this project, we avoid access to the
+internet and to the user’s cjdk cache directory in all unit tests. Instead,
+temporary directories are used to mock the cache, and, where needed, a mock
+server is used to test downloads.</p>
+<p>Unit test modules should try not to import cjdk modules other than the one
+under test, although sometimes this is unavoidable.</p>
+<p>Actual use of the internet (including the Coursier index) and the user cache
+directory is limited to integration tests, which are kept separate.</p>
 </section>
 <section id="versioning">
 <span id="versioning-scheme"></span><h2>Versioning<a class="headerlink" href="#versioning" title="Link to this heading">#</a></h2>
@@ -575,6 +587,7 @@ without releasing.</p></li>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modularity">Modularity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing">Testing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#versioning">Versioning</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#making-api-changes">Making API changes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-procedure">Release procedure</a></li>
