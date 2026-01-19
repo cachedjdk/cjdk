@@ -1,6 +1,14 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+
+"""
+Public API surface.
+
+Exposes all user-facing functions (which are re-exported by __init__.py).
+Coordinates calls to other modules.
+"""
+
 from __future__ import annotations
 
 import hashlib

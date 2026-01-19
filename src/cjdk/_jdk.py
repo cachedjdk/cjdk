@@ -1,6 +1,13 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+
+"""
+JDK-specific logic.
+
+Integrates _index, _cache, and _install for JDK operations.
+"""
+
 from __future__ import annotations
 
 from pathlib import Path

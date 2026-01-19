@@ -1,6 +1,18 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+
+"""
+Low-level caching primitives.
+
+Manages URL-to-cache-key mapping (via SHA-1 hashing of normalized URLs), atomic
+file/directory operations, TTL-based freshness checks, and inter-process
+coordination (waiting when another process is downloading the same file).
+
+No JDK-specific operations. All network/unarchive operations are
+dependency-injected.
+"""
+
 from __future__ import annotations
 
 import hashlib

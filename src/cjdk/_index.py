@@ -1,6 +1,17 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+
+"""
+JDK index handling.
+
+Fetches and caches the Coursier JDK index, parses JSON, normalizes vendor names
+(e.g., merges ibm-semeru-*-java## variants), and performs version
+matching/resolution with support for version expressions like "17+".
+
+No actual operations except for caching the index itself.
+"""
+
 from __future__ import annotations
 
 import copy

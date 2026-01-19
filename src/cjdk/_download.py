@@ -1,6 +1,16 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+
+"""
+HTTP downloads and archive extraction.
+
+Downloads files via HTTPS with progress tracking, extracts .zip and .tgz
+archives, and preserves executable bits from zip files.
+
+No JDK-specific or cache-related operations.
+"""
+
 from __future__ import annotations
 
 import sys

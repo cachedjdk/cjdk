@@ -53,6 +53,23 @@ New notebook pages can be added by first creating the notebook (`.ipynb`) in
 Jupyter Lab, then running `jupytext mypage.ipynb --to myst`. Delete the
 `.ipynb` file so that the MyST (`.md`) file is the single source of truth.
 
+## Modularity
+
+We try to maintain good separation of concerns between modules, each of which
+should have a single area of responsibility. The division will undoubtedly
+evolve over time. See each module's docstring for their intended scope (and
+keep it up to date!). Think hard before introducing new dependencies between
+modules.
+
+All internal modules (which currently are all modules except for `__init__.py`)
+begin with an underscore. The public API is defined by `_api` and `_exceptions`
+and exposed by `__init__.py`. The command-line interface, defined in
+`__main__.py`, uses the public API only.
+
+All module-internal names are prefixed with an underscore. Such names should
+not be used from another module. Modules must avoid reaching into each other's
+internals.
+
 (versioning-scheme)=
 
 ## Versioning

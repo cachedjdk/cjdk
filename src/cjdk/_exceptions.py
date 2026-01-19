@@ -2,6 +2,13 @@
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
+"""
+Exception hierarchy.
+
+Defines the base CjdkError and specific subclasses. These are exposed to the
+API by __init__.py.
+"""
+
 __all__ = [
     "CjdkError",
     "ConfigError",

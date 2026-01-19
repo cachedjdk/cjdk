@@ -1,6 +1,14 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+
+"""
+Low-level utilities.
+
+Exponential backoff iterator, and Windows-aware retry logic for file operations
+that handles sharing-violation errors gracefully.
+"""
+
 from __future__ import annotations
 
 import os

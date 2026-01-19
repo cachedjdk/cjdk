@@ -1,6 +1,18 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+
+"""
+Configuration management.
+
+Defines the Configuration dataclass, parses and validates parameters, detects
+platform (OS/architecture canonicalization), determines default cache
+directories (platform-specific), and resolves environment variable overrides
+(CJDK_*).
+
+No actual operations.
+"""
+
 from __future__ import annotations
 
 import os

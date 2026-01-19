@@ -9,8 +9,7 @@ import sys
 
 import click
 
-from . import __version__, _api
-from ._exceptions import CjdkError
+from . import CjdkError, __version__, _api
 
 __all__ = [
     "main",
