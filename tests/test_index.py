@@ -49,7 +49,7 @@ def test_available_jdks(tmp_path):
             }
         }
     }
-    jdks = _index.available_jdks(index, configure(os="linux", arch="amd64"))
+    jdks = _index._available_jdks(index, configure(os="linux", arch="amd64"))
     assert len(jdks) == 1
     assert jdks[0] == ("adoptium", "17.0.1")
 

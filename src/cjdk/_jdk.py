@@ -17,18 +17,53 @@ from ._conf import Configuration
 from ._exceptions import InstallError, JdkNotFoundError, UnsupportedFormatError
 
 __all__ = [
+    "available_vendors",
     "find_home",
     "install_jdk",
-    "is_jdk_cached",
+    "matching_jdks",
 ]
 
 
 _JDK_KEY_PREFIX = "jdks"
 
 
-def is_jdk_cached(cache_dir: Path, url: str) -> bool:
-    """Check if a JDK at the given URL is already cached."""
-    return _cache.is_cached(_JDK_KEY_PREFIX, url, cache_dir=cache_dir)
+def available_vendors(conf: Configuration) -> set[str]:
+    """
+    Return the set of available JDK vendor names.
+
+    Arguments:
+    conf -- Configuration (currently unused, for future os/arch filtering)
+    """
+    _ = conf
+    index = _index.jdk_index(conf)
+    return {
+        vendor.removeprefix("jdk@")
+        for os in index
+        for arch in index[os]
+        for vendor in index[os][arch]
+        if vendor.startswith("jdk@")
+    }
+
+
+def matching_jdks(conf: Configuration, cached_only: bool = True) -> list[str]:
+    """
+    Return JDKs matching the configuration, optionally filtered to cached only.
+    """
+    index = _index.jdk_index(conf)
+    versions = _index.matching_jdk_versions(index, conf)
+
+    if cached_only:
+        versions = [
+            v
+            for v in versions
+            if _cache.is_cached(
+                _JDK_KEY_PREFIX,
+                _index.jdk_url(index, conf, v),
+                cache_dir=conf.cache_dir,
+            )
+        ]
+
+    return [f"{conf.vendor}:{v}" for v in versions]
 
 
 def install_jdk(conf: Configuration) -> Path:

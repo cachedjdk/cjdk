@@ -9,7 +9,8 @@ Fetches and caches the Coursier JDK index, parses JSON, normalizes vendor names
 (e.g., merges ibm-semeru-*-java## variants), and performs version
 matching/resolution with support for version expressions like "17+".
 
-No actual operations except for caching the index itself.
+No actual operations except for caching the index itself. _index should be
+considered an internal helper for _jdk and should not be used directly.
 """
 
 from __future__ import annotations
@@ -29,7 +30,6 @@ if TYPE_CHECKING:
     from ._conf import Configuration
 
 __all__ = [
-    "available_jdks",
     "jdk_index",
     "jdk_url",
     "matching_jdk_versions",
@@ -55,7 +55,9 @@ def jdk_index(conf: Configuration) -> Index:
     return _read_index(_cached_index_path(conf))
 
 
-def available_jdks(index: Index, conf: Configuration) -> list[tuple[str, str]]:
+def _available_jdks(
+    index: Index, conf: Configuration
+) -> list[tuple[str, str]]:
     """
     Find in index the available JDK vendor-version combinations.
 
@@ -83,7 +85,7 @@ def resolve_jdk_version(index: Index, conf: Configuration) -> str:
     Arguments:
     index -- The JDK index (nested dict)
     """
-    jdks = available_jdks(index, conf)
+    jdks = _available_jdks(index, conf)
     versions = _get_versions(jdks, conf)
     if not versions:
         raise JdkNotFoundError(
@@ -306,7 +308,7 @@ def matching_jdk_versions(index: Index, conf: Configuration) -> list[str]:
     Unlike resolve_jdk_version() which returns only the best match, this
     returns all compatible versions.
     """
-    jdks = available_jdks(index, conf)
+    jdks = _available_jdks(index, conf)
     versions = _get_versions(jdks, conf)
     if not versions:
         return []

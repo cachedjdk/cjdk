@@ -17,7 +17,7 @@ import shutil
 from contextlib import contextmanager
 from typing import TYPE_CHECKING
 
-from . import _conf, _index, _install, _jdk
+from . import _conf, _install, _jdk
 from ._exceptions import (
     CjdkError,
     ConfigError,
@@ -72,7 +72,8 @@ def list_vendors(**kwargs: Unpack[ConfigKwargs]) -> list[str]:
     InstallError
         If fetching the index fails.
     """
-    return sorted(_get_vendors(**kwargs))
+    conf = _conf.configure(**kwargs)
+    return sorted(_jdk.available_vendors(conf))
 
 
 def list_jdks(  # type: ignore [misc]  # overlap with kwargs
@@ -121,9 +122,27 @@ def list_jdks(  # type: ignore [misc]  # overlap with kwargs
     InstallError
         If fetching the index fails.
     """
-    return _get_jdks(
-        vendor=vendor, version=version, cached_only=cached_only, **kwargs
-    )
+    jdk = kwargs.pop("jdk", None)
+    if jdk:
+        parsed_vendor, parsed_version = _conf.parse_vendor_version(jdk)
+        vendor = vendor or parsed_vendor or None
+        version = version or parsed_version or None
+
+    if vendor is None:
+        conf = _conf.configure(**kwargs)
+        return [
+            jdk
+            for v in sorted(_jdk.available_vendors(conf))
+            for jdk in list_jdks(
+                vendor=v,
+                version=version,
+                cached_only=cached_only,
+                **kwargs,
+            )
+        ]
+
+    conf = _conf.configure(vendor=vendor, version=version, **kwargs)
+    return _jdk.matching_jdks(conf, cached_only=cached_only)
 
 
 def clear_cache(**kwargs: Unpack[ConfigKwargs]) -> Path:
@@ -431,60 +450,6 @@ def cache_package(
         )
     except UnsupportedFormatError as e:
         raise ConfigError(str(e)) from e
-
-
-def _get_vendors(**kwargs: Unpack[ConfigKwargs]) -> set[str]:
-    conf = _conf.configure(**kwargs)
-    index = _index.jdk_index(conf)
-    return {
-        vendor.removeprefix("jdk@")
-        for osys in index
-        for arch in index[osys]
-        for vendor in index[osys][arch]
-        if vendor.startswith("jdk@")
-    }
-
-
-def _get_jdks(
-    *,
-    vendor: str | None = None,
-    version: str | None = None,
-    cached_only: bool = True,
-    **kwargs: Unpack[ConfigKwargs],
-) -> list[str]:
-    jdk = kwargs.pop("jdk", None)
-    if jdk:
-        parsed_vendor, parsed_version = _conf.parse_vendor_version(jdk)
-        vendor = vendor or parsed_vendor or None
-        version = version or parsed_version or None
-
-    # Handle "all vendors" before creating Configuration.
-    if vendor is None:
-        return [
-            jdk
-            for v in sorted(_get_vendors(**kwargs))
-            for jdk in _get_jdks(
-                vendor=v,
-                version=version,
-                cached_only=cached_only,
-                **kwargs,
-            )
-        ]
-
-    conf = _conf.configure(vendor=vendor, version=version, **kwargs)
-    index = _index.jdk_index(conf)
-    versions = _index.matching_jdk_versions(index, conf)
-
-    if cached_only:
-        versions = [
-            v
-            for v in versions
-            if _jdk.is_jdk_cached(
-                conf.cache_dir, _index.jdk_url(index, conf, v)
-            )
-        ]
-
-    return [f"{conf.vendor}:{v}" for v in versions]
 
 
 def _make_hash_checker(
