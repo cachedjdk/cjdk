@@ -1,21 +1,69 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+
+"""
+JDK-specific logic.
+
+Integrates _index, _cache, and _install for JDK operations.
+"""
+
 from __future__ import annotations
 
 from pathlib import Path
 
-from . import _index, _install
+from . import _cache, _index, _install
 from ._conf import Configuration
 from ._exceptions import InstallError, JdkNotFoundError, UnsupportedFormatError
 
 __all__ = [
-    "install_jdk",
+    "available_vendors",
     "find_home",
+    "install_jdk",
+    "matching_jdks",
 ]
 
 
 _JDK_KEY_PREFIX = "jdks"
+
+
+def available_vendors(conf: Configuration) -> set[str]:
+    """
+    Return the set of available JDK vendor names.
+
+    Arguments:
+    conf -- Configuration (currently unused, for future os/arch filtering)
+    """
+    _ = conf
+    index = _index.jdk_index(conf)
+    return {
+        vendor.removeprefix("jdk@")
+        for os in index
+        for arch in index[os]
+        for vendor in index[os][arch]
+        if vendor.startswith("jdk@")
+    }
+
+
+def matching_jdks(conf: Configuration, cached_only: bool = True) -> list[str]:
+    """
+    Return JDKs matching the configuration, optionally filtered to cached only.
+    """
+    index = _index.jdk_index(conf)
+    versions = _index.matching_jdk_versions(index, conf)
+
+    if cached_only:
+        versions = [
+            v
+            for v in versions
+            if _cache.is_cached(
+                _JDK_KEY_PREFIX,
+                _index.jdk_url(index, conf, v),
+                cache_dir=conf.cache_dir,
+            )
+        ]
+
+    return [f"{conf.vendor}:{v}" for v in versions]
 
 
 def install_jdk(conf: Configuration) -> Path:

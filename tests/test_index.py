@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import json
+from pathlib import Path
 
 import mock_server
 import pytest
@@ -48,7 +49,7 @@ def test_available_jdks(tmp_path):
             }
         }
     }
-    jdks = _index.available_jdks(index, configure(os="linux", arch="amd64"))
+    jdks = _index._available_jdks(index, configure(os="linux", arch="amd64"))
     assert len(jdks) == 1
     assert jdks[0] == ("adoptium", "17.0.1")
 
@@ -272,3 +273,52 @@ def test_is_version_compatible_with_spec():
     assert f("11.1.2.3", "11.1+")
     assert not f("11.1.2.3", "11.2+")
     assert not f("11.1.2.3", "12+")
+
+
+def test_matching_jdk_versions():
+    index = {
+        "linux": {
+            "amd64": {
+                "jdk@adoptium": {
+                    "17.0.1": "tgz+https://example.com/17.0.1.tgz",
+                    "17.0.2": "tgz+https://example.com/17.0.2.tgz",
+                    "17.0.10": "tgz+https://example.com/17.0.10.tgz",
+                    "21.0.1": "tgz+https://example.com/21.0.1.tgz",
+                }
+            }
+        }
+    }
+
+    conf = configure(
+        vendor="adoptium",
+        version="17+",
+        os="linux",
+        arch="amd64",
+        cache_dir=Path("/tmp"),
+    )
+
+    versions = _index.matching_jdk_versions(index, conf)
+
+    assert versions == ["17.0.1", "17.0.2", "17.0.10", "21.0.1"]
+
+    conf2 = configure(
+        vendor="adoptium",
+        version="17.0.2",
+        os="linux",
+        arch="amd64",
+        cache_dir=Path("/tmp"),
+    )
+    versions2 = _index.matching_jdk_versions(index, conf2)
+    assert versions2 == ["17.0.2"]
+
+
+def test_matching_jdk_versions_empty():
+    index = {"linux": {"amd64": {"jdk@adoptium": {"17.0.1": "url"}}}}
+    conf = configure(
+        vendor="zulu",
+        version="17+",
+        os="linux",
+        arch="amd64",
+        cache_dir=Path("/tmp"),
+    )
+    assert _index.matching_jdk_versions(index, conf) == []

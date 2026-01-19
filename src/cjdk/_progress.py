@@ -1,6 +1,15 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+
+"""
+Progress bar display.
+
+Wraps the progressbar library providing three patterns: indefinite (unknown
+duration), data_transfer (byte-based), and iterate (count-based). Respects
+CJDK_HIDE_PROGRESS_BARS environment variable.
+"""
+
 from __future__ import annotations
 
 import os

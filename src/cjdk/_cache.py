@@ -1,6 +1,18 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+
+"""
+Low-level caching primitives.
+
+Manages URL-to-cache-key mapping (via SHA-1 hashing of normalized URLs), atomic
+file/directory operations, TTL-based freshness checks, and inter-process
+coordination (waiting when another process is downloading the same file).
+
+No JDK-specific operations. All network/unarchive operations are
+dependency-injected.
+"""
+
 from __future__ import annotations
 
 import hashlib
@@ -19,8 +31,15 @@ from ._exceptions import ConfigError, InstallError
 
 __all__ = [
     "atomic_file",
+    "is_cached",
     "permanent_directory",
 ]
+
+
+def is_cached(prefix: str, key_url: str, *, cache_dir: Path) -> bool:
+    """Check if content for the given prefix and URL is cached."""
+    key = (prefix, _key_for_url(key_url))
+    return _key_directory(cache_dir, key).is_dir()
 
 
 def _key_for_url(url: str | urllib.parse.ParseResult) -> str:

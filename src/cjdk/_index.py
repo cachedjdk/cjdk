@@ -1,6 +1,18 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+
+"""
+JDK index handling.
+
+Fetches and caches the Coursier JDK index, parses JSON, normalizes vendor names
+(e.g., merges ibm-semeru-*-java## variants), and performs version
+matching/resolution with support for version expressions like "17+".
+
+No actual operations except for caching the index itself. _index should be
+considered an internal helper for _jdk and should not be used directly.
+"""
+
 from __future__ import annotations
 
 import copy
@@ -19,9 +31,9 @@ if TYPE_CHECKING:
 
 __all__ = [
     "jdk_index",
-    "available_jdks",
-    "resolve_jdk_version",
     "jdk_url",
+    "matching_jdk_versions",
+    "resolve_jdk_version",
 ]
 
 
@@ -43,7 +55,9 @@ def jdk_index(conf: Configuration) -> Index:
     return _read_index(_cached_index_path(conf))
 
 
-def available_jdks(index: Index, conf: Configuration) -> list[tuple[str, str]]:
+def _available_jdks(
+    index: Index, conf: Configuration
+) -> list[tuple[str, str]]:
     """
     Find in index the available JDK vendor-version combinations.
 
@@ -71,7 +85,7 @@ def resolve_jdk_version(index: Index, conf: Configuration) -> str:
     Arguments:
     index -- The JDK index (nested dict)
     """
-    jdks = available_jdks(index, conf)
+    jdks = _available_jdks(index, conf)
     versions = _get_versions(jdks, conf)
     if not versions:
         raise JdkNotFoundError(
@@ -266,3 +280,43 @@ def _is_version_compatible_with_spec(
             and version[len(spec) - 1] >= spec[-1]
         )
     return len(version) >= len(spec) and version[: len(spec)] == spec
+
+
+class _VersionElement:
+    """Wrapper for version tuple elements enabling mixed int/str comparison."""
+
+    def __init__(self, value: int | str) -> None:
+        self.value = value
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, _VersionElement):
+            return NotImplemented
+        if isinstance(self.value, int) and isinstance(other.value, int):
+            return self.value == other.value
+        return str(self.value) == str(other.value)
+
+    def __lt__(self, other: _VersionElement) -> bool:
+        if isinstance(self.value, int) and isinstance(other.value, int):
+            return self.value < other.value
+        return str(self.value) < str(other.value)
+
+
+def matching_jdk_versions(index: Index, conf: Configuration) -> list[str]:
+    """
+    Return all version strings matching the configuration, sorted by version.
+
+    Unlike resolve_jdk_version() which returns only the best match, this
+    returns all compatible versions.
+    """
+    jdks = _available_jdks(index, conf)
+    versions = _get_versions(jdks, conf)
+    if not versions:
+        return []
+    matched = _match_versions(conf.vendor, versions, conf.version)
+
+    def version_sort_key(
+        item: tuple[tuple[int | str, ...], str],
+    ) -> tuple[_VersionElement, ...]:
+        return tuple(_VersionElement(e) for e in item[0])
+
+    return [v for _, v in sorted(matched.items(), key=version_sort_key)]

@@ -1,6 +1,14 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+
+"""
+Public API surface.
+
+Exposes all user-facing functions (which are re-exported by __init__.py).
+Coordinates calls to other modules.
+"""
+
 from __future__ import annotations
 
 import hashlib
@@ -9,7 +17,7 @@ import shutil
 from contextlib import contextmanager
 from typing import TYPE_CHECKING
 
-from . import _cache, _conf, _index, _install, _jdk
+from . import _conf, _install, _jdk
 from ._exceptions import (
     CjdkError,
     ConfigError,
@@ -64,7 +72,8 @@ def list_vendors(**kwargs: Unpack[ConfigKwargs]) -> list[str]:
     InstallError
         If fetching the index fails.
     """
-    return sorted(_get_vendors(**kwargs))
+    conf = _conf.configure(**kwargs)
+    return sorted(_jdk.available_vendors(conf))
 
 
 def list_jdks(  # type: ignore [misc]  # overlap with kwargs
@@ -113,9 +122,27 @@ def list_jdks(  # type: ignore [misc]  # overlap with kwargs
     InstallError
         If fetching the index fails.
     """
-    return _get_jdks(
-        vendor=vendor, version=version, cached_only=cached_only, **kwargs
-    )
+    jdk = kwargs.pop("jdk", None)
+    if jdk:
+        parsed_vendor, parsed_version = _conf.parse_vendor_version(jdk)
+        vendor = vendor or parsed_vendor or None
+        version = version or parsed_version or None
+
+    if vendor is None:
+        conf = _conf.configure(**kwargs)
+        return [
+            jdk
+            for v in sorted(_jdk.available_vendors(conf))
+            for jdk in list_jdks(
+                vendor=v,
+                version=version,
+                cached_only=cached_only,
+                **kwargs,
+            )
+        ]
+
+    conf = _conf.configure(vendor=vendor, version=version, **kwargs)
+    return _jdk.matching_jdks(conf, cached_only=cached_only)
 
 
 def clear_cache(**kwargs: Unpack[ConfigKwargs]) -> Path:
@@ -423,84 +450,6 @@ def cache_package(
         )
     except UnsupportedFormatError as e:
         raise ConfigError(str(e)) from e
-
-
-def _get_vendors(**kwargs: Unpack[ConfigKwargs]) -> set[str]:
-    conf = _conf.configure(**kwargs)
-    index = _index.jdk_index(conf)
-    return {
-        vendor.replace("jdk@", "")
-        for osys in index
-        for arch in index[osys]
-        for vendor in index[osys][arch]
-    }
-
-
-def _get_jdks(
-    *,
-    vendor: str | None = None,
-    version: str | None = None,
-    cached_only: bool = True,
-    **kwargs: Unpack[ConfigKwargs],
-) -> list[str]:
-    jdk = kwargs.pop("jdk", None)
-    if jdk:
-        parsed_vendor, parsed_version = _conf.parse_vendor_version(jdk)
-        vendor = vendor or parsed_vendor or None
-        version = version or parsed_version or None
-
-    # Handle "all vendors" before creating Configuration.
-    if vendor is None:
-        return [
-            jdk
-            for v in sorted(_get_vendors())
-            for jdk in _get_jdks(
-                vendor=v,
-                version=version,
-                cached_only=cached_only,
-                **kwargs,
-            )
-        ]
-
-    conf = _conf.configure(vendor=vendor, version=version, **kwargs)
-    index = _index.jdk_index(conf)
-    jdks = _index.available_jdks(index, conf)
-    versions = _index._get_versions(jdks, conf)
-    matched = _index._match_versions(conf.vendor, versions, conf.version)
-
-    if cached_only:
-        # Filter matches by existing key directories.
-        def is_cached(v: str) -> bool:
-            url = _index.jdk_url(index, conf, v)
-            key = (_jdk._JDK_KEY_PREFIX, _cache._key_for_url(url))
-            keydir = _cache._key_directory(conf.cache_dir, key)
-            return keydir.exists()
-
-        matched = {k: v for k, v in matched.items() if is_cached(v)}
-
-    class VersionElement:
-        def __init__(self, value: int | str) -> None:
-            self.value = value
-
-        def __eq__(self, other: VersionElement) -> bool:  # type: ignore[override]
-            if isinstance(self.value, int) and isinstance(other.value, int):
-                return self.value == other.value
-            return str(self.value) == str(other.value)
-
-        def __lt__(self, other: VersionElement) -> bool:
-            if isinstance(self.value, int) and isinstance(other.value, int):
-                return self.value < other.value
-            return str(self.value) < str(other.value)
-
-    def version_key(
-        version_tuple: tuple[tuple[int | str, ...], str],
-    ) -> tuple[VersionElement, ...]:
-        return tuple(VersionElement(elem) for elem in version_tuple[0])
-
-    return [
-        f"{conf.vendor}:{v}"
-        for k, v in sorted(matched.items(), key=version_key)
-    ]
 
 
 def _make_hash_checker(

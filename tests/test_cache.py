@@ -69,3 +69,19 @@ def test_wait_for_dir_to_vanish(tmp_path):
     path.mkdir()
     with pytest.raises(InstallError):
         _cache._wait_for_dir_to_vanish(path, 0.1)
+
+
+def test_is_cached(tmp_path):
+    prefix = "test-prefix"
+    url = "https://example.com/file.txt"
+
+    assert not _cache.is_cached(prefix, url, cache_dir=tmp_path)
+
+    def fetch(dest):
+        dest.write_text("content")
+
+    _cache.atomic_file(
+        prefix, url, "file.txt", fetch, cache_dir=tmp_path, ttl=2**63
+    )
+
+    assert _cache.is_cached(prefix, url, cache_dir=tmp_path)

@@ -1,6 +1,16 @@
 # This file is part of cjdk.
 # Copyright 2022-25 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
+
+"""
+Installation orchestration.
+
+Bridges _cache and _download: provides install_file and install_dir functions
+that coordinate downloading with caching, and prints progress headers.
+
+No JDK-specific operations.
+"""
+
 from __future__ import annotations
 
 import sys
