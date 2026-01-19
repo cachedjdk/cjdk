@@ -403,6 +403,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modularity">Modularity</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#versioning">Versioning</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#making-api-changes">Making API changes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-procedure">Release procedure</a></li>
@@ -459,6 +460,21 @@ Markdown file that is not a notebook).</p>
 <p>New notebook pages can be added by first creating the notebook (<code class="docutils literal notranslate"><span class="pre">.ipynb</span></code>) in
 Jupyter Lab, then running <code class="docutils literal notranslate"><span class="pre">jupytext</span> <span class="pre">mypage.ipynb</span> <span class="pre">--to</span> <span class="pre">myst</span></code>. Delete the
 <code class="docutils literal notranslate"><span class="pre">.ipynb</span></code> file so that the MyST (<code class="docutils literal notranslate"><span class="pre">.md</span></code>) file is the single source of truth.</p>
+<section id="modularity">
+<h2>Modularity<a class="headerlink" href="#modularity" title="Link to this heading">#</a></h2>
+<p>We try to maintain good separation of concerns between modules, each of which
+should have a single area of responsibility. The division will undoubtedly
+evolve over time. See each module’s docstring for their intended scope (and
+keep it up to date!). Think hard before introducing new dependencies between
+modules.</p>
+<p>All internal modules (which currently are all modules except for <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>)
+begin with an underscore. The public API is defined by <code class="docutils literal notranslate"><span class="pre">_api</span></code> and <code class="docutils literal notranslate"><span class="pre">_exceptions</span></code>
+and exposed by <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>. The command-line interface, defined in
+<code class="docutils literal notranslate"><span class="pre">__main__.py</span></code>, uses the public API only.</p>
+<p>All module-internal names are prefixed with an underscore. Such names should
+not be used from another module. Modules must avoid reaching into each other’s
+internals.</p>
+</section>
 <section id="versioning">
 <span id="versioning-scheme"></span><h2>Versioning<a class="headerlink" href="#versioning" title="Link to this heading">#</a></h2>
 <p><strong>cjdk</strong> uses <a class="reference external" href="https://semver.org/#semantic-versioning-200">SemVer 2</a>, with the
@@ -558,6 +574,7 @@ without releasing.</p></li>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modularity">Modularity</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#versioning">Versioning</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#making-api-changes">Making API changes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-procedure">Release procedure</a></li>
