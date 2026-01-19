@@ -70,6 +70,19 @@ All module-internal names are prefixed with an underscore. Such names should
 not be used from another module. Modules must avoid reaching into each other's
 internals.
 
+## Testing
+
+Everything should have a unit test. In this project, we avoid access to the
+internet and to the user's cjdk cache directory in all unit tests. Instead,
+temporary directories are used to mock the cache, and, where needed, a mock
+server is used to test downloads.
+
+Unit test modules should try not to import cjdk modules other than the one
+under test, although sometimes this is unavoidable.
+
+Actual use of the internet (including the Coursier index) and the user cache
+directory is limited to integration tests, which are kept separate.
+
 (versioning-scheme)=
 
 ## Versioning
