@@ -5,17 +5,23 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from . import _index, _install
+from . import _cache, _index, _install
 from ._conf import Configuration
 from ._exceptions import InstallError, JdkNotFoundError, UnsupportedFormatError
 
 __all__ = [
-    "install_jdk",
     "find_home",
+    "install_jdk",
+    "is_jdk_cached",
 ]
 
 
 _JDK_KEY_PREFIX = "jdks"
+
+
+def is_jdk_cached(cache_dir: Path, url: str) -> bool:
+    """Check if a JDK at the given URL is already cached."""
+    return _cache.is_cached(_JDK_KEY_PREFIX, url, cache_dir=cache_dir)
 
 
 def install_jdk(conf: Configuration) -> Path:

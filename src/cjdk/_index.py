@@ -18,10 +18,11 @@ if TYPE_CHECKING:
     from ._conf import Configuration
 
 __all__ = [
-    "jdk_index",
     "available_jdks",
-    "resolve_jdk_version",
+    "jdk_index",
     "jdk_url",
+    "matching_jdk_versions",
+    "resolve_jdk_version",
 ]
 
 
@@ -266,3 +267,43 @@ def _is_version_compatible_with_spec(
             and version[len(spec) - 1] >= spec[-1]
         )
     return len(version) >= len(spec) and version[: len(spec)] == spec
+
+
+class _VersionElement:
+    """Wrapper for version tuple elements enabling mixed int/str comparison."""
+
+    def __init__(self, value: int | str) -> None:
+        self.value = value
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, _VersionElement):
+            return NotImplemented
+        if isinstance(self.value, int) and isinstance(other.value, int):
+            return self.value == other.value
+        return str(self.value) == str(other.value)
+
+    def __lt__(self, other: _VersionElement) -> bool:
+        if isinstance(self.value, int) and isinstance(other.value, int):
+            return self.value < other.value
+        return str(self.value) < str(other.value)
+
+
+def matching_jdk_versions(index: Index, conf: Configuration) -> list[str]:
+    """
+    Return all version strings matching the configuration, sorted by version.
+
+    Unlike resolve_jdk_version() which returns only the best match, this
+    returns all compatible versions.
+    """
+    jdks = available_jdks(index, conf)
+    versions = _get_versions(jdks, conf)
+    if not versions:
+        return []
+    matched = _match_versions(conf.vendor, versions, conf.version)
+
+    def version_sort_key(
+        item: tuple[tuple[int | str, ...], str],
+    ) -> tuple[_VersionElement, ...]:
+        return tuple(_VersionElement(e) for e in item[0])
+
+    return [v for _, v in sorted(matched.items(), key=version_sort_key)]

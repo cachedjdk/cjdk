@@ -19,8 +19,15 @@ from ._exceptions import ConfigError, InstallError
 
 __all__ = [
     "atomic_file",
+    "is_cached",
     "permanent_directory",
 ]
+
+
+def is_cached(prefix: str, key_url: str, *, cache_dir: Path) -> bool:
+    """Check if content for the given prefix and URL is cached."""
+    key = (prefix, _key_for_url(key_url))
+    return _key_directory(cache_dir, key).is_dir()
 
 
 def _key_for_url(url: str | urllib.parse.ParseResult) -> str:

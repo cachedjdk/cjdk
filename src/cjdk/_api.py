@@ -9,7 +9,7 @@ import shutil
 from contextlib import contextmanager
 from typing import TYPE_CHECKING
 
-from . import _cache, _conf, _index, _install, _jdk
+from . import _conf, _index, _install, _jdk
 from ._exceptions import (
     CjdkError,
     ConfigError,
@@ -429,10 +429,11 @@ def _get_vendors(**kwargs: Unpack[ConfigKwargs]) -> set[str]:
     conf = _conf.configure(**kwargs)
     index = _index.jdk_index(conf)
     return {
-        vendor.replace("jdk@", "")
+        vendor.removeprefix("jdk@")
         for osys in index
         for arch in index[osys]
         for vendor in index[osys][arch]
+        if vendor.startswith("jdk@")
     }
 
 
@@ -453,7 +454,7 @@ def _get_jdks(
     if vendor is None:
         return [
             jdk
-            for v in sorted(_get_vendors())
+            for v in sorted(_get_vendors(**kwargs))
             for jdk in _get_jdks(
                 vendor=v,
                 version=version,
@@ -464,43 +465,18 @@ def _get_jdks(
 
     conf = _conf.configure(vendor=vendor, version=version, **kwargs)
     index = _index.jdk_index(conf)
-    jdks = _index.available_jdks(index, conf)
-    versions = _index._get_versions(jdks, conf)
-    matched = _index._match_versions(conf.vendor, versions, conf.version)
+    versions = _index.matching_jdk_versions(index, conf)
 
     if cached_only:
-        # Filter matches by existing key directories.
-        def is_cached(v: str) -> bool:
-            url = _index.jdk_url(index, conf, v)
-            key = (_jdk._JDK_KEY_PREFIX, _cache._key_for_url(url))
-            keydir = _cache._key_directory(conf.cache_dir, key)
-            return keydir.exists()
+        versions = [
+            v
+            for v in versions
+            if _jdk.is_jdk_cached(
+                conf.cache_dir, _index.jdk_url(index, conf, v)
+            )
+        ]
 
-        matched = {k: v for k, v in matched.items() if is_cached(v)}
-
-    class VersionElement:
-        def __init__(self, value: int | str) -> None:
-            self.value = value
-
-        def __eq__(self, other: VersionElement) -> bool:  # type: ignore[override]
-            if isinstance(self.value, int) and isinstance(other.value, int):
-                return self.value == other.value
-            return str(self.value) == str(other.value)
-
-        def __lt__(self, other: VersionElement) -> bool:
-            if isinstance(self.value, int) and isinstance(other.value, int):
-                return self.value < other.value
-            return str(self.value) < str(other.value)
-
-    def version_key(
-        version_tuple: tuple[tuple[int | str, ...], str],
-    ) -> tuple[VersionElement, ...]:
-        return tuple(VersionElement(elem) for elem in version_tuple[0])
-
-    return [
-        f"{conf.vendor}:{v}"
-        for k, v in sorted(matched.items(), key=version_key)
-    ]
+    return [f"{conf.vendor}:{v}" for v in versions]
 
 
 def _make_hash_checker(

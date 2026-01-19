@@ -4,7 +4,7 @@
 
 import pytest
 
-from cjdk import _jdk
+from cjdk import _cache, _jdk
 
 
 def test_find_home(tmp_path):
@@ -53,3 +53,15 @@ def test_contains_single_subdir(tmp_path):
     assert f(tmp_path)
     (tmp_path / "testdir2").mkdir()
     assert not f(tmp_path)
+
+
+def test_is_jdk_cached(tmp_path):
+    url = "https://example.com/jdk.zip"
+
+    assert not _jdk.is_jdk_cached(tmp_path, url)
+
+    key = ("jdks", _cache._key_for_url(url))
+    keydir = tmp_path / "v0" / key[0] / key[1]
+    keydir.mkdir(parents=True)
+
+    assert _jdk.is_jdk_cached(tmp_path, url)
