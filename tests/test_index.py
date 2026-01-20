@@ -162,34 +162,6 @@ def test_read_index(tmp_path):
     assert _index._read_index(path) == data
 
 
-def test_postprocess_index():
-    index = {
-        "linux": {
-            "amd64": {
-                "jdk@ibm-semeru-openj9-java11": {
-                    "11.0.21+9_openj9-0.41.0": "a",
-                    "11.0.22+7_openj9-0.43.0": "b",
-                    "11.0.23+9_openj9-0.44.0": "c",
-                },
-                "jdk@ibm-semeru-openj9-java17": {
-                    "17.0.1+12_openj9-0.29.1": "d",
-                    "17.0.2+8_openj9-0.30.0": "e",
-                    "17.0.3+7_openj9-0.32.0": "f",
-                },
-                "jdk@ibm-semeru-openj9-java21": {
-                    "21.0.1+12_openj9-0.42.0": "g",
-                    "21.0.2+13_openj9-0.43.0": "h",
-                },
-                "jdk@not-semeru": {"8.0.252": "i"},
-            }
-        }
-    }
-    pp_index = _index._postprocess_index(index)
-    assert pp_index is index
-    assert "jdk@ibm-semeru-openj9" in index["linux"]["amd64"]
-    assert len(index["linux"]["amd64"]["jdk@ibm-semeru-openj9"]) == 8
-
-
 def test_match_versions():
     f = _index._match_versions
     assert f("adoptium", ["10", "11.0", "11.1", "1.12.0"], "11") == {

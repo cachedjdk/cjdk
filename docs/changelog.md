@@ -15,6 +15,11 @@ See also the section on [versioning](versioning-scheme).
 - `list_vendors()` and `ls-vendors` now filter vendors by OS and architecture,
   defaulting to the current platform.
 
+### Removed
+
+- The synthesized `ibm-semeru-openj9` vendor is no longer generated. Use
+  `ibm-semeru` instead (now available directly in the upstream index).
+
 ## [0.5.0] - 2026-01-07
 
 ### Added

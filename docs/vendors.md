@@ -42,9 +42,8 @@ version.
 ```
 
 ```{note}
-For **IBM Semeru**, use `ibm-semeru`. The upstream index also has separate
-entries for each Java major version (`ibm-semeru-openj9-java11`,
-`ibm-semeru-openj9-java17`, etc.), which, as a special case, **cjdk** merges
-into a single vendor `ibm-semeru-openj9`; these have more complex version
-numbers that include a suffix denoting the OpenJ9 VM version.
+For **IBM Semeru**, use `ibm-semeru`. There are also vendor names
+like `ibm-semeru-openj9-java11` (per Java major version), containing JDK
+versions that include an OpenJ9 VM version suffix (e.g.,
+`11.0.29+7_openj9-0.56.0`).
 ```

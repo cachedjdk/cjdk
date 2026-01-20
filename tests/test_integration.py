@@ -11,7 +11,7 @@ def test_list_vendors():
     assert "adoptium" in vendors
     assert "corretto" in vendors
     assert "graalvm" in vendors
-    assert "ibm-semeru-openj9" in vendors
+    assert "ibm-semeru" in vendors
     assert "java-oracle" in vendors
     assert "liberica" in vendors
     assert "temurin" in vendors
