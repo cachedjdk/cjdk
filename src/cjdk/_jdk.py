@@ -29,18 +29,19 @@ _JDK_KEY_PREFIX = "jdks"
 
 def available_vendors(conf: Configuration) -> set[str]:
     """
-    Return the set of available JDK vendor names.
+    Return the set of available JDK vendor names for the configured OS and arch.
 
     Arguments:
-    conf -- Configuration (currently unused, for future os/arch filtering)
+    conf -- Configuration (uses os and arch for filtering)
     """
-    _ = conf
     index = _index.jdk_index(conf)
+    try:
+        vendors = index[conf.os][conf.arch]
+    except KeyError:
+        return set()
     return {
         vendor.removeprefix("jdk@")
-        for os in index
-        for arch in index[os]
-        for vendor in index[os][arch]
+        for vendor in vendors
         if vendor.startswith("jdk@")
     }
 

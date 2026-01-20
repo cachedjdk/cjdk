@@ -52,6 +52,9 @@ successful, returns the exit code of the launched program.
 
 ```{eval-rst}
 .. versionadded:: 0.4.0
+.. versionchanged:: 0.6.0
+   Now filters vendors by the ``--os`` and ``--arch`` options, which default to
+   the current platform.
 ```
 
 ## Working with cached JDKs

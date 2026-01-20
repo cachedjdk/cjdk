@@ -10,6 +10,11 @@ See also the section on [versioning](versioning-scheme).
 
 ## [Unreleased]
 
+### Changed
+
+- `list_vendors()` and `ls-vendors` now filter vendors by OS and architecture,
+  defaulting to the current platform.
+
 ## [0.5.0] - 2026-01-07
 
 ### Added

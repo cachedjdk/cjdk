@@ -154,3 +154,58 @@ def test_env_var_set():
     with f("CJDK_TEST_ENV_VAR", "testvalue"):
         assert os.environ["CJDK_TEST_ENV_VAR"] == "testvalue"
     assert "CJDK_TEST_ENV_VAR" not in os.environ
+
+
+def test_list_vendors(tmp_path):
+    with mock_server.start(
+        endpoint="/index.json",
+        data={
+            "linux": {
+                "amd64": {
+                    "jdk@adoptium": {"17": "zip+http://example.com/a.zip"},
+                    "jdk@zulu": {"17": "zip+http://example.com/z.zip"},
+                },
+                "arm64": {
+                    "jdk@adoptium": {"17": "zip+http://example.com/a.zip"},
+                },
+            },
+            "darwin": {
+                "amd64": {
+                    "jdk@graalvm": {"17": "zip+http://example.com/g.zip"},
+                },
+            },
+        },
+    ) as server:
+        vendors_linux_amd64 = _api.list_vendors(
+            os="linux",
+            arch="amd64",
+            cache_dir=tmp_path / "cache",
+            index_url=server.url("/index.json"),
+            _allow_insecure_for_testing=True,
+        )
+        vendors_linux_arm64 = _api.list_vendors(
+            os="linux",
+            arch="arm64",
+            cache_dir=tmp_path / "cache",
+            index_url=server.url("/index.json"),
+            _allow_insecure_for_testing=True,
+        )
+        vendors_darwin_amd64 = _api.list_vendors(
+            os="darwin",
+            arch="amd64",
+            cache_dir=tmp_path / "cache",
+            index_url=server.url("/index.json"),
+            _allow_insecure_for_testing=True,
+        )
+        vendors_nonexistent = _api.list_vendors(
+            os="windows",
+            arch="amd64",
+            cache_dir=tmp_path / "cache",
+            index_url=server.url("/index.json"),
+            _allow_insecure_for_testing=True,
+        )
+
+    assert vendors_linux_amd64 == ["adoptium", "zulu"]
+    assert vendors_linux_arm64 == ["adoptium"]
+    assert vendors_darwin_amd64 == ["graalvm"]
+    assert vendors_nonexistent == []
