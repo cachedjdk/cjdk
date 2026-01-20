@@ -19,8 +19,8 @@ repos:
       - id: ruff
         args: ["--fix"]
       - id: ruff-format
-  - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.22
+  - repo: https://github.com/hukkin/mdformat
+    rev: 1.0.0
     hooks:
       - id: mdformat
         additional_dependencies:

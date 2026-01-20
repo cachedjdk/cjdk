@@ -47,31 +47,11 @@ with open("Hello.java", "w") as fp:
     fp.write(java_source)
 ```
 
-Let's store the keyword arguments to `cjdk.java_env()` so that we can call it
-several times with the same configuration.
-
-```{code-cell} ipython3
-cjdk_config = dict(vendor="graalvm-java17", version="22.1.0")
-```
-
-The GraalVM `native-image` command is not included in the default install, so
-we need to use `gu` (the GraalVM updater) to install it.
-
-(On macOS, you may see warnings related to `setrlimit` in this and following
-steps. They can be ignored.)
-
-```{code-cell} ipython3
-with cjdk.java_env(**cjdk_config):
-    subprocess.run(
-        ["gu", "install", "--no-progress", "native-image"], check=True
-    )
-```
-
 Now let's compile the source, first with `javac` to byte code, then to a native
 image.
 
 ```{code-cell} ipython3
-with cjdk.java_env(**cjdk_config):
+with cjdk.java_env(vendor="graalvm-community", version="25.0.1"):
     subprocess.run(["javac", "Hello.java"], check=True)
     subprocess.run(["native-image", "Hello"], check=True)
 ```
