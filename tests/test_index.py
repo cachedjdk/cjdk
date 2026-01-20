@@ -210,8 +210,14 @@ def test_normalize_version():
     assert f("1", remove_prefix_1=True) == ()
     assert f("1.8", remove_prefix_1=True) == (8,)
     assert f("1.8.0", remove_prefix_1=True) == (8, 0)
-    assert f("1.8u300", remove_prefix_1=True) == ("8u300",)
-    assert f("21.0.1+12_openj9-0.42.0") == (21, 0, 1, 12, "openj9", 0, 42, 0)
+    assert f("17.0.4.1+1_openj9-0.33.1") == (17, 0, 4, 1, 1, 0, 33, 1)
+    assert f("21.0.1+12_openj9-0.42.0") == (21, 0, 1, 0, 12, 0, 42, 0)
+    assert f("23+37_openj9-0.47.0.0.0") == (23, 0, 0, 0, 37, 0, 47, 0, 0, 0)
+    assert f("23.0.1+11_openj9-0.49.0-m2") == (23, 0, 1, 0, 11, 0, 49, 0, 2)
+    with pytest.raises(ValueError):
+        f("23.4.5_openj9-42")  # No '+' despite having _openj9-
+    with pytest.raises(ValueError):
+        f("1.8u300")  # No longer seen in index
 
 
 def test_is_version_compatible_with_spec():
