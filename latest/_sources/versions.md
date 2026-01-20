@@ -14,6 +14,12 @@ The available versions for a given vendor (and OS, architecture) are defined by
 the [JDK index](./jdk-index.md). Different vendors use different numbering
 schemes.
 
+```{attention}
+For legacy GraalVM vendors (`graalvm`, `graalvm-java11`, etc.), version numbers
+are GraalVM release versions, not Java/JDK versions. See
+[vendors](./vendors.md) for details.
+```
+
 If you want to reproducibly install an exact JDK build, you should consult the
 index and specify an exact version in full.
 

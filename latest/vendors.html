@@ -423,28 +423,43 @@ SPDX-License-Identifier: MIT
 <section class="tex2jax_ignore mathjax_ignore" id="jdk-vendors">
 <h1>JDK vendors<a class="headerlink" href="#jdk-vendors" title="Link to this heading">#</a></h1>
 <p><strong>cjdk</strong> allows you to choose among JDKs and JREs released from different
-sources. Names such as <code class="docutils literal notranslate"><span class="pre">adoptium</span></code>, <code class="docutils literal notranslate"><span class="pre">zulu-jre</span></code>, or <code class="docutils literal notranslate"><span class="pre">graalvm-java17</span></code> are used to
-select a particular series of JDKs. These names are referred to as “vendors”,
-even though they do not map 1:1 to companies.</p>
+sources. Names such as <code class="docutils literal notranslate"><span class="pre">adoptium</span></code>, <code class="docutils literal notranslate"><span class="pre">zulu-jre</span></code>, or <code class="docutils literal notranslate"><span class="pre">graalvm-community</span></code> are used
+to select a particular series of JDKs. These names are referred to as
+“vendors”, even though they do not map 1:1 to companies.</p>
 <p>If no vendor is specified, <code class="docutils literal notranslate"><span class="pre">adoptium</span></code> is used unless the environment variable
 <a class="reference internal" href="environ.html#environ-cjdk-vendor"><span class="std std-ref"><code class="docutils literal notranslate"><span class="pre">CJDK_VENDOR</span></code></span></a> is set to an alternative default.</p>
 <section id="about-available-vendors">
 <h2>About available vendors<a class="headerlink" href="#about-available-vendors" title="Link to this heading">#</a></h2>
 <p>The available set of vendors is determined by the <a class="reference internal" href="jdk-index.html"><span class="std std-doc">JDK index</span></a>
 and is not built into <strong>cjdk</strong> itself.</p>
-<p>Common vendors include <code class="docutils literal notranslate"><span class="pre">adopt</span></code>, <code class="docutils literal notranslate"><span class="pre">adoptium</span></code>, <code class="docutils literal notranslate"><span class="pre">temurin</span></code>, <code class="docutils literal notranslate"><span class="pre">liberica</span></code>, <code class="docutils literal notranslate"><span class="pre">zulu</span></code>, and
-their JRE counterparts <code class="docutils literal notranslate"><span class="pre">adopt-jre</span></code>, <code class="docutils literal notranslate"><span class="pre">adoptium-jre</span></code>, <code class="docutils literal notranslate"><span class="pre">temurin-jre</span></code>,
-<code class="docutils literal notranslate"><span class="pre">liberica-jre</span></code>, <code class="docutils literal notranslate"><span class="pre">zulu-jre</span></code>.</p>
-<p>AdoptOpenJDK was
-<a class="reference external" href="https://blog.adoptium.net/2021/08/adoptium-celebrates-first-release/">succeeded</a>
-by Eclipse Temurin by Adoptium in 2021. To specifically get AdoptOpenJDK
-releases, use <code class="docutils literal notranslate"><span class="pre">adopt</span></code>; to specifically get Temurin releases, use <code class="docutils literal notranslate"><span class="pre">temurin</span></code>;
-<code class="docutils literal notranslate"><span class="pre">adoptium</span></code> will get a Temurin release if available, falling back to
-AdoptOpenJDK for older versions. (Again, this behavior is defined by the index,
-not <strong>cjdk</strong> itself.)</p>
-<p>For GraalVM, <code class="docutils literal notranslate"><span class="pre">graalvm-java11</span></code>, <code class="docutils literal notranslate"><span class="pre">graalvm-java16</span></code>, and <code class="docutils literal notranslate"><span class="pre">graalvm-java17</span></code> are
-available at the time of writing (these each have <a class="reference internal" href="versions.html"><span class="std std-doc">versions</span></a>
-that are numbered independently of the regular JDK version).</p>
+<p>Common vendor names for full JDKs include <code class="docutils literal notranslate"><span class="pre">temurin</span></code>, <code class="docutils literal notranslate"><span class="pre">zulu</span></code>, <code class="docutils literal notranslate"><span class="pre">liberica</span></code>,
+<code class="docutils literal notranslate"><span class="pre">corretto</span></code>, <code class="docutils literal notranslate"><span class="pre">ibm-semeru</span></code>, and <code class="docutils literal notranslate"><span class="pre">graalvm-community</span></code>. Common vendor names for JREs
+include <code class="docutils literal notranslate"><span class="pre">temurin-jre</span></code>, <code class="docutils literal notranslate"><span class="pre">zulu-jre</span></code>, and <code class="docutils literal notranslate"><span class="pre">liberica-jre</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Eclipse Temurin</strong> was
+<a class="reference external" href="https://blog.adoptium.net/2021/08/adoptium-celebrates-first-release/">previously known</a>
+as <strong>AdoptOpenJDK</strong>. To specifically get AdoptOpenJDK releases, use <code class="docutils literal notranslate"><span class="pre">adopt</span></code>; to
+specifically get Temurin releases, use <code class="docutils literal notranslate"><span class="pre">temurin</span></code>; <code class="docutils literal notranslate"><span class="pre">adoptium</span></code> will get a Temurin
+release if available, falling back to AdoptOpenJDK for older versions. (This
+behavior is defined by the index, not <strong>cjdk</strong> itself.)</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For <strong>GraalVM</strong>, the recommended vendor name is <code class="docutils literal notranslate"><span class="pre">graalvm-community</span></code>, which uses
+Java-version-aligned numbering (e.g., version <code class="docutils literal notranslate"><span class="pre">21.0.2</span></code> is for Java 21). Legacy
+vendors <code class="docutils literal notranslate"><span class="pre">graalvm</span></code> (Java 8), <code class="docutils literal notranslate"><span class="pre">graalvm-java11</span></code>, <code class="docutils literal notranslate"><span class="pre">graalvm-java17</span></code>, etc., are also
+available; these use GraalVM release version numbers (e.g., <code class="docutils literal notranslate"><span class="pre">22.3.3</span></code>) which are
+independent of the Java version. The <code class="docutils literal notranslate"><span class="pre">-javaN</span></code> suffix indicates the Java
+version.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For <strong>IBM Semeru</strong>, use <code class="docutils literal notranslate"><span class="pre">ibm-semeru</span></code>. There are also vendor names
+like <code class="docutils literal notranslate"><span class="pre">ibm-semeru-openj9-java11</span></code> (per Java major version), containing JDK
+versions that include an OpenJ9 VM version suffix (e.g.,
+<code class="docutils literal notranslate"><span class="pre">11.0.29+7_openj9-0.56.0</span></code>).</p>
+</div>
 </section>
 </section>
 

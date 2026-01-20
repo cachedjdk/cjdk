@@ -447,113 +447,94 @@ for details.</p>
 </div>
 </div>
 </div>
-<p>Let’s store the keyword arguments to <code class="docutils literal notranslate"><span class="pre">cjdk.java_env()</span></code> so that we can call it
-several times with the same configuration.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cjdk_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">vendor</span><span class="o">=</span><span class="s2">&quot;graalvm-java17&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;22.1.0&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>The GraalVM <code class="docutils literal notranslate"><span class="pre">native-image</span></code> command is not included in the default install, so
-we need to use <code class="docutils literal notranslate"><span class="pre">gu</span></code> (the GraalVM updater) to install it.</p>
-<p>(On macOS, you may see warnings related to <code class="docutils literal notranslate"><span class="pre">setrlimit</span></code> in this and following
-steps. They can be ignored.)</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">cjdk</span><span class="o">.</span><span class="n">java_env</span><span class="p">(</span><span class="o">**</span><span class="n">cjdk_config</span><span class="p">):</span>
-    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-        <span class="p">[</span><span class="s2">&quot;gu&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="s2">&quot;--no-progress&quot;</span><span class="p">,</span> <span class="s2">&quot;native-image&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cjdk: Installing JDK graalvm-java17:22.1.0 to /home/runner/.cache/cjdk
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading: Component catalog from www.graalvm.org
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Processing Component: Native Image
-Downloading: Component native-image: Native Image from github.com
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Installing new component: Native Image (org.graalvm.native-image, version 22.1.0)
-</pre></div>
-</div>
-</div>
-</div>
 <p>Now let’s compile the source, first with <code class="docutils literal notranslate"><span class="pre">javac</span></code> to byte code, then to a native
 image.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">cjdk</span><span class="o">.</span><span class="n">java_env</span><span class="p">(</span><span class="o">**</span><span class="n">cjdk_config</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">cjdk</span><span class="o">.</span><span class="n">java_env</span><span class="p">(</span><span class="n">vendor</span><span class="o">=</span><span class="s2">&quot;graalvm-community&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;25.0.1&quot;</span><span class="p">):</span>
     <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;javac&quot;</span><span class="p">,</span> <span class="s2">&quot;Hello.java&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;native-image&quot;</span><span class="p">,</span> <span class="s2">&quot;Hello&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cjdk: Installing JDK graalvm-community:25.0.1 to /home/runner/.cache/cjdk
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>========================================================================================================================
 GraalVM Native Image: Generating &#39;hello&#39; (executable)...
 ========================================================================================================================
+For detailed information and explanations on the build output, visit:
+https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/BuildOutput.md
+------------------------------------------------------------------------------------------------------------------------
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1/7] Initializing...                                                                                    (3.9s @ 0.18GB)
- Version info: &#39;GraalVM 22.1.0 Java 17 CE&#39;
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1/8] Initializing...                                                                                    (5.1s @ 0.12GB)
+ Java version: 25.0.1+8, vendor version: GraalVM CE 25.0.1+8.1
+ Graal compiler: optimization level: 2, target machine: x86-64-v3
  C compiler: gcc (linux, x86_64, 13.3.0)
- Garbage collector: Serial GC
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[2/7] Performing analysis...  [******]                                                                  (14.3s @ 0.57GB)
-   2,852 (74.19%) of  3,844 classes reachable
-   3,399 (50.83%) of  6,687 fields reachable
-  12,932 (44.57%) of 29,017 methods reachable
-      27 classes,     0 fields, and   345 methods registered for reflection
-      57 classes,    58 fields, and    51 methods registered for JNI access
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[3/7] Building universe...                                                                               (1.0s @ 0.77GB)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[4/7] Parsing methods...      [*]                                                                        (1.0s @ 1.02GB)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[5/7] Inlining methods...     [****]                                                                     (1.5s @ 0.52GB)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[6/7] Compiling methods...    [***]                                                                     (10.8s @ 1.14GB)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[7/7] Creating image...                                                                                  (1.6s @ 1.43GB)
-   4.41MB (35.36%) for code area:    7,591 compilation units
-   6.97MB (55.91%) for image heap:   1,711 classes and 102,365 objects
-   1.09MB ( 8.73%) for other data
-  12.46MB in total
+ Garbage collector: Serial GC (max heap size: 80% of RAM)
+ 1 user-specific feature(s):
+ - com.oracle.svm.thirdparty.gson.GsonFeature
 ------------------------------------------------------------------------------------------------------------------------
-Top 10 packages in code area:                               Top 10 object types in image heap:
- 666.49KB java.util                                         1014.06KB byte[] for general heap data
- 338.23KB java.lang                                          984.94KB java.lang.String
- 274.64KB java.text                                          944.49KB byte[] for code metadata
- 235.70KB java.util.regex                                    623.31KB java.lang.Class
- 194.32KB com.oracle.svm.jni                                 572.10KB byte[] for java.lang.String
- 193.13KB java.util.concurrent                               474.56KB java.util.HashMap$Node
- 157.08KB com.oracle.svm.core.reflect                        222.81KB com.oracle.svm.core.hub.DynamicHubCompanion
- 147.39KB java.math                                          201.63KB java.lang.String[]
-  98.45KB java.util.logging                                  197.61KB java.util.HashMap$Node[]
-  94.89KB com.oracle.svm.core.genscavenge                    155.91KB java.util.concurrent.ConcurrentHashMap$Node
-      ... 119 additional packages                                 ... 778 additional object types
-                                           (use GraalVM Dashboard to see all)
+Build resources:
+ - 12.67GB of memory (75.6% of system memory, $CI set to &#39;true&#39;)
+ - 4 thread(s) (100.0% of 4 available processor(s), determined at start)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[2/8] Performing analysis...  [******]                                                                  (17.9s @ 0.37GB)
+    3,262 types,   3,721 fields, and  15,131 methods found reachable
+    1,056 types,      36 fields, and     415 methods registered for reflection
+       58 types,      59 fields, and      52 methods registered for JNI access
+        0 downcalls and 0 upcalls registered for foreign access
+        4 native libraries: dl, pthread, rt, z
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[3/8] Building universe...                                                                               (2.4s @ 0.42GB)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[4/8] Parsing methods...      [*]                                                                        (1.8s @ 0.44GB)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[5/8] Inlining methods...     [****]                                                                     (1.9s @ 0.47GB)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[6/8] Compiling methods...    [****]                                                                    (19.2s @ 0.41GB)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[7/8] Laying out methods...   [*]                                                                        (1.4s @ 0.50GB)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[8/8] Creating image...       [*]                                                                        (1.7s @ 0.55GB)
+   5.17MB (35.34%) for code area:     8,661 compilation units
+   7.67MB (52.37%) for image heap:   88,461 objects and 55 resources
+   1.80MB (12.29%) for other data
+  14.64MB in total image size, 13.76MB in total file size
 ------------------------------------------------------------------------------------------------------------------------
-                        1.7s (4.7% of total time) in 17 GCs | Peak RSS: 3.45GB | CPU load: 3.68
+Top 10 origins of code area:                                Top 10 object types in image heap:
+   3.73MB java.base                                            1.39MB byte[] for code metadata
+ 902.15kB svm.jar (Native Image)                               1.19MB byte[] for java.lang.String
+ 110.59kB java.logging                                       828.48kB java.lang.String
+  90.79kB org.graalvm.nativeimage.base                       626.30kB com.oracle.svm.core.hub.DynamicHubCompanion
+  48.90kB jdk.proxy2                                         545.74kB heap alignment
+  38.97kB jdk.proxy1                                         460.10kB byte[] for general heap data
+  38.09kB org.graalvm.nativeimage.configure                  424.96kB java.lang.Class
+  28.00kB jdk.internal.vm.ci                                 314.88kB java.util.HashMap$Node
+  25.44kB jdk.graal.compiler                                 221.12kB java.lang.Object[]
+  20.07kB org.graalvm.collections                            178.74kB java.util.HashMap$Node[]
+  13.88kB for 5 more packages                                  1.48MB for 958 more object types
 ------------------------------------------------------------------------------------------------------------------------
-Produced artifacts:
- /tmp/tmpc0z3mh4l/hello (executable)
- /tmp/tmpc0z3mh4l/hello.build_artifacts.txt
+Recommendations:
+ FUTR: Use &#39;--future-defaults=all&#39; to prepare for future releases.
+ HEAP: Set max heap for improved and more predictable memory usage.
+ CPU:  Enable more CPU features with &#39;-march=native&#39; for improved performance.
+------------------------------------------------------------------------------------------------------------------------
+                        2.1s (3.9% of total time) in 491 GCs | Peak RSS: 1.14GB | CPU load: 3.62
+------------------------------------------------------------------------------------------------------------------------
+Build artifacts:
+ /tmp/tmp99w44qf8/hello (executable)
 ========================================================================================================================
-Finished generating &#39;hello&#39; in 35.5s.
+Finished generating &#39;hello&#39; in 52.6s.
 </pre></div>
 </div>
 </div>
