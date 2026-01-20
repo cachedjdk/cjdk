@@ -11,6 +11,9 @@ SPDX-License-Identifier: MIT
 ```{eval-rst}
 .. autofunction:: cjdk.list_vendors
 .. versionadded:: 0.4.0
+.. versionchanged:: 0.6.0
+   Now filters vendors by the given os/arch, which default to the current
+   platform.
 ```
 
 ```{eval-rst}

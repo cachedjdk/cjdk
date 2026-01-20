@@ -49,16 +49,16 @@ def list_vendors(**kwargs: Unpack[ConfigKwargs]) -> list[str]:
     """
     Return the list of available JDK vendors.
 
-    Parameters
-    ----------
-    None
-
     Other Parameters
     ----------------
     cache_dir : pathlib.Path or str, optional
         Override the root cache directory.
     index_url : str, optional
         Alternative URL for the JDK index.
+    os : str, optional
+        Operating system for the JDK (default: current operating system).
+    arch : str, optional
+        CPU architecture for the JDK (default: current architecture).
 
     Returns
     -------
@@ -71,6 +71,10 @@ def list_vendors(**kwargs: Unpack[ConfigKwargs]) -> list[str]:
         If configuration is invalid.
     InstallError
         If fetching the index fails.
+
+    .. versionchanged:: 0.6.0
+       Now filters vendors by the given os/arch, which default to the current
+       platform.
     """
     conf = _conf.configure(**kwargs)
     return sorted(_jdk.available_vendors(conf))

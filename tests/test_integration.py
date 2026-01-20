@@ -6,7 +6,7 @@ from cjdk import _api
 
 
 def test_list_vendors():
-    vendors = _api.list_vendors()
+    vendors = _api.list_vendors(os="linux", arch="amd64")
     assert vendors is not None
     assert "adoptium" in vendors
     assert "corretto" in vendors
