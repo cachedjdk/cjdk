@@ -457,9 +457,10 @@ SPDX-License-Identifier: MIT
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>None</strong></p></li>
 <li><p><strong>cache_dir</strong> (<em>pathlib.Path</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – Override the root cache directory.</p></li>
 <li><p><strong>index_url</strong> (<em>str</em><em>, </em><em>optional</em>) – Alternative URL for the JDK index.</p></li>
+<li><p><strong>os</strong> (<em>str</em><em>, </em><em>optional</em>) – Operating system for the JDK (default: current operating system).</p></li>
+<li><p><strong>arch</strong> (<em>str</em><em>, </em><em>optional</em>) – CPU architecture for the JDK (default: current architecture).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -472,6 +473,8 @@ SPDX-License-Identifier: MIT
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#cjdk.ConfigError" title="cjdk.ConfigError"><strong>ConfigError</strong></a> – If configuration is invalid.</p></li>
 <li><p><a class="reference internal" href="#cjdk.InstallError" title="cjdk.InstallError"><strong>InstallError</strong></a> – If fetching the index fails.</p></li>
+<li><p><strong>.. versionchanged:</strong> – 0.6.0: Now filters vendors by the given os/arch, which default to the current
+    platform.</p></li>
 </ul>
 </dd>
 </dl>
@@ -479,6 +482,10 @@ SPDX-License-Identifier: MIT
 
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version 0.4.0.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.6.0: </span>Now filters vendors by the given os/arch, which default to the current
+platform.</p>
 </div>
 <dl class="py function">
 <dt class="sig sig-object py" id="cjdk.list_jdks">
