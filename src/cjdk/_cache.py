@@ -16,6 +16,7 @@ dependency-injected.
 from __future__ import annotations
 
 import hashlib
+import shutil
 import sys
 import time
 import urllib.parse
@@ -27,12 +28,13 @@ from . import _progress, _utils
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
-from ._exceptions import ConfigError, InstallError
+from ._exceptions import CjdkError, ConfigError, InstallError
 
 __all__ = [
     "atomic_file",
     "is_cached",
     "permanent_directory",
+    "remove",
 ]
 
 
@@ -40,6 +42,34 @@ def is_cached(prefix: str, key_url: str, *, cache_dir: Path) -> bool:
     """Check if content for the given prefix and URL is cached."""
     key = (prefix, _key_for_url(key_url))
     return _key_directory(cache_dir, key).is_dir()
+
+
+def remove(prefix: str, key_url: str, *, cache_dir: Path) -> bool:
+    """
+    Remove cached content for the given prefix and URL.
+
+    Both the key directory and its sibling ``.url`` file are removed. Returns
+    True if a cached key directory was present and removed, False otherwise.
+
+    This should not be called when other processes may be using the cached
+    content.
+    """
+    if not isinstance(cache_dir, Path):
+        cache_dir = Path(cache_dir)
+    key = (prefix, _key_for_url(key_url))
+    keydir = _key_directory(cache_dir, key)
+    url_file = keydir.parent / (keydir.name + ".url")
+    existed = keydir.is_dir()
+    try:
+        if existed:
+            shutil.rmtree(keydir)
+        if url_file.exists():
+            url_file.unlink()
+    except OSError as e:
+        raise CjdkError(
+            f"Failed to remove cached directory {keydir}: {e}"
+        ) from e
+    return existed
 
 
 def _key_for_url(url: str | urllib.parse.ParseResult) -> str:

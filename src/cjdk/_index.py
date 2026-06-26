@@ -33,6 +33,7 @@ __all__ = [
     "jdk_url",
     "matching_jdk_versions",
     "resolve_jdk_version",
+    "version_sort_key",
 ]
 
 
@@ -256,6 +257,22 @@ def _is_version_compatible_with_spec(
             and version[len(spec) - 1] >= spec[-1]
         )
     return len(version) >= len(spec) and version[: len(spec)] == spec
+
+
+def version_sort_key(vendor: str, version: str) -> tuple[int | str, ...]:
+    """
+    Return a normalized, sortable key for the given vendor's version string.
+
+    The key compares element by element, so that, e.g., "26.0.0" sorts before
+    "26.0.1". Returns an empty tuple for versions that cannot be normalized.
+
+    The first element of the (non-empty) key is the major version.
+    """
+    is_graal = "graalvm" in vendor.lower()
+    try:
+        return _normalize_version(version, remove_prefix_1=not is_graal)
+    except ValueError:
+        return ()
 
 
 def matching_jdk_versions(index: Index, conf: Configuration) -> list[str]:

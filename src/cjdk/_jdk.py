@@ -18,9 +18,12 @@ from ._exceptions import InstallError, JdkNotFoundError, UnsupportedFormatError
 
 __all__ = [
     "available_vendors",
+    "cached_jdk_versions",
     "find_home",
     "install_jdk",
+    "jdks_to_prune",
     "matching_jdks",
+    "remove_jdks",
 ]
 
 
@@ -50,21 +53,85 @@ def matching_jdks(conf: Configuration, cached_only: bool = True) -> list[str]:
     """
     Return JDKs matching the configuration, optionally filtered to cached only.
     """
-    index = _index.jdk_index(conf)
-    versions = _index.matching_jdk_versions(index, conf)
-
     if cached_only:
-        versions = [
-            v
-            for v in versions
-            if _cache.is_cached(
-                _JDK_KEY_PREFIX,
-                _index.jdk_url(index, conf, v),
-                cache_dir=conf.cache_dir,
-            )
-        ]
+        versions = cached_jdk_versions(conf)
+    else:
+        index = _index.jdk_index(conf)
+        versions = _index.matching_jdk_versions(index, conf)
 
     return [f"{conf.vendor}:{v}" for v in versions]
+
+
+def cached_jdk_versions(conf: Configuration) -> list[str]:
+    """
+    Return the exact version strings of cached JDKs matching the configuration.
+
+    The versions are sorted from oldest to newest.
+    """
+    index = _index.jdk_index(conf)
+    versions = _index.matching_jdk_versions(index, conf)
+    return [
+        v
+        for v in versions
+        if _cache.is_cached(
+            _JDK_KEY_PREFIX,
+            _index.jdk_url(index, conf, v),
+            cache_dir=conf.cache_dir,
+        )
+    ]
+
+
+def remove_jdks(conf: Configuration, versions: list[str]) -> list[str]:
+    """
+    Remove the given cached JDK versions for the configured vendor.
+
+    Returns the list of "vendor:version" strings that were actually removed.
+    """
+    index = _index.jdk_index(conf)
+    removed = []
+    for version in versions:
+        url = _index.jdk_url(index, conf, version)
+        if _cache.remove(_JDK_KEY_PREFIX, url, cache_dir=conf.cache_dir):
+            removed.append(f"{conf.vendor}:{version}")
+    return removed
+
+
+def jdks_to_prune(
+    jdks: list[tuple[str, str]],
+    *,
+    per_vendor: bool = True,
+    per_major: bool = True,
+) -> list[tuple[str, str]]:
+    """
+    Select obsolete JDKs to prune, keeping the newest of each group.
+
+    Arguments:
+    jdks -- A list of (vendor, version) tuples (the cached JDKs).
+    per_vendor -- If True, prune each vendor separately; if False, pool all
+                  vendors together so that only the newest version survives in
+                  each (remaining) group, regardless of vendor.
+    per_major -- If True, keep the newest of each major version; if False,
+                 keep only the single newest version per (remaining) group.
+
+    Within each group, the single newest version is kept; the rest are
+    returned. The returned list preserves the order of the input.
+    """
+    keys = [
+        _index.version_sort_key(vendor, version) for vendor, version in jdks
+    ]
+
+    groups: dict[tuple[str | None, int | str | None], list[int]] = {}
+    for i, (vendor, _version) in enumerate(jdks):
+        key = keys[i]
+        group_key = (
+            vendor if per_vendor else None,
+            key[0] if (per_major and key) else None,
+        )
+        groups.setdefault(group_key, []).append(i)
+
+    keep = {max(members, key=lambda i: keys[i]) for members in groups.values()}
+
+    return [jdk for i, jdk in enumerate(jdks) if i not in keep]
 
 
 def install_jdk(conf: Configuration) -> Path:

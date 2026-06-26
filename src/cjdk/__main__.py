@@ -285,22 +285,174 @@ def cache_package(
     )
 
 
+@click.command(short_help="Remove specific cached JDKs.")
+@click.pass_context
+@click.option(
+    "--dry-run",
+    "-n",
+    is_flag=True,
+    help="Show what would be removed, without removing anything.",
+)
+@click.option(
+    "--yes",
+    "-y",
+    is_flag=True,
+    help="Do not prompt for confirmation before removing.",
+)
+def rm(ctx: click.Context, dry_run: bool, yes: bool) -> None:
+    """
+    Remove the cached JDKs matching the requested criteria.
+
+    Specify which JDKs to remove using the common --jdk/-j option (together
+    with --os/--arch if desired); for example, 'cjdk -j zulu:26 rm' removes all
+    cached Zulu 26 JDKs. Only cached JDKs are removed; cached files, packages,
+    and the index are left untouched.
+
+    To remove everything in the cache, use 'clear-cache' instead. To prune
+    obsolete JDKs while keeping the newest of each, use 'prune'.
+
+    When removing JDKs, ensure that no other processes are using cjdk or the
+    affected JDKs.
+
+    See 'cjdk --help' for the common options used to specify the JDK.
+    """
+    if not ctx.obj.get("jdk"):
+        raise click.UsageError(
+            "Specify which JDK(s) to remove with -j VENDOR:VERSION "
+            "(or use 'clear-cache' to remove everything)."
+        )
+    matched = _api.remove_jdks(**ctx.obj, dry_run=True)
+    if not matched:
+        click.echo("No matching cached JDKs.")
+        return
+    _echo_jdk_list("JDKs to remove:", matched)
+    if dry_run:
+        return
+    if not yes:
+        click.confirm(f"Remove {len(matched)} JDK(s)?", abort=True)
+    removed = _api.remove_jdks(**ctx.obj)
+    click.echo(f"Removed {len(removed)} JDK(s).")
+
+
+@click.command(short_help="Prune obsolete cached JDKs.")
+@click.pass_context
+@click.option(
+    "--per-vendor/--across-vendors",
+    default=True,
+    help="Prune each vendor separately (default), or pool all vendors "
+    "together so only the newest version survives.",
+)
+@click.option(
+    "--per-major/--across-majors",
+    default=True,
+    help="Keep the newest of each major version (default), or only the single "
+    "newest version overall.",
+)
+@click.option(
+    "--dry-run",
+    "-n",
+    is_flag=True,
+    help="Show what would be removed, without removing anything.",
+)
+@click.option(
+    "--yes",
+    "-y",
+    is_flag=True,
+    help="Do not prompt for confirmation before removing.",
+)
+def prune(
+    ctx: click.Context,
+    per_vendor: bool,
+    per_major: bool,
+    dry_run: bool,
+    yes: bool,
+) -> None:
+    """
+    Remove obsolete cached JDKs, keeping only the newest of each.
+
+    By default, the newest cached version of each vendor and major version is
+    kept, and older versions are removed. For example, if both Zulu 26.0.0 and
+    26.0.1 are cached, 26.0.0 is removed.
+
+    Use --across-vendors and/or --across-majors to widen the grouping (removing
+    more), and the common --jdk/-j option to limit pruning to a particular
+    vendor. Only cached JDKs are removed; cached files, packages, and the index
+    are left untouched.
+
+    When pruning JDKs, ensure that no other processes are using cjdk or the
+    affected JDKs.
+
+    See 'cjdk --help' for the common options.
+    """
+    matched = _api.prune_jdks(
+        **ctx.obj,
+        per_vendor=per_vendor,
+        per_major=per_major,
+        dry_run=True,
+    )
+    if not matched:
+        click.echo("Nothing to prune.")
+        return
+    _echo_jdk_list("JDKs to remove:", matched)
+    if dry_run:
+        return
+    if not yes:
+        click.confirm(f"Remove {len(matched)} JDK(s)?", abort=True)
+    removed = _api.prune_jdks(
+        **ctx.obj, per_vendor=per_vendor, per_major=per_major
+    )
+    click.echo(f"Removed {len(removed)} JDK(s).")
+
+
 @click.command(short_help="Remove all cached files.")
 @click.pass_context
-def clear_cache(ctx: click.Context) -> None:
+@click.option(
+    "--dry-run",
+    "-n",
+    is_flag=True,
+    help="Show what would be removed, without removing anything.",
+)
+@click.option(
+    "--yes",
+    "-y",
+    is_flag=True,
+    help="Do not prompt for confirmation before removing.",
+)
+def clear_cache(ctx: click.Context, dry_run: bool, yes: bool) -> None:
     """
     Remove all cached JDKs, files, and packages from the cache directory.
 
     This permanently deletes everything in the cache. Subsequent commands will
-    re-download any needed files.
+    re-download any needed files. To remove only specific JDKs, use 'rm'; to
+    prune obsolete JDKs, use 'prune'.
+
+    Unless --yes is given, you are prompted to confirm before anything is
+    deleted.
 
     When clearing the cache, ensure that no other processes are using cjdk or
     the JDKs, files, or packages installed by cjdk.
 
     See 'cjdk --help' for the common options (only --cache-dir is relevant).
     """
+    cache_dir = _api.cache_directory(**ctx.obj)
+    if not cache_dir.exists():
+        click.echo(f"Cache directory does not exist: {cache_dir}")
+        return
+    if dry_run:
+        click.echo(f"Would remove entire cache directory: {cache_dir}")
+        return
+    if not yes:
+        click.echo("This will permanently remove the entire cache directory:")
+        click.echo(f"  {cache_dir}")
+        click.confirm("Proceed?", abort=True)
     cleared = _api.clear_cache(**ctx.obj)
     click.echo(f"Cleared cache: {cleared}")
+
+
+def _echo_jdk_list(header: str, jdks: list[str]) -> None:
+    click.echo(header)
+    for jdk in jdks:
+        click.echo(f"  {jdk}")
 
 
 # Register current commands.
@@ -311,6 +463,8 @@ _cli.add_command(ls)
 _cli.add_command(cache)
 _cli.add_command(cache_file)
 _cli.add_command(cache_package)
+_cli.add_command(rm)
+_cli.add_command(prune)
 _cli.add_command(clear_cache)
 
 # Register hidden/deprecated commands, for backwards compatibility.

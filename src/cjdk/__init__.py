@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 from ._api import (
+    cache_directory,
     cache_file,
     cache_jdk,
     cache_package,
@@ -11,6 +12,8 @@ from ._api import (
     java_home,
     list_jdks,
     list_vendors,
+    prune_jdks,
+    remove_jdks,
 )
 from ._exceptions import (
     CjdkError,
@@ -21,6 +24,7 @@ from ._exceptions import (
 from ._version import __version__ as __version__
 
 __all__ = [
+    "cache_directory",
     "cache_file",
     "cache_jdk",
     "cache_package",
@@ -33,4 +37,6 @@ __all__ = [
     "JdkNotFoundError",
     "list_jdks",
     "list_vendors",
+    "prune_jdks",
+    "remove_jdks",
 ]
