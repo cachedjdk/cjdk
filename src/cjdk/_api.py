@@ -44,7 +44,6 @@ __all__ = [
     "list_jdks",
     "list_vendors",
     "prune_jdks",
-    "remove_jdks",
 ]
 
 
@@ -152,87 +151,13 @@ def list_jdks(  # type: ignore [misc]  # overlap with kwargs
     return _jdk.matching_jdks(conf, cached_only=cached_only)
 
 
-def remove_jdks(  # type: ignore [misc]  # overlap with kwargs
-    *,
-    vendor: str | None = None,
-    version: str | None = None,
-    dry_run: bool = False,
-    **kwargs: Unpack[ConfigKwargs],
-) -> list[str]:
-    """
-    Remove cached JDKs matching the given criteria.
-
-    Only cached JDKs are affected; cached files, packages, and the index are
-    left untouched. This should not be called when other processes may be using
-    cjdk or the JDKs installed by cjdk.
-
-    Parameters
-    ----------
-    vendor : str, optional
-        JDK vendor name, such as "adoptium".
-    version : str, optional
-        JDK version expression, such as "17+".
-    dry_run : bool, default: False
-        If True, return the matching JDKs without removing anything.
-
-    Other Parameters
-    ----------------
-    jdk : str, optional
-        JDK vendor and version, such as "adoptium:17+". Cannot be specified
-        together with `vendor` or `version`.
-    cache_dir : pathlib.Path or str, optional
-        Override the root cache directory.
-    index_url : str, optional
-        Alternative URL for the JDK index.
-    os : str, optional
-        Operating system for the JDK (default: current operating system).
-    arch : str, optional
-        CPU architecture for the JDK (default: current architecture).
-
-    Returns
-    -------
-    list[str]
-        The JDKs (vendor:version) that were removed (or, if `dry_run`, that
-        would be removed).
-
-    Raises
-    ------
-    ConfigError
-        If configuration is invalid.
-    InstallError
-        If fetching the index fails.
-    CjdkError
-        If a cached JDK could not be removed.
-    """
-    jdk = kwargs.pop("jdk", None)
-    if jdk:
-        parsed_vendor, parsed_version = _conf.parse_vendor_version(jdk)
-        vendor = vendor or parsed_vendor or None
-        version = version or parsed_version or None
-
-    if vendor is None:
-        conf = _conf.configure(**kwargs)
-        return [
-            removed
-            for v in sorted(_jdk.available_vendors(conf))
-            for removed in remove_jdks(
-                vendor=v, version=version, dry_run=dry_run, **kwargs
-            )
-        ]
-
-    conf = _conf.configure(vendor=vendor, version=version, **kwargs)
-    versions = _jdk.cached_jdk_versions(conf)
-    if dry_run:
-        return [f"{conf.vendor}:{v}" for v in versions]
-    return _jdk.remove_jdks(conf, versions)
-
-
 def prune_jdks(  # type: ignore [misc]  # overlap with kwargs
     *,
     vendor: str | None = None,
     version: str | None = None,
     per_vendor: bool = True,
     per_major: bool = True,
+    keep_none: bool = False,
     dry_run: bool = False,
     **kwargs: Unpack[ConfigKwargs],
 ) -> list[str]:
@@ -257,6 +182,11 @@ def prune_jdks(  # type: ignore [misc]  # overlap with kwargs
     per_major : bool, default: True
         If True, keep the newest of each major version. If False, keep only the
         single newest version per group.
+    keep_none : bool, default: False
+        If True, remove every matching JDK, keeping none (this ignores
+        `per_vendor` and `per_major`). Combined with `vendor`/`version` (or
+        `jdk`), it removes specific JDKs; with no such filter, it removes all
+        cached JDKs.
     dry_run : bool, default: False
         If True, return the obsolete JDKs without removing anything.
 
@@ -306,7 +236,10 @@ def prune_jdks(  # type: ignore [misc]  # overlap with kwargs
         cached.extend((v, ver) for ver in _jdk.cached_jdk_versions(conf))
 
     to_prune = _jdk.jdks_to_prune(
-        cached, per_vendor=per_vendor, per_major=per_major
+        cached,
+        per_vendor=per_vendor,
+        per_major=per_major,
+        keep_none=keep_none,
     )
 
     if dry_run:

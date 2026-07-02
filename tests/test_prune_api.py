@@ -45,14 +45,16 @@ def _common(server, cache_dir):
     )
 
 
-def test_remove_jdks_exact(tmp_path):
+def test_prune_keep_none_exact(tmp_path):
     cache_dir = tmp_path / "cache"
     _populate_all(cache_dir)
     with mock_server.start(endpoint="/index.json", data=_INDEX_DATA) as server:
         common = _common(server, cache_dir)
 
         # Dry run reports but does not remove.
-        dry = _api.remove_jdks(jdk="zulu:25.0.0", dry_run=True, **common)
+        dry = _api.prune_jdks(
+            jdk="zulu:25.0.0", keep_none=True, dry_run=True, **common
+        )
         assert dry == ["zulu:25.0.0"]
         assert _api.list_jdks(jdk="zulu", **common) == [
             "zulu:21.0.9",
@@ -60,7 +62,7 @@ def test_remove_jdks_exact(tmp_path):
             "zulu:25.0.1",
         ]
 
-        removed = _api.remove_jdks(jdk="zulu:25.0.0", **common)
+        removed = _api.prune_jdks(jdk="zulu:25.0.0", keep_none=True, **common)
         assert removed == ["zulu:25.0.0"]
         assert _api.list_jdks(jdk="zulu", **common) == [
             "zulu:21.0.9",
@@ -70,16 +72,34 @@ def test_remove_jdks_exact(tmp_path):
         assert _api.list_jdks(jdk="adoptium", **common) == ["adoptium:17.0.3"]
 
 
-def test_remove_jdks_by_vendor(tmp_path):
+def test_prune_keep_none_by_vendor(tmp_path):
     cache_dir = tmp_path / "cache"
     _populate_all(cache_dir)
     with mock_server.start(endpoint="/index.json", data=_INDEX_DATA) as server:
         common = _common(server, cache_dir)
 
-        removed = _api.remove_jdks(jdk="zulu", **common)
-        assert removed == ["zulu:21.0.9", "zulu:25.0.0", "zulu:25.0.1"]
+        removed = _api.prune_jdks(jdk="zulu", keep_none=True, **common)
+        assert sorted(removed) == ["zulu:21.0.9", "zulu:25.0.0", "zulu:25.0.1"]
         assert _api.list_jdks(jdk="zulu", **common) == []
         assert _api.list_jdks(jdk="adoptium", **common) == ["adoptium:17.0.3"]
+
+
+def test_prune_keep_none_all(tmp_path):
+    cache_dir = tmp_path / "cache"
+    _populate_all(cache_dir)
+    with mock_server.start(endpoint="/index.json", data=_INDEX_DATA) as server:
+        common = _common(server, cache_dir)
+
+        # With no vendor filter, keep_none removes every cached JDK.
+        removed = _api.prune_jdks(keep_none=True, **common)
+        assert sorted(removed) == [
+            "adoptium:17.0.3",
+            "zulu:21.0.9",
+            "zulu:25.0.0",
+            "zulu:25.0.1",
+        ]
+        assert _api.list_jdks(jdk="zulu", **common) == []
+        assert _api.list_jdks(jdk="adoptium", **common) == []
 
 
 def test_prune_jdks_default(tmp_path):

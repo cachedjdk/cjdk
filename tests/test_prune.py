@@ -79,6 +79,20 @@ def test_prune_empty():
     assert jdks_to_prune([]) == []
 
 
+def test_prune_keep_none():
+    jdks = [
+        ("zulu", "25.0.0"),
+        ("zulu", "25.0.1"),
+        ("corretto", "25.0.2"),
+    ]
+    # keep_none prunes everything, ignoring the grouping options.
+    assert jdks_to_prune(jdks, keep_none=True) == jdks
+    assert (
+        jdks_to_prune(jdks, keep_none=True, per_vendor=False, per_major=False)
+        == jdks
+    )
+
+
 def test_prune_handles_jdk_1_x_prefix():
     # JDK 1.8 normalizes to major 8; keep the newest 1.8.
     jdks = [

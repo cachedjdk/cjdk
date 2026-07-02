@@ -118,21 +118,6 @@ shown was on macOS.)
 
 ## Managing the cache
 
-### `rm`
-
-```{command-output} cjdk rm --help
-```
-
-For example, to remove all cached Zulu 26 JDKs:
-
-```text
-$ cjdk -j zulu:26 rm
-```
-
-```{eval-rst}
-.. versionadded:: 0.6.0
-```
-
 ### `prune`
 
 ```{command-output} cjdk prune --help
@@ -143,6 +128,14 @@ is removed while the newest of each vendor and major version is kept:
 
 ```text
 $ cjdk prune
+```
+
+To remove specific cached JDKs instead of keeping the newest of each, add
+`--keep-none` and narrow the selection with `-j`. For example, to remove all
+cached Zulu 26 JDKs:
+
+```text
+$ cjdk -j zulu:26 prune --keep-none
 ```
 
 ```{eval-rst}

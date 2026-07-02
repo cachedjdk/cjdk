@@ -101,6 +101,7 @@ def jdks_to_prune(
     *,
     per_vendor: bool = True,
     per_major: bool = True,
+    keep_none: bool = False,
 ) -> list[tuple[str, str]]:
     """
     Select obsolete JDKs to prune, keeping the newest of each group.
@@ -112,10 +113,15 @@ def jdks_to_prune(
                   each (remaining) group, regardless of vendor.
     per_major -- If True, keep the newest of each major version; if False,
                  keep only the single newest version per (remaining) group.
+    keep_none -- If True, prune every JDK, keeping none (per_vendor and
+                 per_major are ignored).
 
     Within each group, the single newest version is kept; the rest are
     returned. The returned list preserves the order of the input.
     """
+    if keep_none:
+        return list(jdks)
+
     keys = [
         _index.version_sort_key(vendor, version) for vendor, version in jdks
     ]

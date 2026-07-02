@@ -13,7 +13,6 @@ from ._api import (
     list_jdks,
     list_vendors,
     prune_jdks,
-    remove_jdks,
 )
 from ._exceptions import (
     CjdkError,
@@ -38,5 +37,4 @@ __all__ = [
     "list_jdks",
     "list_vendors",
     "prune_jdks",
-    "remove_jdks",
 ]
