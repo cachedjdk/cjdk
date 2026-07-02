@@ -60,6 +60,16 @@ install an application JAR.
 ## Managing the cache
 
 ```{eval-rst}
+.. autofunction:: cjdk.prune_jdks
+.. versionadded:: 0.6.0
+```
+
+```{eval-rst}
+.. autofunction:: cjdk.cache_directory
+.. versionadded:: 0.6.0
+```
+
+```{eval-rst}
 .. autofunction:: cjdk.clear_cache
 .. versionadded:: 0.5.0
 ```

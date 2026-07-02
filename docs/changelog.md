@@ -10,10 +10,21 @@ See also the section on [versioning](versioning-scheme).
 
 ## [Unreleased]
 
+### Added
+
+- Add `cjdk prune` and `prune_jdks()` to remove obsolete cached JDKs, keeping
+  the newest of each vendor and major version (configurable with
+  `--per-vendor`/`--across-vendors` and `--per-major`/`--across-majors`). Pass
+  `--keep-none` (with `-j` for precision) to remove specific cached JDKs
+  outright.
+- Add `cache_directory()` to the Python API.
+
 ### Changed
 
 - `list_vendors()` and `ls-vendors` now filter vendors by OS and architecture,
   defaulting to the current platform.
+- `cjdk clear-cache` now prompts for confirmation before deleting; pass `--yes`
+  to skip the prompt, or `--dry-run` to preview. `prune` prompts the same way.
 
 ### Removed
 

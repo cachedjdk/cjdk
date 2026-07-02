@@ -118,6 +118,30 @@ shown was on macOS.)
 
 ## Managing the cache
 
+### `prune`
+
+```{command-output} cjdk prune --help
+```
+
+For example, if both `zulu:26.0.0` and `zulu:26.0.1` are cached, the older one
+is removed while the newest of each vendor and major version is kept:
+
+```text
+$ cjdk prune
+```
+
+To remove specific cached JDKs instead of keeping the newest of each, add
+`--keep-none` and narrow the selection with `-j`. For example, to remove all
+cached Zulu 26 JDKs:
+
+```text
+$ cjdk -j zulu:26 prune --keep-none
+```
+
+```{eval-rst}
+.. versionadded:: 0.6.0
+```
+
 (cli-clear-cache)=
 
 ### `clear-cache`
@@ -127,4 +151,7 @@ shown was on macOS.)
 
 ```{eval-rst}
 .. versionadded:: 0.5.0
+.. versionchanged:: 0.6.0
+   Now prompts for confirmation before deleting. Pass ``--yes`` to skip the
+   prompt, or ``--dry-run`` to preview.
 ```
